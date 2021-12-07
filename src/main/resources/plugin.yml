@@ -1,0 +1,28 @@
+main: me.jasonhorkles.entityclearer.EntityClearer
+name: EntityClearer
+description: The best plugin to remove entities from your worlds!
+version: %VERSION%
+author: JasonHorkles
+website: https://github.com/SilverstoneMC/EntityClearer
+api-version: 1.17
+
+commands:
+  entityclearer:
+    aliases: [ ecl ]
+    description: "Base command for the EntityClearer plugin"
+    usage: "§cUsage: /entityclearer reload"
+    permission: entityclearer.reload
+  clearentities:
+    description: "Clears the entities defined in the config"
+    permission: entityclearer.clear
+
+permissions:
+  entityclearer.reload:
+    description: Reload the plugin
+    default: op
+  entityclearer.clear:
+    description: Force clear the entities
+    default: op
+  entityclearer.lowtps:
+    description: Notifications when the TPS is low
+    default: op

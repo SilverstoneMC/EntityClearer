@@ -1,0 +1,59 @@
+name: Bug Report
+description: Report a problem with the plugin
+labels: Bug-Unconfirmed
+body:
+  - type: textarea
+    attributes:
+      label: Description of the bug
+      description: "Be clear and concise"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Link to latest.log file with print-stack-traces enabled
+      description: "Reproduce your problem with `print-stack-traces` set to true in the EntityClearer config, then upload your `/logs/latest.log` file to https://paste.gg/, click \"Submit anonymously\", and paste the URL below"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce the problem
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Expected behavior
+      description: "What should've happened?"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Output of `/version`
+      description: "Upload a screenshot or copy the text from the message"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Output of `/version EntityClearer`
+      description: "Upload a screenshot or copy the text from the message"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: EntityClearer config.yml
+      description: "Please copy and paste your config.yml to the text box below"
+      render: yaml
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional info
+      description: Optional
+    validations:
+      required: false

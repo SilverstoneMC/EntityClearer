@@ -13,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
-//temp
 @SuppressWarnings({"ConstantConditions"})
 public class ClearTask implements CommandExecutor {
 

@@ -4,10 +4,11 @@
 
     <groupId>me.jasonhorkles</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>1.10.3-beta</version>
+    <version>1.10.3</version>
 
     <properties>
-        <maven.compiler.release>16</maven.compiler.release>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -111,6 +112,12 @@
             <artifactId>paper-api</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>adventure-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

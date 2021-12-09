@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public @NonNull BukkitAudiences adventure() {
+    public BukkitAudiences adventure() {
         if (this.adventure == null)
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
         return this.adventure;

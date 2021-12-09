@@ -4,7 +4,7 @@ description: The best plugin to remove entities from your worlds!
 version: %VERSION%
 author: JasonHorkles
 website: https://github.com/SilverstoneMC/EntityClearer
-api-version: 1.16.5
+api-version: 1.16
 
 commands:
   entityclearer:

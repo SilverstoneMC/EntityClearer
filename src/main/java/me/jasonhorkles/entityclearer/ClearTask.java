@@ -188,7 +188,7 @@ public class ClearTask implements CommandExecutor {
                 .severe("Something went wrong sending messages! Is your config outdated?");
             plugin.getLogger()
                 .warning(
-                    "Please see https://github.com/JasonHorkles/EntityClearer/blob/main/config.yml for the most recent config.");
+                    "Please see https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml for the most recent config.");
             if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
         }
     }
@@ -425,6 +425,7 @@ public class ClearTask implements CommandExecutor {
                 plugin.getLogger()
                     .info(entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
                 plugin.getLogger().info("");
+                return;
             }
         }
 

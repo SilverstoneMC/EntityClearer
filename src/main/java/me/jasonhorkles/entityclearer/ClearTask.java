@@ -243,13 +243,13 @@ public class ClearTask implements CommandExecutor {
                             if (debug)
                                 plugin.getLogger().info("Entity " + entities.getType() + " matches the config's!");
                             // If only entities with a specific reason should be removed
-                            if (plugin.getConfig().getBoolean(path + "." + world.getName() + ".spawn-reason.enabled")) {
+                            if (plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
                                 if (debug)
                                     plugin.getLogger().info("Only removing entities with a specific spawn reason...");
                                 // For each spawn reason in the config
                                 // If the entity's spawn reason matches the config's
                                 for (String spawnReason : plugin.getConfig()
-                                    .getStringList(path + "." + world.getName() + ".spawn-reason.reasons"))
+                                    .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
                                     if (entities.getEntitySpawnReason().name().equalsIgnoreCase(spawnReason)) {
                                         if (debug) plugin.getLogger()
                                             .info(

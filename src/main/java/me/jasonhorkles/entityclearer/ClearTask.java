@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -242,6 +243,13 @@ public class ClearTask implements CommandExecutor {
                         if (entities.getType().toString().equalsIgnoreCase(entityTypes)) {
                             if (debug)
                                 plugin.getLogger().info("Entity " + entities.getType() + " matches the config's!");
+                            if (entities.getType() == EntityType.DROPPED_ITEM) {
+                                if (debug)
+                                    plugin.getLogger()
+                                        .info("Skipping detection of spawn reasons and nearby entities...");
+                                checkNamed(entities);
+                                continue;
+                            }
                             // If only entities with a specific reason should be removed
                             if (plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
                                 if (debug)

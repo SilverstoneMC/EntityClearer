@@ -144,7 +144,7 @@ public class ClearTask implements CommandExecutor {
                 // If that world doesn't exist, complain
                 if (world == null) {
                     plugin.getLogger()
-                        .severe("Couldn't find world \"" + world.getName() + "\"! Please double check your config.");
+                        .severe("Couldn't find world \"" + world + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -228,7 +228,7 @@ public class ClearTask implements CommandExecutor {
                 // If that world doesn't exist, complain
                 if (world == null) {
                     plugin.getLogger()
-                        .severe("Couldn't find world \"" + world.getName() + "\"! Please double check your config.");
+                        .severe("Couldn't find world \"" + world + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -287,7 +287,7 @@ public class ClearTask implements CommandExecutor {
                 // If that world doesn't exist, complain
                 if (world == null) {
                     plugin.getLogger()
-                        .severe("Couldn't find world \"" + world.getName() + "\"! Please double check your config.");
+                        .severe("Couldn't find world \"" + world + "\"! Please double check your config.");
                     continue;
                 }
 

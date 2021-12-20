@@ -140,11 +140,13 @@ public class ClearTask implements CommandExecutor {
             }
 
             // For each world in the config
+            int index = -1;
             for (World world : worlds) {
+                index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
                     plugin.getLogger()
-                        .severe("Couldn't find world \"" + world + "\"! Please double check your config.");
+                        .severe("Couldn't find world \"" + keys.get(index) + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -207,7 +209,7 @@ public class ClearTask implements CommandExecutor {
         String path = "worlds";
         if (tpsLow)
             if (plugin.getConfig().getBoolean("low-tps.separate-entity-list")) {
-                plugin.getLogger().info("Separate entity list enabled!");
+                if (debug) plugin.getLogger().info("Separate entity list enabled!");
                 path = "low-tps.worlds";
             }
 
@@ -224,11 +226,13 @@ public class ClearTask implements CommandExecutor {
 
         try {
             // For each world in the config
+            int index = -1;
             for (World world : worlds) {
+                index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
                     plugin.getLogger()
-                        .severe("Couldn't find world \"" + world + "\"! Please double check your config.");
+                        .severe("Couldn't find world \"" + keys.get(index) + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -283,11 +287,13 @@ public class ClearTask implements CommandExecutor {
                 .addCustomChart(new Metrics.SingleLineChart("entities_removed", () -> finalRemovedEntities));
 
             // For each world in the config
+            index = -1;
             for (World world : worlds) {
+                index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
                     plugin.getLogger()
-                        .severe("Couldn't find world \"" + world + "\"! Please double check your config.");
+                        .severe("Couldn't find world \"" + keys.get(index) + "\"! Please double check your config.");
                     continue;
                 }
 

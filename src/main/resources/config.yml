@@ -10,7 +10,7 @@
 interval: 0
 
 # The sound to play when showing the warnings
-# See https://minecraft.fandom.com/wiki/Sounds.json#Java_Edition_values for all sounds
+# See https://minecraft.fandom.com/wiki/Sounds.json#:~:text=be%20found%20here.-,Sound%20events,-A%20sound%20event for all sounds
 # Set to '' for no sound
 sound: 'ui.button.click'
 

@@ -21,7 +21,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
-                    <outputDirectory>F:\Intellij Outputs</outputDirectory>
+                    <outputDirectory>D:\Intellij Outputs</outputDirectory>
                 </configuration>
             </plugin>
 

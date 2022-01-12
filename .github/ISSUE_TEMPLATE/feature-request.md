@@ -1,6 +1,9 @@
 ---
-name: Feature Request about: Suggest an idea for the plugin title: ''
-labels: Suggestion assignees: ''
+name: Feature Request
+about: Suggest an idea for the plugin
+title: ''
+labels: Suggestion
+assignees: ''
 
 ---
 

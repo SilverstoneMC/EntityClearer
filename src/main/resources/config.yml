@@ -19,7 +19,7 @@ sound: 'ui.button.click'
 # See https://papermc.io/javadocs/paper/1.18/org/bukkit/entity/EntityType.html for all entities
 # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
 worlds:
-  your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds
+  your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
     # The entities to be removed from the world
     entities:
       - BEE
@@ -69,8 +69,9 @@ nearby-entities:
   # Using this would prevent every entity from being removed then just respawning again naturally
   # It is recommended to leave this feature enabled
   enabled: true
-  # Only apply to worlds with the mob spawning gamerule enabled?
-  gamerule-enabled-only: false
+  # Should the plugin only count nearby entities that are also on the remove list?
+  # Setting this to false will count ANY nearby entity, including XP Orbs, Item Frames, etc
+  only-count-from-list: true
   # The distance in blocks that the plugin should check for extra entities
   x: 3
   y: 3
@@ -85,10 +86,7 @@ countdown-on-command: false
 remove-named: false
 
 messages:
-  # Should there be action bar messages?
-  actionbar: true
-  # Should there be chat messages?
-  chat: false
+  # Set the message to "" to disable it
   # This plugin supports MiniMessage markdown and formatting - see https://docs.adventure.kyori.net/minimessage.html#format
   actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{SECONDS} <#ff9b0f>&lsecond{S}!"
   actionbar-completed-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities!"
@@ -128,7 +126,7 @@ low-tps:
   separate-entity-list: false
   # This list will not be active unless the above option is true
   worlds:
-    your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds
+    your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
       entities:
         - BEE
         - ARMOR_STAND

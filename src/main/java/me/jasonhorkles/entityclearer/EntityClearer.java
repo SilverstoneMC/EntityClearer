@@ -13,8 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("ConstantConditions")
 public class EntityClearer extends JavaPlugin implements Listener {
@@ -105,7 +103,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
-                ClearTask.countdown();
+                new ClearTask().countdown();
             }
         };
         savedKillTask = task.runTaskTimer(this, ((getConfig().getInt("interval") * 60L) * 20),
@@ -162,7 +160,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
                     .getString("low-tps.chat-message")).replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed instantly
-        ClearTask.removeEntitiesTask(true);
+        new ClearTask().removeEntitiesTask(true);
 
         // Cooldown
         tpsTimerRan = true;
@@ -181,13 +179,13 @@ public class EntityClearer extends JavaPlugin implements Listener {
     }
 
     private void sendMetrics() {
-        // Entity
-        metrics.addCustomChart(new Metrics.AdvancedPie("entity_types", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (String world : instance.getConfig().getConfigurationSection("worlds").getKeys(false))
-                for (String entity : instance.getConfig().getStringList("worlds." + world)) valueMap.put(entity, 1);
-            return valueMap;
-        }));
+        // Interval
+        int interval = getConfig().getInt("interval");
+        metrics.addCustomChart(new Metrics.SimplePie("interval", () -> String.valueOf(interval)));
+
+        // Sound
+        String sound = getConfig().getString("sound");
+        metrics.addCustomChart(new Metrics.SimplePie("sound", () -> sound));
 
         // TPS
         String tpsEnabled;
@@ -200,18 +198,6 @@ public class EntityClearer extends JavaPlugin implements Listener {
         if (getConfig().getBoolean("nearby-entities.enabled")) nearbyEnabled = "Enabled";
         else nearbyEnabled = "Disabled";
         metrics.addCustomChart(new Metrics.SimplePie("nearby_entities_check", () -> nearbyEnabled));
-
-        // Actionbar
-        String actionbarEnabled;
-        if (getConfig().getBoolean("messages.actionbar")) actionbarEnabled = "Enabled";
-        else actionbarEnabled = "Disabled";
-        metrics.addCustomChart(new Metrics.SimplePie("actionbar_messages", () -> actionbarEnabled));
-
-        // Chat
-        String chatEnabled;
-        if (getConfig().getBoolean("messages.chat")) chatEnabled = "Enabled";
-        else chatEnabled = "Disabled";
-        metrics.addCustomChart(new Metrics.SimplePie("chat_messages", () -> chatEnabled));
     }
 
     public static String parseMessage(String message) {

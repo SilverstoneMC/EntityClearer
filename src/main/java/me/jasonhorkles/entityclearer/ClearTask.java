@@ -161,7 +161,7 @@ public class ClearTask implements CommandExecutor {
                         if (debug) plugin.getLogger().info(
                             "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
-                        player.sendMessage(MiniMessage.miniMessage().parse(
+                        bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().parse(
                             EntityClearer.parseMessage(plugin.getConfig().getString("messages.chat-message"))
                                 .replace("{SECONDS}", String.valueOf(timeLeft)).replace("{S}", s)));
                     }
@@ -312,15 +312,16 @@ public class ClearTask implements CommandExecutor {
                             if (debug) plugin.getLogger().info(
                                 "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
 
-                            player.sendMessage(MiniMessage.miniMessage().parse(EntityClearer.parseMessage(
-                                    plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
-                                .replace("{ENTITIES}", String.valueOf(removedEntities))));
+                            bukkitAudiences.player(player)
+                                .sendMessage(MiniMessage.miniMessage().parse(EntityClearer.parseMessage(
+                                        plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
+                                    .replace("{ENTITIES}", String.valueOf(removedEntities))));
                         }
                     } else if (!plugin.getConfig().getString("messages.chat-completed-message").isBlank()) {
                         if (debug) plugin.getLogger().info(
                             "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
-                        player.sendMessage(MiniMessage.miniMessage().parse(
+                        bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().parse(
                             EntityClearer.parseMessage(
                                     plugin.getConfig().getString("messages.chat-completed-message"))
                                 .replace("{ENTITIES}", String.valueOf(removedEntities))));

@@ -156,8 +156,9 @@ public class EntityClearer extends JavaPlugin implements Listener {
         // If a chat message should be sent
         if (instance.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
             if (player.hasPermission("entityclearer.lowtps"))
-                player.sendMessage(MiniMessage.miniMessage().parse(EntityClearer.parseMessage(instance.getConfig()
-                    .getString("low-tps.chat-message")).replace("{TPS}", String.valueOf(tps))));
+                getInstance().adventure().player(player)
+                    .sendMessage(MiniMessage.miniMessage().parse(EntityClearer.parseMessage(instance.getConfig()
+                        .getString("low-tps.chat-message")).replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed instantly
         new ClearTask().removeEntitiesTask(true);

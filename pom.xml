@@ -4,7 +4,7 @@
 
     <groupId>me.jasonhorkles</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>1.11.0</version>
+    <version>1.11.1</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -64,12 +64,8 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>net.kyori.adventure.text.minimessage</pattern>
-                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.minimessage</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>net.kyori.adventure.sound</pattern>
-                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.sound</shadedPattern>
+                                    <pattern>net.kyori.adventure</pattern>
+                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.adventure</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

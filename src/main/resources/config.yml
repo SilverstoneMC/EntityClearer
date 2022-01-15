@@ -70,7 +70,7 @@ nearby-entities:
   # It is recommended to leave this feature enabled
   enabled: true
   # Should the plugin only count nearby entities that are also on the remove list?
-  # Setting this to false will count ANY nearby entity, including XP Orbs, Item Frames, etc
+  # Setting this to false will count ANY nearby entity, including players, XP Orbs, Item Frames, etc
   only-count-from-list: true
   # The distance in blocks that the plugin should check for extra entities
   x: 3

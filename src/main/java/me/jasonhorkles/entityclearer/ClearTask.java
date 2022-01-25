@@ -1,6 +1,8 @@
 package me.jasonhorkles.entityclearer;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -139,8 +141,12 @@ public class ClearTask implements CommandExecutor {
                 index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
-                    plugin.getLogger()
-                        .severe("Couldn't find world \"" + keys.get(index) + "\"! Please double check your config.");
+                    plugin.getLogger().severe(
+                        "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                    for (Player players : Bukkit.getOnlinePlayers())
+                        if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text(
+                            "[EntityClearer] Couldn't find the world \"" + keys.get(
+                                index) + "\"! Please double check your config.").color(NamedTextColor.RED));
                     continue;
                 }
 
@@ -216,8 +222,12 @@ public class ClearTask implements CommandExecutor {
                 index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
-                    plugin.getLogger()
-                        .severe("Couldn't find world \"" + keys.get(index) + "\"! Please double check your config.");
+                    plugin.getLogger().severe(
+                        "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                    for (Player players : Bukkit.getOnlinePlayers())
+                        if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text(
+                            "[EntityClearer] Couldn't find the world \"" + keys.get(
+                                index) + "\"! Please double check your config.").color(NamedTextColor.RED));
                     continue;
                 }
 
@@ -278,8 +288,12 @@ public class ClearTask implements CommandExecutor {
                 index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
-                    plugin.getLogger()
-                        .severe("Couldn't find world \"" + keys.get(index) + "\"! Please double check your config.");
+                    plugin.getLogger().severe(
+                        "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                    for (Player players : Bukkit.getOnlinePlayers())
+                        if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text(
+                            "[EntityClearer] Couldn't find the world \"" + keys.get(
+                                index) + "\"! Please double check your config.").color(NamedTextColor.RED));
                     continue;
                 }
 
@@ -312,8 +326,8 @@ public class ClearTask implements CommandExecutor {
                             if (debug) plugin.getLogger().info(
                                 "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
 
-                            bukkitAudiences.player(player)
-                                .sendMessage(MiniMessage.miniMessage().parse(EntityClearer.parseMessage(
+                            bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().parse(
+                                EntityClearer.parseMessage(
                                         plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
                                     .replace("{ENTITIES}", String.valueOf(removedEntities))));
                         }
@@ -322,8 +336,7 @@ public class ClearTask implements CommandExecutor {
                             "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().parse(
-                            EntityClearer.parseMessage(
-                                    plugin.getConfig().getString("messages.chat-completed-message"))
+                            EntityClearer.parseMessage(plugin.getConfig().getString("messages.chat-completed-message"))
                                 .replace("{ENTITIES}", String.valueOf(removedEntities))));
                     }
 
@@ -339,6 +352,10 @@ public class ClearTask implements CommandExecutor {
             plugin.getLogger().severe("Something went wrong clearing entities! Is your config outdated?");
             plugin.getLogger().warning(
                 "Please see https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml for the most recent config.");
+            for (Player players : Bukkit.getOnlinePlayers())
+                if (players.hasPermission("entityclearer.notify")) players.sendMessage(
+                    Component.text("[EntityClearer] Something went wrong clearing entities! Is your config outdated?")
+                        .color(NamedTextColor.RED));
             if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
         }
 

@@ -1,6 +1,6 @@
 main: me.jasonhorkles.entityclearer.EntityClearer
 name: EntityClearer
-description: The best plugin to remove entities from your worlds!
+description: Remove entities from your worlds!
 version: %VERSION%
 author: JasonHorkles
 website: https://github.com/SilverstoneMC/EntityClearer
@@ -25,4 +25,7 @@ permissions:
     default: op
   entityclearer.lowtps:
     description: Notifications when the TPS is low
+    default: op
+  entityclearer.notify:
+    description: Notifications when there are problems within the plugin
     default: op

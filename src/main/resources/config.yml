@@ -14,6 +14,14 @@ interval: 0
 # Set to '' for no sound
 sound: 'ui.button.click'
 
+# The sound's pitch played when the timer is counting down
+# Valid values are between 0.0-2.0
+countdown-pitch: 0.9
+
+# The sound's pitch played when the entites are cleared
+# Valid values are between 0.0-2.0
+cleared-pitch: 1.0
+
 # The worlds to check and remove entities from
 # Make sure to add your world(s) if they're not already there
 # See https://papermc.io/javadocs/paper/1.18/org/bukkit/entity/EntityType.html for all entities

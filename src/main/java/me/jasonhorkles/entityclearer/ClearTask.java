@@ -144,8 +144,8 @@ public class ClearTask implements CommandExecutor {
                     plugin.getLogger().severe(
                         "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
                     for (Player players : Bukkit.getOnlinePlayers())
-                        if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text(
-                            "[EntityClearer] Couldn't find the world \"" + keys.get(
+                        if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
+                            Component.text("[EntityClearer] Couldn't find the world \"" + keys.get(
                                 index) + "\"! Please double check your config.").color(NamedTextColor.RED));
                     continue;
                 }
@@ -176,8 +176,18 @@ public class ClearTask implements CommandExecutor {
                     if (debug) plugin.getLogger().info("Playing sound " + plugin.getConfig()
                         .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
-                    player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
-                        SoundCategory.MASTER, 1, 0.9F);
+                    try {
+                        player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
+                            SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("countdown-pitch")));
+                    } catch (NumberFormatException e) {
+                        for (Player players : Bukkit.getOnlinePlayers())
+                            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players)
+                                .sendMessage(Component.text("[EntityClearer] Countdown pitch \"" + plugin.getConfig()
+                                    .getString("countdown-pitch") + "\" is not a number!").color(NamedTextColor.RED));
+                        plugin.getLogger().severe("Countdown pitch \"" + plugin.getConfig()
+                            .getString("countdown-pitch") + "\" is not a valid number!");
+                        if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                    }
                 }
             }
         } catch (NullPointerException e) {
@@ -225,8 +235,8 @@ public class ClearTask implements CommandExecutor {
                     plugin.getLogger().severe(
                         "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
                     for (Player players : Bukkit.getOnlinePlayers())
-                        if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text(
-                            "[EntityClearer] Couldn't find the world \"" + keys.get(
+                        if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
+                            Component.text("[EntityClearer] Couldn't find the world \"" + keys.get(
                                 index) + "\"! Please double check your config.").color(NamedTextColor.RED));
                     continue;
                 }
@@ -291,8 +301,8 @@ public class ClearTask implements CommandExecutor {
                     plugin.getLogger().severe(
                         "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
                     for (Player players : Bukkit.getOnlinePlayers())
-                        if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text(
-                            "[EntityClearer] Couldn't find the world \"" + keys.get(
+                        if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
+                            Component.text("[EntityClearer] Couldn't find the world \"" + keys.get(
                                 index) + "\"! Please double check your config.").color(NamedTextColor.RED));
                     continue;
                 }
@@ -344,8 +354,18 @@ public class ClearTask implements CommandExecutor {
                     if (debug) plugin.getLogger().info("Playing sound " + plugin.getConfig()
                         .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
-                    player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
-                        SoundCategory.MASTER, 1, 1);
+                    try {
+                        player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
+                            SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
+                    } catch (NumberFormatException e) {
+                        for (Player players : Bukkit.getOnlinePlayers())
+                            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players)
+                                .sendMessage(Component.text("[EntityClearer] Cleared pitch \"" + plugin.getConfig()
+                                    .getString("cleared-pitch") + "\" is not a number!").color(NamedTextColor.RED));
+                        plugin.getLogger().severe(
+                            "\"" + plugin.getConfig().getString("cleared-pitch") + "Cleared pitch \" is not a number!");
+                        if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                    }
                 }
             }
         } catch (NullPointerException e) {
@@ -353,7 +373,7 @@ public class ClearTask implements CommandExecutor {
             plugin.getLogger().warning(
                 "Please see https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml for the most recent config.");
             for (Player players : Bukkit.getOnlinePlayers())
-                if (players.hasPermission("entityclearer.notify")) players.sendMessage(
+                if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
                     Component.text("[EntityClearer] Something went wrong clearing entities! Is your config outdated?")
                         .color(NamedTextColor.RED));
             if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();

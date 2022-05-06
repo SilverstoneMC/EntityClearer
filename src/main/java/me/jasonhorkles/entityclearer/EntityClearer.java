@@ -72,10 +72,8 @@ public class EntityClearer extends JavaPlugin implements Listener {
             reloadConfig();
 
             tickList.clear();
-            if (savedKillTask != null && !savedKillTask.isCancelled())
-                savedKillTask.cancel();
-            if (savedTpsTask != null && !savedTpsTask.isCancelled())
-                savedTpsTask.cancel();
+            if (savedKillTask != null && !savedKillTask.isCancelled()) savedKillTask.cancel();
+            if (savedTpsTask != null && !savedTpsTask.isCancelled()) savedTpsTask.cancel();
             if (getConfig().getBoolean("low-tps.enabled")) tpsTimer(0);
             tpsTimerRan = false;
             killTimer();
@@ -155,10 +153,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
         // If a chat message should be sent
         if (instance.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
-            if (player.hasPermission("entityclearer.lowtps"))
-                getInstance().adventure().player(player)
-                    .sendMessage(MiniMessage.miniMessage().deserialize(EntityClearer.parseMessage(instance.getConfig()
-                        .getString("low-tps.chat-message")).replace("{TPS}", String.valueOf(tps))));
+            if (player.hasPermission("entityclearer.lowtps")) getInstance().adventure().player(player).sendMessage(
+                MiniMessage.miniMessage().deserialize(
+                    EntityClearer.parseMessage(instance.getConfig().getString("low-tps.chat-message"))
+                        .replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed instantly
         new ClearTask().removeEntitiesTask(true);
@@ -202,27 +200,12 @@ public class EntityClearer extends JavaPlugin implements Listener {
     }
 
     public static String parseMessage(String message) {
-        return message.replace("&0", "<black>")
-            .replace("&1", "<dark_blue>")
-            .replace("&2", "<dark_green>")
-            .replace("&3", "<dark_aqua>")
-            .replace("&4", "<dark_red>")
-            .replace("&5", "<dark_purple>")
-            .replace("&6", "<gold>")
-            .replace("&7", "<gray>")
-            .replace("&8", "<dark_gray>")
-            .replace("&9", "<blue>")
-            .replace("&a", "<green>")
-            .replace("&b", "<aqua>")
-            .replace("&c", "<red>")
-            .replace("&d", "<light_purple>")
-            .replace("&e", "<yellow>")
-            .replace("&f", "<white>")
-            .replace("&k", "<obfuscated>")
-            .replace("&l", "<bold>")
-            .replace("&m", "<strikethrough>")
-            .replace("&n", "<underlined>")
-            .replace("&o", "<italic>")
+        return message.replace("&0", "<black>").replace("&1", "<dark_blue>").replace("&2", "<dark_green>")
+            .replace("&3", "<dark_aqua>").replace("&4", "<dark_red>").replace("&5", "<dark_purple>")
+            .replace("&6", "<gold>").replace("&7", "<gray>").replace("&8", "<dark_gray>").replace("&9", "<blue>")
+            .replace("&a", "<green>").replace("&b", "<aqua>").replace("&c", "<red>").replace("&d", "<light_purple>")
+            .replace("&e", "<yellow>").replace("&f", "<white>").replace("&k", "<obfuscated>").replace("&l", "<bold>")
+            .replace("&m", "<strikethrough>").replace("&n", "<underlined>").replace("&o", "<italic>")
             .replace("&r", "<reset>");
     }
 }

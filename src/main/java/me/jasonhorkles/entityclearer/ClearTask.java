@@ -74,6 +74,7 @@ public class ClearTask implements CommandExecutor {
             if (debug) plugin.getLogger().info("Starting at 1 second...");
             time = 1;
         }
+
         final int[] timeLeft = {time};
         BukkitRunnable task = new BukkitRunnable() {
             @Override
@@ -110,7 +111,7 @@ public class ClearTask implements CommandExecutor {
                         removeEntitiesTask(false);
                         this.cancel();
                 }
-                timeLeft[0] = timeLeft[0] - 1;
+                timeLeft[0] -= 1;
             }
         };
         task.runTaskTimer(plugin, 0, 20);
@@ -190,6 +191,7 @@ public class ClearTask implements CommandExecutor {
                     }
                 }
             }
+
         } catch (NullPointerException e) {
             plugin.getLogger().severe("Something went wrong sending messages! Is your config outdated?");
             plugin.getLogger().warning(

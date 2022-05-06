@@ -10,22 +10,25 @@ commands:
   entityclearer:
     aliases: [ ecl ]
     description: "Base command for the EntityClearer plugin"
-    usage: "§cUsage: /entityclearer reload"
     permission: entityclearer.reload
+    usage: "§cUsage: /entityclearer <debug | reload>"
   clearentities:
     description: "Clears the entities defined in the config"
     permission: entityclearer.clear
 
 permissions:
   entityclearer.reload:
+    default: op
     description: Reload the plugin
+  entityclearer.debug:
     default: op
+    description: Create debug dump
   entityclearer.clear:
+    default: op
     description: Force clear the entities
-    default: op
   entityclearer.lowtps:
+    default: op
     description: Notifications when the TPS is low
-    default: op
   entityclearer.notify:
-    description: Notifications when there are problems within the plugin
     default: op
+    description: Notifications when there are problems within the plugin

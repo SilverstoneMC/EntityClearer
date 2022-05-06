@@ -12,6 +12,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 @SuppressWarnings("ConstantConditions")
@@ -67,20 +71,48 @@ public class EntityClearer extends JavaPlugin implements Listener {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length > 0) if (args[0].equalsIgnoreCase("reload")) {
-            saveDefaultConfig();
-            reloadConfig();
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("reload")) {
+                saveDefaultConfig();
+                reloadConfig();
 
-            tickList.clear();
-            if (savedKillTask != null && !savedKillTask.isCancelled()) savedKillTask.cancel();
-            if (savedTpsTask != null && !savedTpsTask.isCancelled()) savedTpsTask.cancel();
-            if (getConfig().getBoolean("low-tps.enabled")) tpsTimer(0);
-            tpsTimerRan = false;
-            killTimer();
-            sendMetrics();
+                tickList.clear();
+                if (savedKillTask != null && !savedKillTask.isCancelled()) savedKillTask.cancel();
+                if (savedTpsTask != null && !savedTpsTask.isCancelled()) savedTpsTask.cancel();
+                if (getConfig().getBoolean("low-tps.enabled")) tpsTimer(0);
+                tpsTimerRan = false;
+                killTimer();
+                sendMetrics();
 
-            sender.sendMessage(ChatColor.GREEN + "EntityClearer reloaded!");
-            return true;
+                sender.sendMessage(ChatColor.GREEN + "EntityClearer reloaded!");
+                return true;
+            }
+
+            if (args[0].equalsIgnoreCase("debug")) {
+                if (ClearTask.debug) {
+                    sender.sendMessage(ChatColor.RED + "Debug is already active!");
+                    return true;
+                }
+
+                sender.sendMessage(ChatColor.YELLOW + "Starting debug dump... See console for more details.");
+
+                try {
+                    File file = new File(instance.getDataFolder(), "debug-" + System.currentTimeMillis() + ".txt");
+                    if (!file.createNewFile()) sender.sendMessage(
+                        ChatColor.RED + "Failed to create debug file! Check console for the debug output.");
+                    else ClearTask.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
+                } catch (IOException e) {
+                    sender.sendMessage(
+                        ChatColor.RED + "Failed to create debug file! Check console for the debug output.");
+                    if (instance.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                }
+                ClearTask.debug = true;
+
+                if (instance.getConfig().getBoolean("countdown-on-command")) new ClearTask().countdown();
+                else new ClearTask().removeEntitiesTask(false);
+
+                return true;
+            }
         }
         return false;
     }

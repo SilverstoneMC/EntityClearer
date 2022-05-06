@@ -181,4 +181,3 @@ low-tps:
 # Debug stuff
 # You shouldn't need to touch this unless specifically asked to do so :)
 print-stack-traces: false
-debug: false

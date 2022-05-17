@@ -96,6 +96,12 @@ remove-named: false
 messages:
   # Set the message to "" to disable it
   # This plugin supports MiniMessage markdown and formatting - see https://docs.adventure.kyori.net/minimessage.html#format
+  
+  # Placeholders:
+  # {SECONDS} - the time remaining before the clear task is run
+  # {S} - if the seconds remaining is above 1, an `s` will be appended
+  # {ENTITIES} - the amount of entities removed after the clear task has run
+  
   actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{SECONDS} <#ff9b0f>&lsecond{S}!"
   actionbar-completed-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities!"
   actionbar-completed-low-tps-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities due to low TPS!"
@@ -128,6 +134,8 @@ low-tps:
   # Should there be a chat message sent to players with the `entityclearer.lowtps`
   # permission stating that the TPS is low?
   chat: true
+  # Placeholders:
+  # {TPS} - the current TPS of the server
   chat-message: "&c&lWarning: TPS low &8&l(&7&l{TPS}&8&l)&c&l! Removing entities..."
 
   # Should the list of entities to remove be separate from the one defined above?

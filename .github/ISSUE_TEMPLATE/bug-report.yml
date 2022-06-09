@@ -39,7 +39,7 @@ body:
   - type: textarea
     attributes:
       label: EntityClearer config.yml
-      description: "Upload your config.yml file"
+      description: "Copy and paste your config.yml file"
       render: yaml
     validations:
       required: true

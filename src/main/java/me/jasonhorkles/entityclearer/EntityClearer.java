@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 @SuppressWarnings("ConstantConditions")
 public class EntityClearer extends JavaPlugin implements Listener {
@@ -99,18 +100,39 @@ public class EntityClearer extends JavaPlugin implements Listener {
                 sender.sendMessage(ChatColor.YELLOW + "Starting debug dump... See console for more details.");
 
                 try {
-                    File file = new File(instance.getDataFolder(), "debug-" + System.currentTimeMillis() + ".txt");
+                    File file = new File(getDataFolder(), "debug-" + System.currentTimeMillis() + ".yml");
                     if (!file.createNewFile()) sender.sendMessage(
                         ChatColor.RED + "Failed to create debug file! Check console for the debug output.");
                     else ClearTask.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
                 } catch (IOException e) {
                     sender.sendMessage(
                         ChatColor.RED + "Failed to create debug file! Check console for the debug output.");
-                    if (instance.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                    if (getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
                 }
                 ClearTask.debug = true;
 
-                if (instance.getConfig().getBoolean("countdown-on-command")) new ClearTask().countdown();
+                // Dump config into debug file
+                getLogger().info("Dumping config into debug file...");
+                try {
+                    Scanner scanner = new Scanner(new File(getDataFolder(), "config.yml"));
+                    while (scanner.hasNextLine()) ClearTask.debugFile.write(scanner.nextLine() + "\n");
+                    ClearTask.debugFile.write("""
+
+
+
+                        ###############################################
+                        #              END OF CONFIG DUMP             #
+                        ###############################################
+
+
+
+                        """);
+                } catch (IOException e) {
+                    if (getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                }
+                getLogger().info("Config file dumped!");
+
+                if (getConfig().getBoolean("countdown-on-command")) new ClearTask().countdown();
                 else new ClearTask().removeEntitiesTask(false);
 
                 return true;

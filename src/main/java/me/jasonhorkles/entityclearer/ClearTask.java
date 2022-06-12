@@ -280,15 +280,34 @@ public class ClearTask implements CommandExecutor {
                             if (plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
                                 if (debug) logDebug("Only removing entities with a specific spawn reason...");
 
-                                // For each spawn reason in the config
-                                // If the entity's spawn reason matches the config's
-                                for (String spawnReason : plugin.getConfig()
-                                    .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
-                                    if (entities.getEntitySpawnReason().name().equalsIgnoreCase(spawnReason)) {
-                                        if (debug) logDebug(
-                                            entities.getType() + "'s spawn reason " + entities.getEntitySpawnReason() + " matches the config's!");
-                                        checkNearby(entities, path, worldName);
-                                    }
+                                try {
+                                    // For each spawn reason in the config
+                                    // If the entity's spawn reason matches the config's
+                                    for (String spawnReason : plugin.getConfig()
+                                        .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
+                                        if (entities.getEntitySpawnReason().name().equalsIgnoreCase(spawnReason)) {
+                                            if (debug) logDebug(
+                                                entities.getType() + "'s spawn reason " + entities.getEntitySpawnReason() + " matches the config's!");
+                                            checkNearby(entities, path, worldName);
+                                        }
+
+                                } catch (NoClassDefFoundError | NoSuchMethodError e) {
+                                    plugin.getLogger()
+                                        .severe("Unable to check for entity spawn reason! Are you not running Paper?");
+                                    plugin.getLogger()
+                                        .warning("Please use Paper or its forks for this feature to work.");
+
+                                    for (Player players : Bukkit.getOnlinePlayers())
+                                        if (players.hasPermission("entityclearer.notify"))
+                                            bukkitAudiences.player(players).sendMessage(Component.text(
+                                                    "[EntityClearer] Unable to check for entity spawn reason! Are you not running Paper?")
+                                                .color(NamedTextColor.RED));
+
+                                    if (debug) {
+                                        logDebug(e.toString());
+                                        for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+                                    } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                                }
 
                                 // If any entity should be removed, regardless of the spawn reason
                             } else {

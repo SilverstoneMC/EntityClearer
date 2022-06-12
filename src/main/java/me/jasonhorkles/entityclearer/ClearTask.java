@@ -206,8 +206,10 @@ public class ClearTask implements CommandExecutor {
                     Component.text("[EntityClearer] Something went wrong sending messages! Is your config outdated?")
                         .color(NamedTextColor.RED));
 
-            if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
-            else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+            if (debug) {
+                logDebug(e.toString());
+                for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+            } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
         }
     }
 
@@ -388,8 +390,10 @@ public class ClearTask implements CommandExecutor {
                     Component.text("[EntityClearer] Something went wrong clearing entities! Is your config outdated?")
                         .color(NamedTextColor.RED));
 
-            if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
-            else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+            if (debug) {
+                logDebug(e.toString());
+                for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+            } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
             else plugin.getLogger().warning("Enable 'print-stack-traces' in your config to see the whole error.");
         }
 

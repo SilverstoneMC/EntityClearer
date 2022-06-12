@@ -9,13 +9,6 @@ body:
     validations:
       required: true
 
-  - type: input
-    attributes:
-      label: Link to latest.log file with print-stack-traces enabled
-      description: "Reproduce your problem with `print-stack-traces` set to true in the EntityClearer config, then upload your `/logs/latest.log` file to https://paste.gg/, click \"Submit anonymously\", and paste the URL below"
-    validations:
-      required: true
-
   - type: textarea
     attributes:
       label: Steps to reproduce the problem
@@ -46,8 +39,15 @@ body:
   - type: textarea
     attributes:
       label: EntityClearer config.yml
-      description: "Please copy and paste your config.yml to the text box below"
+      description: "Copy and paste your config.yml file"
       render: yaml
+    validations:
+      required: true
+      
+  - type: textarea
+    attributes:
+      label: Debug file
+      description: "Upload your debug text file located in the `/plugins/EntityClearer/` directory after running the `/ecl debug` command"
     validations:
       required: true
 

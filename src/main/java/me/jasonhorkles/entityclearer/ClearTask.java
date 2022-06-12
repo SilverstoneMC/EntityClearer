@@ -380,9 +380,8 @@ public class ClearTask implements CommandExecutor {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Error | Exception e) {
             plugin.getLogger().severe("Something went wrong clearing entities!");
-            plugin.getLogger().warning("Enable 'print-stack-traces' in your config to see the whole error.");
 
             for (Player players : Bukkit.getOnlinePlayers())
                 if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
@@ -391,6 +390,7 @@ public class ClearTask implements CommandExecutor {
 
             if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
             else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+            else plugin.getLogger().warning("Enable 'print-stack-traces' in your config to see the whole error.");
         }
 
         if (debug) {

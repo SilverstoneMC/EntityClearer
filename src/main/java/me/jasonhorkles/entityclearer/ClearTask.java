@@ -145,10 +145,12 @@ public class ClearTask implements CommandExecutor {
                 if (world == null) {
                     plugin.getLogger().severe(
                         "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+
                     for (Player players : Bukkit.getOnlinePlayers())
                         if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
                             Component.text("[EntityClearer] Couldn't find the world \"" + keys.get(
                                 index) + "\"! Please double check your config.").color(NamedTextColor.RED));
+
                     continue;
                 }
 
@@ -181,6 +183,7 @@ public class ClearTask implements CommandExecutor {
                     try {
                         player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
                             SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("countdown-pitch")));
+
                     } catch (NumberFormatException e) {
                         for (Player players : Bukkit.getOnlinePlayers())
                             if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players)
@@ -197,7 +200,14 @@ public class ClearTask implements CommandExecutor {
             plugin.getLogger().severe("Something went wrong sending messages! Is your config outdated?");
             plugin.getLogger().warning(
                 "Please see https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml for the most recent config.");
-            if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+
+            for (Player players : Bukkit.getOnlinePlayers())
+                if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
+                    Component.text("[EntityClearer] Something went wrong sending messages! Is your config outdated?")
+                        .color(NamedTextColor.RED));
+
+            if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+            else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
         }
     }
 
@@ -360,28 +370,33 @@ public class ClearTask implements CommandExecutor {
                             if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players)
                                 .sendMessage(Component.text("[EntityClearer] Cleared pitch \"" + plugin.getConfig()
                                     .getString("cleared-pitch") + "\" is not a number!").color(NamedTextColor.RED));
+
                         plugin.getLogger().severe(
                             "\"" + plugin.getConfig().getString("cleared-pitch") + "Cleared pitch \" is not a number!");
-                        if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+
+                        if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+                        else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
                     }
                 }
             }
 
-        } catch (NullPointerException e) {
-            plugin.getLogger().severe("Something went wrong clearing entities! Is your config outdated?");
-            plugin.getLogger().warning(
-                "Please see https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml for the most recent config.");
+        } catch (Exception e) {
+            plugin.getLogger().severe("Something went wrong clearing entities!");
+            plugin.getLogger().warning("Enable 'print-stack-traces' in your config to see the whole error.");
+
             for (Player players : Bukkit.getOnlinePlayers())
                 if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
                     Component.text("[EntityClearer] Something went wrong clearing entities! Is your config outdated?")
                         .color(NamedTextColor.RED));
-            if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+
+            if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+            else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
         }
 
         if (debug) {
             logDebug("╔══════════════════════════════════════╗");
             logDebug("║           TASKS COMPLETED            ║");
-            logDebug("║     IF SUPPORT IS NEEDED, UPLOAD     ║");
+            logDebug("║      IF SUPPORT IS NEEDED, FIND      ║");
             logDebug("║     THE DUMP FILE LOCATED IN THE     ║");
             logDebug("║         ENTITYCLEARER FOLDER         ║");
             logDebug("║         AND SEND IT TO US AT         ║");
@@ -464,22 +479,22 @@ public class ClearTask implements CommandExecutor {
             if (debug) logDebug("Removing entities without a name only...");
             // Don't remove named
             // And it doesn't have a name
-            if (entity.getCustomName() == null) {
+            if (entity.customName() == null) {
                 if (debug) logDebug("Entity " + entity.getType() + " didn't have a custom name!");
                 // Remove it!
                 if (debug) logDebug("Removing entity " + entity.getType() + "...");
                 entity.remove();
                 removedEntities++;
             } else if (debug) {
-                logDebug(entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
+                logDebug(entity.getType() + " was skipped becuase it has a name: " + entity.customName());
                 logDebug("");
                 return;
             }
         }
 
-        if (entity.getCustomName() != null) {
+        if (entity.customName() != null) {
             if (debug) logDebug(
-                entity.getType() + " with name " + entity.getCustomName() + " removed! Total removed is " + removedEntities);
+                entity.getType() + " with name " + entity.customName() + " removed! Total removed is " + removedEntities);
         } else if (debug) {
             logDebug(entity.getType() + " removed! Total removed is " + removedEntities + ".");
             logDebug("");

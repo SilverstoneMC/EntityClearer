@@ -5,7 +5,7 @@ body:
   - type: textarea
     attributes:
       label: Description of the bug
-      description: "Be clear and concise"
+      description: "What happened?"
     validations:
       required: true
 
@@ -35,19 +35,12 @@ body:
       description: "Upload a screenshot or copy the text from the message"
     validations:
       required: true
-
-  - type: textarea
-    attributes:
-      label: EntityClearer config.yml
-      description: "Copy and paste your config.yml file"
-      render: yaml
-    validations:
-      required: true
       
   - type: textarea
     attributes:
       label: Debug file
-      description: "Upload your debug text file located in the `/plugins/EntityClearer/` directory after running the `/ecl debug` command"
+      description: "Copy and paste the contents of your debug file located in the `/plugins/EntityClearer/` directory after running the `/ecl debug` command"
+      render: yaml
     validations:
       required: true
 

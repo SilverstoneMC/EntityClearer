@@ -5,6 +5,12 @@
 # https://bstats.org/plugin/bukkit/EntityClearer/10915
 # Metrics can be disabled in the bStats config.yml
 
+
+
+###############################################
+#              COUNTDOWN SETTINGS             #
+###############################################
+
 # Interval in minutes the clear task should run
 # To disable the timer, set the interval to 0 (useful if only using TPS monitoring)
 interval: 0
@@ -22,92 +28,8 @@ countdown-pitch: 0.9
 # Valid values are between 0.0-2.0
 cleared-pitch: 1.0
 
-# The worlds to check and remove entities from
-# Make sure to add your world(s) if they're not already there
-# See https://papermc.io/javadocs/paper/1.18/org/bukkit/entity/EntityType.html for all entities
-# Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
-worlds:
-  your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
-    # The entities to be removed from the world
-    entities:
-      - BEE
-      - CAVE_SPIDER
-      - CHICKEN
-      - CREEPER
-      - SHEEP
-      - SKELETON
-      - SLIME
-      - SPIDER
-      - SQUID
-      - WOLF
-      - ZOMBIE
-    # Should only entities with a specific spawn reason be removed?
-    # Setting this to false will check for any spawn reason
-    spawn-reason:
-      enabled: false
-      # See https://papermc.io/javadocs/paper/1.18/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
-      reasons:
-        - SPAWNER
-        - SPAWNER_EGG
-  your_world_name_nether: # <- Change your_world_name_nether to be whatever world name you'd like
-    entities:
-      - BLAZE
-      - ZOMBIFIED_PIGLIN
-    spawn-reason:
-      enabled: false
-      reasons: [ ]
-#  creative:
-#    entities:
-#      - ARMOR_STAND
-#      - ARROW
-#      - BOAT
-#      - DROPPED_ITEM
-#      - MINECART
-#      - MINECART_CHEST
-#      - MINECART_FURNACE
-#      - MINECART_HOPPER
-#      - MINECART_TNT
-#    spawn-reason:
-#      enabled: false
-#      reasons: [ ]
-
-nearby-entities:
-  # Should the plugin only remove entities that have multiple entities nearby?
-  # This is useful to only remove large groups of entities while leaving smaller entity groups alone
-  # Using this would prevent every entity from being removed then just respawning again naturally
-  # It is recommended to leave this feature enabled
-  enabled: true
-  # Should the plugin only count nearby entities that are also on the remove list?
-  # Setting this to false will count ANY nearby entity, including players, XP Orbs, Item Frames, etc
-  only-count-from-list: true
-  # The distance in blocks that the plugin should check for extra entities
-  x: 3
-  y: 3
-  z: 3
-  # How many additional entities must be around the first entity to be removed?
-  count: 14
-
 # Should using the command /clearentities start the countdown or instantly remove the entities?
 countdown-on-command: false
-
-# Should named entities be removed?
-remove-named: false
-
-messages:
-  # Set the message to "" to disable it
-  # This plugin supports MiniMessage markdown and formatting - see https://docs.adventure.kyori.net/minimessage.html#format
-  
-  # Placeholders:
-  # {SECONDS} - the time remaining before the clear task is run
-  # {S} - if the seconds remaining is above 1, an `s` will be appended
-  # {ENTITIES} - the amount of entities removed after the clear task has run
-  
-  actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{SECONDS} <#ff9b0f>&lsecond{S}!"
-  actionbar-completed-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities!"
-  actionbar-completed-low-tps-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities due to low TPS!"
-  chat-message: "&cCommon entities will be removed in &7{SECONDS} &csecond{S}!"
-  chat-completed-message: "&cRemoved &7{ENTITIES} &centities!"
-  chat-completed-low-tps-message: "&cRemoved &7{ENTITIES} &centities due to low TPS!"
 
 # When should the warning messages send?
 # Time is in seconds remaining before the clear task
@@ -122,18 +44,145 @@ warning-messages:
   2-seconds: true
   1-second: true
 
-# The command(s) to run after the entity clearing task runs
+
+
+###############################################
+#            WORLDS / ENTITY TYPES            #
+###############################################
+
+# The world(s) to check and remove entities from
+# You may add as many worlds to this list as you like
+worlds:
+
+  # Example 1
+  your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
+
+    # The entities to be removed from the world
+    # See https://jd.papermc.io/paper/1.19/org/bukkit/entity/EntityType.html for all entity types
+    # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
+    entities:
+      - BEE
+      - CAVE_SPIDER
+      - CHICKEN
+      - CREEPER
+      - SHEEP
+      - SKELETON
+      - SLIME
+      - SPIDER
+      - SQUID
+      - WOLF
+      - ZOMBIE
+
+    # Should only entities with a specific spawn reason be removed?
+    # Setting this to false will check for any spawn reason
+    # Note: This only works on Paper and its forks!
+    spawn-reason:
+      enabled: false
+
+      # See https://papermc.io/javadocs/paper/1.18/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+      reasons:
+        - SPAWNER
+        - SPAWNER_EGG
+
+  # Example 2
+  your_world_name_nether:
+    entities:
+      - BLAZE
+      - ZOMBIFIED_PIGLIN
+    spawn-reason:
+      enabled: false
+      reasons:
+        - SPAWNER
+        - SPAWNER_EGG
+
+  # Example 3
+  creative:
+    entities:
+      - ARMOR_STAND
+      - ARROW
+      - BOAT
+      - DROPPED_ITEM
+      - MINECART
+      - MINECART_CHEST
+      - MINECART_FURNACE
+      - MINECART_HOPPER
+      - MINECART_TNT
+    spawn-reason:
+      enabled: false
+      reasons:
+        - SPAWNER
+        - SPAWNER_EGG
+
+
+
+###############################################
+#               REMOVAL SETTINGS              #
+###############################################
+
+nearby-entities:
+  # Should the plugin only remove entities that have multiple entities nearby?
+  # This is useful to only remove large groups of entities while leaving smaller entity groups alone
+  # Using this would prevent every entity from being removed then just respawning again naturally
+  # It is recommended to leave this feature enabled
+  enabled: true
+
+  # Should the plugin only count nearby entities that are also on the remove list?
+  # Setting this to false will count ANY nearby entity, including players, XP Orbs, Item Frames, etc
+  only-count-from-list: true
+
+  # The distance in blocks that the plugin should check for extra entities
+  x: 3
+  y: 3
+  z: 3
+  # How many additional entities must be around the first entity to be removed?
+  count: 14
+
+# Should entities with names also be removed?
+remove-named: false
+
+# The command(s) to run after the entity clearing task completes
 commands:
 #  - nuke
+
+
+
+###############################################
+#                   MESSAGES                  #
+###############################################
+
+messages:
+  # Set the message to "" to disable it
+  # This plugin supports MiniMessage markdown and formatting - see https://docs.adventure.kyori.net/minimessage.html#format
+
+  # Placeholders:
+  # {SECONDS} - the time remaining before the clear task is run
+  # {S} - if the seconds remaining is above 1, an `s` will be appended
+  # {ENTITIES} - the amount of entities removed after the clear task has run
+
+  actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{SECONDS} <#ff9b0f>&lsecond{S}!"
+  actionbar-completed-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities!"
+  actionbar-completed-low-tps-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities due to low TPS!"
+  chat-message: "&cCommon entities will be removed in &7{SECONDS} &csecond{S}!"
+  chat-completed-message: "&cRemoved &7{ENTITIES} &centities!"
+  chat-completed-low-tps-message: "&cRemoved &7{ENTITIES} &centities due to low TPS!"
+
+
+
+###############################################
+#                   LOW TPS                   #
+###############################################
 
 low-tps:
   # Should the entity removal task be triggered when the TPS is low?
   enabled: true
+
   # Below what TPS should the plugin remove the entities?
   threshold: 17
+
   # Should there be a chat message sent to players with the `entityclearer.lowtps`
   # permission stating that the TPS is low?
   chat: true
+
   # Placeholders:
   # {TPS} - the current TPS of the server
   chat-message: "&c&lWarning: TPS low &8&l(&7&l{TPS}&8&l)&c&l! Removing entities..."
@@ -142,7 +191,13 @@ low-tps:
   separate-entity-list: false
   # This list will not be active unless the above option is true
   worlds:
+
+    # Example 1
     your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
+
+      # The entities to be removed from the world
+      # See https://jd.papermc.io/paper/1.19/org/bukkit/entity/EntityType.html for all entity types
+      # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
       entities:
         - BEE
         - ARMOR_STAND
@@ -164,10 +219,20 @@ low-tps:
         - SQUID
         - WOLF
         - ZOMBIE
+
+      # Should only entities with a specific spawn reason be removed?
+      # Setting this to false will check for any spawn reason
+      # Note: This only works on Paper and its forks!
       spawn-reason:
         enabled: false
-        reasons: [ ]
-    your_world_name_nether: # <- Change your_world_name_nether to be whatever world name you'd like
+
+        # See https://papermc.io/javadocs/paper/1.18/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+        reasons:
+          - SPAWNER
+          - SPAWNER_EGG
+
+    # Example 2
+    your_world_name_nether:
       entities:
         - BLAZE
         - ARMOR_STAND
@@ -182,10 +247,14 @@ low-tps:
         - ZOMBIFIED_PIGLIN
       spawn-reason:
         enabled: false
-        reasons: [ ]
+        reasons:
+          - SPAWNER
+          - SPAWNER_EGG
+
+
 
 ###############################################
+#                    DEBUG                    #
+###############################################
 
-# Debug stuff
-# You shouldn't need to touch this unless specifically asked to do so :)
 print-stack-traces: false

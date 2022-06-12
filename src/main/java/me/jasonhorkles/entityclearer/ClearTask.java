@@ -27,8 +27,9 @@ public class ClearTask implements CommandExecutor {
 
     private final JavaPlugin plugin = EntityClearer.getInstance();
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().adventure();
-
     private int removedEntities;
+    private static boolean logCooldown = false;
+
     public static boolean debug = false;
     public static FileWriter debugFile;
 
@@ -292,6 +293,8 @@ public class ClearTask implements CommandExecutor {
                                         }
 
                                 } catch (NoClassDefFoundError | NoSuchMethodError e) {
+                                    if (logCooldown) continue;
+
                                     plugin.getLogger()
                                         .severe("Unable to check for entity spawn reason! Are you not running Paper?");
                                     plugin.getLogger()
@@ -307,6 +310,15 @@ public class ClearTask implements CommandExecutor {
                                         logDebug(e.toString());
                                         for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
                                     } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+
+                                    logCooldown = true;
+                                    BukkitRunnable cooldown = new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            logCooldown = false;
+                                        }
+                                    };
+                                    cooldown.runTaskLater(plugin, 200);
                                 }
 
                                 // If any entity should be removed, regardless of the spawn reason

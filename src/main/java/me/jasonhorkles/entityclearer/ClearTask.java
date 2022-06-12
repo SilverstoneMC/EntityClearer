@@ -521,22 +521,22 @@ public class ClearTask implements CommandExecutor {
             if (debug) logDebug("Removing entities without a name only...");
             // Don't remove named
             // And it doesn't have a name
-            if (entity.customName() == null) {
+            if (entity.getCustomName() == null) {
                 if (debug) logDebug("Entity " + entity.getType() + " didn't have a custom name!");
                 // Remove it!
                 if (debug) logDebug("Removing entity " + entity.getType() + "...");
                 entity.remove();
                 removedEntities++;
             } else if (debug) {
-                logDebug(entity.getType() + " was skipped becuase it has a name: " + entity.customName());
+                logDebug(entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
                 logDebug("");
                 return;
             }
         }
 
-        if (entity.customName() != null) {
+        if (entity.getCustomName() != null) {
             if (debug) logDebug(
-                entity.getType() + " with name " + entity.customName() + " removed! Total removed is " + removedEntities);
+                entity.getType() + " with name " + entity.getCustomName() + " removed! Total removed is " + removedEntities);
         } else if (debug) {
             logDebug(entity.getType() + " removed! Total removed is " + removedEntities + ".");
             logDebug("");

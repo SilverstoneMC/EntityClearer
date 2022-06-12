@@ -4,6 +4,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.SoundCategory;
@@ -191,7 +192,10 @@ public class ClearTask implements CommandExecutor {
                                     .getString("countdown-pitch") + "\" is not a number!").color(NamedTextColor.RED));
                         plugin.getLogger().severe("Countdown pitch \"" + plugin.getConfig()
                             .getString("countdown-pitch") + "\" is not a valid number!");
-                        if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                        if (debug) {
+                            logDebug(e.toString());
+                            for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+                        } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
                     }
                 }
             }
@@ -300,7 +304,7 @@ public class ClearTask implements CommandExecutor {
             // Submit stats
             int finalRemovedEntities = removedEntities;
             if (removedEntities > 0) EntityClearer.getInstance().getMetrics()
-                .addCustomChart(new Metrics.SingleLineChart("entities_removed", () -> finalRemovedEntities));
+                .addCustomChart(new SingleLineChart("entities_removed", () -> finalRemovedEntities));
 
             // For each world in the config
             index = -1;
@@ -409,7 +413,10 @@ public class ClearTask implements CommandExecutor {
             try {
                 debugFile.close();
             } catch (IOException e) {
-                if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                if (debug) {
+                    logDebug(e.toString());
+                    for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
+                } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
             }
             debug = false;
         }

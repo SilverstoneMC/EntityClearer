@@ -2,6 +2,8 @@ package me.jasonhorkles.entityclearer;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -212,23 +214,23 @@ public class EntityClearer extends JavaPlugin implements Listener {
     private void sendMetrics() {
         // Interval
         int interval = getConfig().getInt("interval");
-        metrics.addCustomChart(new Metrics.SimplePie("interval", () -> String.valueOf(interval)));
+        metrics.addCustomChart(new SimplePie("interval", () -> String.valueOf(interval)));
 
         // Sound
         String sound = getConfig().getString("sound");
-        metrics.addCustomChart(new Metrics.SimplePie("sound", () -> sound));
+        metrics.addCustomChart(new SimplePie("sound", () -> sound));
 
         // TPS
         String tpsEnabled;
         if (getConfig().getBoolean("low-tps.enabled")) tpsEnabled = "Enabled";
         else tpsEnabled = "Disabled";
-        metrics.addCustomChart(new Metrics.SimplePie("low_tps_check", () -> tpsEnabled));
+        metrics.addCustomChart(new SimplePie("low_tps_check", () -> tpsEnabled));
 
         // Nearby
         String nearbyEnabled;
         if (getConfig().getBoolean("nearby-entities.enabled")) nearbyEnabled = "Enabled";
         else nearbyEnabled = "Disabled";
-        metrics.addCustomChart(new Metrics.SimplePie("nearby_entities_check", () -> nearbyEnabled));
+        metrics.addCustomChart(new SimplePie("nearby_entities_check", () -> nearbyEnabled));
     }
 
     public static String parseMessage(String message) {

@@ -21,6 +21,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @SuppressWarnings("ConstantConditions")
 public class ClearTask implements CommandExecutor {
@@ -43,99 +45,58 @@ public class ClearTask implements CommandExecutor {
     }
 
     public void countdown() {
-        if (debug) {
-            logDebug("╔══════════════════════════════════════╗");
-            logDebug("║        COUNTDOWN TASK STARTED        ║");
-            logDebug("╚══════════════════════════════════════╝");
-        }
+        logDebug("╔══════════════════════════════════════╗");
+        logDebug("║        COUNTDOWN TASK STARTED        ║");
+        logDebug("╚══════════════════════════════════════╝");
 
-        int time = 0;
-        // Get the lowest time to count down from
-        if (plugin.getConfig().getBoolean("warning-messages.60-seconds")) {
-            if (debug) logDebug("Starting at 60 seconds...");
-            time = 60;
-        } else if (plugin.getConfig().getBoolean("warning-messages.45-seconds")) {
-            if (debug) logDebug("Starting at 45 seconds...");
-            time = 45;
-        } else if (plugin.getConfig().getBoolean("warning-messages.30-seconds")) {
-            if (debug) logDebug("Starting at 30 seconds...");
-            time = 30;
-        } else if (plugin.getConfig().getBoolean("warning-messages.15-seconds")) {
-            if (debug) logDebug("Starting at 15 seconds...");
-            time = 15;
-        } else if (plugin.getConfig().getBoolean("warning-messages.5-seconds")) {
-            if (debug) logDebug("Starting at 5 seconds...");
-            time = 5;
-        } else if (plugin.getConfig().getBoolean("warning-messages.4-seconds")) {
-            if (debug) logDebug("Starting at 4 seconds...");
-            time = 4;
-        } else if (plugin.getConfig().getBoolean("warning-messages.3-seconds")) {
-            if (debug) logDebug("Starting at 3 seconds...");
-            time = 3;
-        } else if (plugin.getConfig().getBoolean("warning-messages.2-seconds")) {
-            if (debug) logDebug("Starting at 3 seconds...");
-            time = 2;
-        } else if (plugin.getConfig().getBoolean("warning-messages.1-second")) {
-            if (debug) logDebug("Starting at 1 second...");
-            time = 1;
-        }
+        int initialTime;
+        List<Integer> times = plugin.getConfig().getIntegerList("warning-messages");
+        times.sort(Comparator.reverseOrder());
+        initialTime = times.get(0);
 
-        final int[] timeLeft = {time};
+        logDebug("Starting countdown at " + initialTime + " seconds (" + initialTime / 60 + " minutes)...");
+        logDebug("Sending messages at " + times + " seconds remaining...");
+
+        final int[] timeLeft = {initialTime};
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
-                switch (timeLeft[0]) {
-                    case 60:
-                        if (plugin.getConfig().getBoolean("warning-messages.60-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 45:
-                        if (plugin.getConfig().getBoolean("warning-messages.45-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 30:
-                        if (plugin.getConfig().getBoolean("warning-messages.30-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 15:
-                        if (plugin.getConfig().getBoolean("warning-messages.15-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 5:
-                        if (plugin.getConfig().getBoolean("warning-messages.5-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 4:
-                        if (plugin.getConfig().getBoolean("warning-messages.4-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 3:
-                        if (plugin.getConfig().getBoolean("warning-messages.3-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 2:
-                        if (plugin.getConfig().getBoolean("warning-messages.2-seconds")) message(timeLeft[0], true);
-                        break;
-                    case 1:
-                        if (plugin.getConfig().getBoolean("warning-messages.1-second")) message(timeLeft[0], false);
-                        break;
-                    case 0:
-                        removeEntitiesTask(false);
-                        this.cancel();
+                if (timeLeft[0] <= 0) {
+                    removeEntitiesTask(false);
+                    this.cancel();
+                    return;
                 }
+
+                if (timeLeft[0] <= times.get(0)) {
+                    message(timeLeft[0]);
+                    times.remove(0);
+                }
+
                 timeLeft[0] -= 1;
             }
         };
         task.runTaskTimer(plugin, 0, 20);
     }
 
-    public void message(int timeLeft, boolean addS) {
+    public void message(int timeLeft) {
         try {
-            String s = "";
-            if (addS) s = "s";
+            StringBuilder time = new StringBuilder();
+            int divideBy = 1;
+            if (timeLeft > 60) {
+                divideBy = 60;
+                time.append("minute");
+            } else time.append("second");
+            if (timeLeft != 1) time.append("s");
 
             ArrayList<World> worlds = new ArrayList<>();
             ArrayList<String> keys = new ArrayList<>(
                 plugin.getConfig().getConfigurationSection("worlds").getKeys(false));
 
             if (keys.contains("ALL")) {
-                if (debug) logDebug("'ALL' found! Adding all worlds to message list...");
+                logDebug("'ALL' found! Adding all worlds to message list...");
                 worlds.addAll(Bukkit.getWorlds());
             } else {
-                if (debug) logDebug("Adding all worlds defined in config to message list...");
+                logDebug("Adding all worlds defined in config to message list...");
                 for (String world : keys) worlds.add(Bukkit.getWorld(world));
             }
 
@@ -160,26 +121,26 @@ public class ClearTask implements CommandExecutor {
                 for (Player player : world.getPlayers()) {
                     // Action bar
                     if (!plugin.getConfig().getString("messages.actionbar-message").isBlank()) {
-                        if (debug) logDebug(
+                        logDebug(
                             "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
                             EntityClearer.parseMessage(plugin.getConfig().getString("messages.actionbar-message")
-                                .replace("{SECONDS}", String.valueOf(timeLeft)).replace("{S}", s))));
+                                .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy)).replace("{TIME}", time))));
                     }
 
                     // Chat
                     if (!plugin.getConfig().getString("messages.chat-message").isBlank()) {
-                        if (debug) logDebug(
+                        logDebug(
                             "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
                             EntityClearer.parseMessage(plugin.getConfig().getString("messages.chat-message"))
-                                .replace("{SECONDS}", String.valueOf(timeLeft)).replace("{S}", s)));
+                                .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy)).replace("{TIME}", time)));
                     }
 
                     // Play the sound
-                    if (debug) logDebug("Playing sound " + plugin.getConfig()
+                    logDebug("Playing sound " + plugin.getConfig()
                         .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
                     try {
@@ -219,7 +180,7 @@ public class ClearTask implements CommandExecutor {
     }
 
     public void removeEntitiesTask(boolean tpsLow) {
-        if (debug) {
+        {
             logDebug("╔══════════════════════════════════════╗");
             logDebug("║     REMOVE ENTITIES TASK STARTED     ║");
             logDebug("╚══════════════════════════════════════╝");
@@ -229,7 +190,7 @@ public class ClearTask implements CommandExecutor {
 
         String path = "worlds";
         if (tpsLow) if (plugin.getConfig().getBoolean("low-tps.separate-entity-list")) {
-            if (debug) logDebug("Separate entity list enabled!");
+            logDebug("Separate entity list enabled!");
             path = "low-tps.worlds";
         }
 
@@ -237,10 +198,10 @@ public class ClearTask implements CommandExecutor {
         ArrayList<String> keys = new ArrayList<>(plugin.getConfig().getConfigurationSection(path).getKeys(false));
 
         if (keys.contains("ALL")) {
-            if (debug) logDebug("'ALL' found! Adding all worlds to removal list...");
+            logDebug("'ALL' found! Adding all worlds to removal list...");
             worlds.addAll(Bukkit.getWorlds());
         } else {
-            if (debug) logDebug("Adding all worlds defined in config to removal list...");
+            logDebug("Adding all worlds defined in config to removal list...");
             for (String world : keys) worlds.add(Bukkit.getWorld(world));
         }
 
@@ -269,17 +230,17 @@ public class ClearTask implements CommandExecutor {
                 for (Entity entities : world.getEntities())
                     for (String entityTypes : plugin.getConfig().getStringList(path + "." + worldName + ".entities"))
                         if (entities.getType().toString().equalsIgnoreCase(entityTypes)) {
-                            if (debug) logDebug("Entity " + entities.getType() + " matches the config's!");
+                            logDebug("Entity " + entities.getType() + " matches the config's!");
 
                             if (entities.getType() == EntityType.DROPPED_ITEM) {
-                                if (debug) logDebug("Skipping detection of spawn reasons and nearby entities...");
+                                logDebug("Skipping detection of spawn reasons and nearby entities...");
                                 checkNamed(entities);
                                 continue;
                             }
 
                             // If only entities with a specific reason should be removed
                             if (plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
-                                if (debug) logDebug("Only removing entities with a specific spawn reason...");
+                                logDebug("Only removing entities with a specific spawn reason...");
 
                                 try {
                                     // For each spawn reason in the config
@@ -287,7 +248,7 @@ public class ClearTask implements CommandExecutor {
                                     for (String spawnReason : plugin.getConfig()
                                         .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
                                         if (entities.getEntitySpawnReason().name().equalsIgnoreCase(spawnReason)) {
-                                            if (debug) logDebug(
+                                            logDebug(
                                                 entities.getType() + "'s spawn reason " + entities.getEntitySpawnReason() + " matches the config's!");
                                             checkNearby(entities, path, worldName);
                                         }
@@ -323,7 +284,7 @@ public class ClearTask implements CommandExecutor {
 
                                 // If any entity should be removed, regardless of the spawn reason
                             } else {
-                                if (debug) logDebug("Removing entities regardless of their spawn reason...");
+                                logDebug("Removing entities regardless of their spawn reason...");
                                 checkNearby(entities, path, worldName);
                             }
                         }
@@ -357,7 +318,7 @@ public class ClearTask implements CommandExecutor {
                     // Action bar
                     if (tpsLow) {
                         if (!plugin.getConfig().getString("messages.actionbar-completed-low-tps-message").isBlank()) {
-                            if (debug) logDebug(
+                            logDebug(
                                 "Sending low TPS action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
                             bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
@@ -366,7 +327,7 @@ public class ClearTask implements CommandExecutor {
                                         .replace("{ENTITIES}", String.valueOf(removedEntities)))));
                         }
                     } else if (!plugin.getConfig().getString("messages.actionbar-completed-message").isBlank()) {
-                        if (debug) logDebug(
+                        logDebug(
                             "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
@@ -378,7 +339,7 @@ public class ClearTask implements CommandExecutor {
                     // Chat
                     if (tpsLow) {
                         if (!plugin.getConfig().getString("messages.chat-completed-low-tps-message").isBlank()) {
-                            if (debug) logDebug(
+                            logDebug(
                                 "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
 
                             bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
@@ -387,7 +348,7 @@ public class ClearTask implements CommandExecutor {
                                     .replace("{ENTITIES}", String.valueOf(removedEntities))));
                         }
                     } else if (!plugin.getConfig().getString("messages.chat-completed-message").isBlank()) {
-                        if (debug) logDebug(
+                        logDebug(
                             "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
@@ -396,7 +357,7 @@ public class ClearTask implements CommandExecutor {
                     }
 
                     // Play the sound
-                    if (debug) logDebug("Playing sound " + plugin.getConfig()
+                    logDebug("Playing sound " + plugin.getConfig()
                         .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
                     try {
@@ -411,8 +372,9 @@ public class ClearTask implements CommandExecutor {
                         plugin.getLogger().severe(
                             "\"" + plugin.getConfig().getString("cleared-pitch") + "Cleared pitch \" is not a number!");
 
-                        if (debug) for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
-                        else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                        for (StackTraceElement ste : e.getStackTrace())
+                            if (debug) logDebug(ste.toString());
+                            else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
                     }
                 }
             }
@@ -432,7 +394,7 @@ public class ClearTask implements CommandExecutor {
             else plugin.getLogger().warning("Enable 'print-stack-traces' in your config to see the whole error.");
         }
 
-        if (debug) {
+        {
             logDebug("╔══════════════════════════════════════╗");
             logDebug("║           TASKS COMPLETED            ║");
             logDebug("║      IF SUPPORT IS NEEDED, FIND      ║");
@@ -441,21 +403,19 @@ public class ClearTask implements CommandExecutor {
             logDebug("║         AND SEND IT TO US AT         ║");
             logDebug("║     https://discord.gg/qcTzC9nMQD    ║");
             logDebug("╚══════════════════════════════════════╝");
-            try {
-                debugFile.close();
-            } catch (IOException e) {
-                if (debug) {
+            if (debug) {
+                try {
+                    debugFile.close();
+                } catch (IOException e) {
                     logDebug(e.toString());
                     for (StackTraceElement ste : e.getStackTrace()) logDebug(ste.toString());
-                } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                }
+                debug = false;
             }
-            debug = false;
         }
     }
 
     private void checkNearby(Entity entity, String path, String worldName) {
-        boolean debug = plugin.getConfig().getBoolean("debug");
-
         boolean nearby = plugin.getConfig().getBoolean("nearby-entities.enabled");
         boolean onlyCountFromList = plugin.getConfig().getBoolean("nearby-entities.only-count-from-list");
         double x = plugin.getConfig().getDouble("nearby-entities.x");
@@ -465,14 +425,14 @@ public class ClearTask implements CommandExecutor {
 
         // If the config option is enabled
         if (nearby) {
-            if (debug) logDebug("Checking nearby entity count...");
+            logDebug("Checking nearby entity count...");
 
             ArrayList<Entity> nearbyEntities = new ArrayList<>(entity.getNearbyEntities(x, y, z));
 
-            if (debug) logDebug("Found " + nearbyEntities.size() + " nearby entities.");
+            logDebug("Found " + nearbyEntities.size() + " nearby entities.");
 
             if (onlyCountFromList) {
-                if (debug) logDebug("However, only entities on the list should be counted...");
+                logDebug("However, only entities on the list should be counted...");
 
                 for (Entity nearbyEntity : new ArrayList<>(nearbyEntities)) {
                     boolean isInList = false;
@@ -485,65 +445,63 @@ public class ClearTask implements CommandExecutor {
                     if (!isInList) {
                         nearbyEntities.remove(nearbyEntity);
 
-                        if (debug)
-                            logDebug("Entity " + nearbyEntity.getType() + " was removed from the nearby entity list.");
+                        logDebug("Entity " + nearbyEntity.getType() + " was removed from the nearby entity list.");
                     }
                 }
 
-                if (debug) logDebug("Found " + nearbyEntities.size() + " nearby entities that were on the list.");
+                logDebug("Found " + nearbyEntities.size() + " nearby entities that were on the list.");
             }
 
             if (nearbyEntities.size() > count) checkNamed(entity);
-            else if (debug) {
+            else {
                 logDebug("Checking next entity if available...");
                 logDebug("");
             }
 
             // If nearby check is disabled, just remove the entities
         } else {
-            if (debug) logDebug("Check nearby entities option disabled.");
+            logDebug("Check nearby entities option disabled.");
             checkNamed(entity);
         }
 
     }
 
     private void checkNamed(Entity entity) {
-        boolean debug = plugin.getConfig().getBoolean("debug");
-
         // Should remove named
         if (plugin.getConfig().getBoolean("remove-named")) {
-            if (debug) logDebug("Removing entities regardless of a name...");
+            logDebug("Removing entities regardless of a name...");
             // Remove it!
-            if (debug) logDebug("Removing entity " + entity.getType() + "...");
+            logDebug("Removing entity " + entity.getType() + "...");
             entity.remove();
             removedEntities++;
         } else {
-            if (debug) logDebug("Removing entities without a name only...");
+            logDebug("Removing entities without a name only...");
             // Don't remove named
             // And it doesn't have a name
             if (entity.getCustomName() == null) {
-                if (debug) logDebug("Entity " + entity.getType() + " didn't have a custom name!");
+                logDebug("Entity " + entity.getType() + " didn't have a custom name!");
                 // Remove it!
-                if (debug) logDebug("Removing entity " + entity.getType() + "...");
+                logDebug("Removing entity " + entity.getType() + "...");
                 entity.remove();
                 removedEntities++;
-            } else if (debug) {
+            } else {
                 logDebug(entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
                 logDebug("");
                 return;
             }
         }
 
-        if (entity.getCustomName() != null) {
-            if (debug) logDebug(
-                entity.getType() + " with name " + entity.getCustomName() + " removed! Total removed is " + removedEntities);
-        } else if (debug) {
+        if (entity.getCustomName() != null) logDebug(
+            entity.getType() + " with name " + entity.getCustomName() + " removed! Total removed is " + removedEntities);
+        else {
             logDebug(entity.getType() + " removed! Total removed is " + removedEntities + ".");
             logDebug("");
         }
     }
 
     private void logDebug(String text) {
+        if (!debug) return;
+
         plugin.getLogger().info(text);
         try {
             debugFile.write(text + "\n");

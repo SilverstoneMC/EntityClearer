@@ -34,15 +34,12 @@ countdown-on-command: false
 # When should the warning messages send?
 # Time is in seconds remaining before the clear task
 warning-messages:
-  60-seconds: false
-  45-seconds: false
-  30-seconds: true
-  15-seconds: false
-  5-seconds: true
-  4-seconds: true
-  3-seconds: true
-  2-seconds: true
-  1-second: true
+  - 30
+  - 5
+  - 4
+  - 3
+  - 2
+  - 1
 
 
 
@@ -155,14 +152,17 @@ messages:
   # This plugin supports MiniMessage markdown and formatting - see https://docs.adventure.kyori.net/minimessage.html#format
 
   # Placeholders:
-  # {SECONDS} - the time remaining before the clear task is run
-  # {S} - if the seconds remaining is above 1, an `s` will be appended
-  # {ENTITIES} - the amount of entities removed after the clear task has run
+  # {TIMELEFT} - the time remaining before the clear task is run
+  # {TIME} - will output "minute(s)" or "second(s)" depending on the time left
 
-  actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{SECONDS} <#ff9b0f>&lsecond{S}!"
+  actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{TIMELEFT} <#ff9b0f>&l{TIME}!"
+  chat-message: "&cCommon entities will be removed in &7{TIMELEFT} &c{TIME}!"
+  
+  # Placeholders:
+  # {ENTITIES} - the amount of entities removed after the clear task has run
+  
   actionbar-completed-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities!"
   actionbar-completed-low-tps-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities due to low TPS!"
-  chat-message: "&cCommon entities will be removed in &7{SECONDS} &csecond{S}!"
   chat-completed-message: "&cRemoved &7{ENTITIES} &centities!"
   chat-completed-low-tps-message: "&cRemoved &7{ENTITIES} &centities due to low TPS!"
 

@@ -3,7 +3,6 @@ package me.jasonhorkles.entityclearer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -13,7 +12,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class Utils {
@@ -21,11 +19,8 @@ public class Utils {
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public static boolean debug = false;
-    public static boolean tpsTimerRan = false;
     public static BukkitTask savedKillTask;
-    public static BukkitTask savedTpsTask;
     public static FileWriter debugFile;
-    public static final ArrayList<Integer> tickList = new ArrayList<>();
 
     public void killTimer() {
         if (plugin.getConfig().getBoolean("debug")) {
@@ -67,72 +62,6 @@ public class Utils {
                 .sendMessage(Component.text("[EntityClearer] " + message).color(NamedTextColor.RED));
 
         logDebug(Level.SEVERE, message);
-    }
-
-    public void tpsTimer(int delay) {
-        plugin.getLogger().info("TPS monitoring activated.");
-        BukkitRunnable taskTimer = new BukkitRunnable() {
-            @Override
-            public void run() {
-                // If the timer was already run
-                if (tpsTimerRan) return;
-
-                long now = System.currentTimeMillis();
-                BukkitRunnable countTicks = new BukkitRunnable() {
-                    int ticks = 0;
-
-                    @Override
-                    public void run() {
-                        ticks++;
-                        if (now + 1000 <= System.currentTimeMillis()) {
-                            this.cancel();
-                            averageTPS(ticks);
-                        }
-                    }
-                };
-                countTicks.runTaskTimer(plugin, 0, 1);
-            }
-        };
-        savedTpsTask = taskTimer.runTaskTimerAsynchronously(plugin, delay, 20);
-    }
-
-    private void averageTPS(int tps) {
-        tickList.add(tps);
-        if (tickList.size() > 10) tickList.remove(0);
-        else return;
-
-        int sum = 0;
-        double average;
-        for (int x : tickList) sum += x;
-        average = (double) sum / tickList.size();
-        tpsLow(average);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void tpsLow(double tps) {
-        // If TPS is not below the threshold, return
-        if (!(tps < plugin.getConfig().getInt("low-tps.threshold"))) return;
-
-        // If a chat message should be sent
-        if (plugin.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
-            if (player.hasPermission("entityclearer.lowtps")) bukkitAudiences.player(player).sendMessage(
-                MiniMessage.miniMessage().deserialize(
-                    parseMessage(plugin.getConfig().getString("low-tps.chat-message")).replace("{TPS}",
-                        String.valueOf(tps))));
-
-        // If the entities should be removed instantly
-        new ClearTask().removeEntities(true);
-
-        // Cooldown
-        tpsTimerRan = true;
-        tickList.clear();
-        BukkitRunnable resetTimerRan = new BukkitRunnable() {
-            @Override
-            public void run() {
-                tpsTimerRan = false;
-            }
-        };
-        resetTimerRan.runTaskLaterAsynchronously(plugin, 1800);
     }
 
     public void sendMetrics() {

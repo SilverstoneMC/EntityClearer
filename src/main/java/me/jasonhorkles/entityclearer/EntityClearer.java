@@ -45,7 +45,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
 
         new Utils().killTimer();
-        if (getConfig().getBoolean("low-tps.enabled")) new Utils().tpsTimer(600);
+        if (getConfig().getBoolean("low-tps.enabled")) new TpsMonitoring().tpsTimer(600);
     }
 
     @Override
@@ -62,14 +62,15 @@ public class EntityClearer extends JavaPlugin implements Listener {
                 saveDefaultConfig();
                 reloadConfig();
 
-                Utils.tickList.clear();
+                TpsMonitoring.tickList.clear();
 
                 if (Utils.savedKillTask != null && !Utils.savedKillTask.isCancelled()) Utils.savedKillTask.cancel();
-                if (Utils.savedTpsTask != null && !Utils.savedTpsTask.isCancelled()) Utils.savedTpsTask.cancel();
+                if (TpsMonitoring.savedTpsTask != null && !TpsMonitoring.savedTpsTask.isCancelled())
+                    TpsMonitoring.savedTpsTask.cancel();
 
-                if (getConfig().getBoolean("low-tps.enabled")) new Utils().tpsTimer(0);
+                if (getConfig().getBoolean("low-tps.enabled")) new TpsMonitoring().tpsTimer(0);
 
-                Utils.tpsTimerRan = false;
+                TpsMonitoring.tpsTimerRan = false;
 
                 new Utils().killTimer();
                 new Utils().sendMetrics();

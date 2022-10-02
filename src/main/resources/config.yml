@@ -56,6 +56,7 @@ worlds:
 
     # The entities to be removed from the world
     # See https://jd.papermc.io/paper/1.19/org/bukkit/entity/EntityType.html for all entity types
+    # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
     # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
     entities:
       - BEE
@@ -69,6 +70,7 @@ worlds:
       - SQUID
       - WOLF
       - ZOMBIE
+      #- "MythicMob:SkeletalKnight"
 
     # Should only entities with a specific spawn reason be removed?
     # Setting this to false will check for any spawn reason
@@ -197,6 +199,7 @@ low-tps:
 
       # The entities to be removed from the world
       # See https://jd.papermc.io/paper/1.19/org/bukkit/entity/EntityType.html for all entity types
+      # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
       # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
       entities:
         - BEE

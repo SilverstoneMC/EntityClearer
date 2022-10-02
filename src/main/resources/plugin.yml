@@ -5,6 +5,8 @@ version: %VERSION%
 author: JasonHorkles
 website: https://github.com/SilverstoneMC/EntityClearer
 api-version: 1.17
+softdepend:
+  - MythicMobs
 
 commands:
   entityclearer:

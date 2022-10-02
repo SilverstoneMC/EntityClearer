@@ -1,5 +1,6 @@
 package me.jasonhorkles.entityclearer;
 
+import io.lumine.mythic.api.MythicPlugin;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
@@ -20,12 +21,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 @SuppressWarnings("ConstantConditions")
 public class EntityClearer extends JavaPlugin implements Listener {
 
     private Metrics metrics;
     private BukkitAudiences adventure;
+    private MythicPlugin mythicPlugin;
 
     private static BukkitTask savedKillTask;
     private static BukkitTask savedTpsTask;
@@ -38,21 +41,18 @@ public class EntityClearer extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public BukkitAudiences adventure() {
-        if (this.adventure == null)
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        return this.adventure;
-    }
-
     // Startup
     @Override
     public void onEnable() {
         instance = this;
 
-        this.adventure = BukkitAudiences.create(this);
+        adventure = BukkitAudiences.create(this);
 
         metrics = new Metrics(this, 10915);
         sendMetrics();
+
+        mythicPlugin = (MythicPlugin) getServer().getPluginManager().getPlugin("MythicMobs");
+        if (mythicPlugin != null) getLogger().log(Level.INFO, "Enabled MythicMobs hook!");
 
         saveDefaultConfig();
 
@@ -141,6 +141,16 @@ public class EntityClearer extends JavaPlugin implements Listener {
         return false;
     }
 
+    public BukkitAudiences getAdventure() {
+        if (this.adventure == null)
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        return this.adventure;
+    }
+
+    public MythicPlugin getMythicPlugin() {
+        return mythicPlugin;
+    }
+
     public void killTimer() {
         if (getConfig().getBoolean("debug")) {
             getLogger().info("╔══════════════════════════════════════╗");
@@ -209,7 +219,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
         // If a chat message should be sent
         if (instance.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
-            if (player.hasPermission("entityclearer.lowtps")) getInstance().adventure().player(player).sendMessage(
+            if (player.hasPermission("entityclearer.lowtps")) getInstance().getAdventure().player(player).sendMessage(
                 MiniMessage.miniMessage().deserialize(
                     EntityClearer.parseMessage(instance.getConfig().getString("low-tps.chat-message"))
                         .replace("{TPS}", String.valueOf(tps))));

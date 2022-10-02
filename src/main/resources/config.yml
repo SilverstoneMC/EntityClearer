@@ -138,6 +138,7 @@ nearby-entities:
 
 # Should entities with names also be removed?
 remove-named: false
+remove-named-mythicmobs: false
 
 # The command(s) to run after the entity clearing task completes
 commands:

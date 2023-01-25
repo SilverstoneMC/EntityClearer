@@ -34,7 +34,7 @@ public class Countdown {
                     return;
                 }
 
-                if (timeLeft[0] <= times.get(0)) {
+                if (!times.isEmpty()) if (timeLeft[0] <= times.get(0)) {
                     new Messages().message(timeLeft[0]);
                     times.remove(0);
                 }

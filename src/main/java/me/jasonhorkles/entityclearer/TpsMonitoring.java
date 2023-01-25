@@ -57,7 +57,7 @@ public class TpsMonitoring {
         tpsLow(average);
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings("DataFlowIssue")
     private void tpsLow(double tps) {
         // If TPS is not below the threshold, return
         if (!(tps < plugin.getConfig().getInt("low-tps.threshold"))) return;
@@ -66,8 +66,8 @@ public class TpsMonitoring {
         if (plugin.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
             if (player.hasPermission("entityclearer.lowtps")) bukkitAudiences.player(player).sendMessage(
                 MiniMessage.miniMessage().deserialize(
-                    new Utils().parseMessage(plugin.getConfig().getString("low-tps.chat-message")).replace("{TPS}",
-                        String.valueOf(tps))));
+                    new Utils().parseMessage(plugin.getConfig().getString("low-tps.chat-message"))
+                        .replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed instantly
         new ClearTask().removeEntities(true);

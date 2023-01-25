@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.logging.Level;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings("DataFlowIssue")
 public class EntityClearer extends JavaPlugin implements Listener {
 
     private BukkitAudiences adventure;
@@ -36,7 +36,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
         metrics = new Metrics(this, 10915);
         new Utils().sendMetrics();
-        
+
         saveDefaultConfig();
 
         getCommand("clearentities").setExecutor(new ClearTask());
@@ -64,7 +64,8 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
                 TpsMonitoring.tickList.clear();
 
-                if (Utils.savedKillTask != null && !Utils.savedKillTask.isCancelled()) Utils.savedKillTask.cancel();
+                if (Utils.savedKillTask != null && !Utils.savedKillTask.isCancelled())
+                    Utils.savedKillTask.cancel();
                 if (TpsMonitoring.savedTpsTask != null && !TpsMonitoring.savedTpsTask.isCancelled())
                     TpsMonitoring.savedTpsTask.cancel();
 

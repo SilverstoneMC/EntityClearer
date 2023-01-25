@@ -15,7 +15,7 @@ public class Messages {
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings("DataFlowIssue")
     public void message(int timeLeft) {
         try {
             StringBuilder time = new StringBuilder();
@@ -44,8 +44,8 @@ public class Messages {
                 index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
-                    new Utils().sendError(
-                        "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                    new Utils().sendError("Couldn't find the world \"" + keys.get(
+                        index) + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -57,8 +57,10 @@ public class Messages {
                             "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
-                            new Utils().parseMessage(plugin.getConfig().getString("messages.actionbar-message")
-                                .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy)).replace("{TIME}", time))));
+                            new Utils().parseMessage(
+                                plugin.getConfig().getString("messages.actionbar-message")
+                                    .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy))
+                                    .replace("{TIME}", time))));
                     }
 
                     // Chat
@@ -68,16 +70,18 @@ public class Messages {
 
                         bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
                             new Utils().parseMessage(plugin.getConfig().getString("messages.chat-message"))
-                                .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy)).replace("{TIME}", time)));
+                                .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy))
+                                .replace("{TIME}", time)));
                     }
 
                     // Play the sound
-                    new Utils().logDebug(Level.INFO, "Playing sound " + plugin.getConfig()
-                        .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
+                    new Utils().logDebug(Level.INFO, "Playing sound " + plugin.getConfig().getString(
+                        "sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
                     try {
-                        player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
-                            SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("countdown-pitch")));
+                        player.playSound(player.getLocation(),
+                            "minecraft:" + plugin.getConfig().getString("sound"), SoundCategory.MASTER, 1,
+                            Float.parseFloat(plugin.getConfig().getString("countdown-pitch")));
 
                     } catch (NumberFormatException e) {
                         new Utils().sendError("Countdown pitch '" + plugin.getConfig()
@@ -99,7 +103,8 @@ public class Messages {
 
             if (Utils.debug) {
                 new Utils().logDebug(Level.SEVERE, e.toString());
-                for (StackTraceElement ste : e.getStackTrace()) new Utils().logDebug(Level.SEVERE, ste.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new Utils().logDebug(Level.SEVERE, ste.toString());
             } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
         }
     }

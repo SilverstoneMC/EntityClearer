@@ -39,7 +39,7 @@ public class ClearTask implements CommandExecutor {
         return true;
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings("DataFlowIssue")
     public void removeEntities(boolean tpsLow) {
         new Utils().logDebug(Level.INFO, "╔══════════════════════════════════════╗");
         new Utils().logDebug(Level.INFO, "║     REMOVE ENTITIES TASK STARTED     ║");
@@ -56,7 +56,8 @@ public class ClearTask implements CommandExecutor {
         }
 
         ArrayList<World> worlds = new ArrayList<>();
-        ArrayList<String> keys = new ArrayList<>(plugin.getConfig().getConfigurationSection(path).getKeys(false));
+        ArrayList<String> keys = new ArrayList<>(
+            plugin.getConfig().getConfigurationSection(path).getKeys(false));
 
         if (keys.contains("ALL")) {
             new Utils().logDebug(Level.INFO, "'ALL' found! Adding all worlds to removal list...");
@@ -76,8 +77,8 @@ public class ClearTask implements CommandExecutor {
 
                 // If that world doesn't exist, complain
                 if (world == null) {
-                    new Utils().sendError(
-                        "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                    new Utils().sendError("Couldn't find the world \"" + keys.get(
+                        index) + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -87,32 +88,35 @@ public class ClearTask implements CommandExecutor {
                 // Get the loaded entities
                 for (Entity entity : world.getEntities())
                     // For each entity type in the config
-                    for (String entityType : plugin.getConfig().getStringList(path + "." + worldName + ".entities")) {
+                    for (String entityType : plugin.getConfig()
+                        .getStringList(path + "." + worldName + ".entities")) {
                         // If the entity is a MythicMob
                         boolean isValidMythicMob = false;
 
                         if (mythicPlugin != null) {
-                            ActiveMob mythicMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
-                                .orElse(null);
+                            ActiveMob mythicMob = MythicBukkit.inst().getMobManager()
+                                .getActiveMob(entity.getUniqueId()).orElse(null);
 
                             // Check if mob is vanilla
                             if (mythicMob != null && !entity.getType().toString()
-                                .equalsIgnoreCase(mythicMob.getMobType())) if (entityType.startsWith("MythicMob:")) {
-                                if (mythicMob.getMobType()
-                                    .equalsIgnoreCase(entityType.replaceFirst("MythicMob:", ""))) {
-                                    new Utils().logDebug(Level.INFO, "Entity is a MythicMob!");
-                                    isValidMythicMob = true;
-                                    entityType = entityType.replaceFirst("MythicMob:", "");
-                                }
-                            } else continue;
+                                .equalsIgnoreCase(mythicMob.getMobType()))
+                                if (entityType.startsWith("MythicMob:")) {
+                                    if (mythicMob.getMobType()
+                                        .equalsIgnoreCase(entityType.replaceFirst("MythicMob:", ""))) {
+                                        new Utils().logDebug(Level.INFO, "Entity is a MythicMob!");
+                                        isValidMythicMob = true;
+                                        entityType = entityType.replaceFirst("MythicMob:", "");
+                                    }
+                                } else continue;
                         }
 
 
                         // If the entity is actually in the config
                         if (entity.getType().toString().equalsIgnoreCase(entityType) || isValidMythicMob) {
                             if (isValidMythicMob) new Utils().logDebug(Level.INFO,
-                                "MythicMob '" + MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
-                                    .orElse(null).getMobType() + "' matches the config's!");
+                                "MythicMob '" + MythicBukkit.inst().getMobManager()
+                                    .getActiveMob(entity.getUniqueId()).orElse(null)
+                                    .getMobType() + "' matches the config's!");
                             else new Utils().logDebug(Level.INFO,
                                 "Entity " + entity.getType() + " matches the config's!");
 
@@ -124,7 +128,8 @@ public class ClearTask implements CommandExecutor {
                             }
 
                             // If only entities with a specific reason should be removed
-                            if (plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
+                            if (plugin.getConfig()
+                                .getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
                                 new Utils().logDebug(Level.INFO,
                                     "Only removing entities with a specific spawn reason...");
 
@@ -133,7 +138,8 @@ public class ClearTask implements CommandExecutor {
                                     // If the entity's spawn reason matches the config's
                                     for (String spawnReason : plugin.getConfig()
                                         .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
-                                        if (entity.getEntitySpawnReason().name().equalsIgnoreCase(spawnReason)) {
+                                        if (entity.getEntitySpawnReason().name()
+                                            .equalsIgnoreCase(spawnReason)) {
                                             new Utils().logDebug(Level.INFO,
                                                 entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason() + " matches the config's!");
                                             checkNearby(entity, path, worldName, isValidMythicMob);
@@ -151,7 +157,8 @@ public class ClearTask implements CommandExecutor {
                                         new Utils().logDebug(Level.SEVERE, e.toString());
                                         for (StackTraceElement ste : e.getStackTrace())
                                             new Utils().logDebug(Level.SEVERE, ste.toString());
-                                    } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                                    } else if (plugin.getConfig().getBoolean("print-stack-traces"))
+                                        e.printStackTrace();
 
                                     logCooldown = true;
                                     BukkitRunnable cooldown = new BukkitRunnable() {
@@ -187,8 +194,8 @@ public class ClearTask implements CommandExecutor {
                 index++;
                 // If that world doesn't exist, complain
                 if (world == null) {
-                    new Utils().sendError(
-                        "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                    new Utils().sendError("Couldn't find the world \"" + keys.get(
+                        index) + "\"! Please double check your config.");
                     continue;
                 }
 
@@ -196,16 +203,18 @@ public class ClearTask implements CommandExecutor {
                 for (Player player : world.getPlayers()) {
                     // Action bar
                     if (tpsLow) {
-                        if (!plugin.getConfig().getString("messages.actionbar-completed-low-tps-message").isBlank()) {
+                        if (!plugin.getConfig().getString("messages.actionbar-completed-low-tps-message")
+                            .isBlank()) {
                             new Utils().logDebug(Level.INFO,
                                 "Sending low TPS action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
-                            bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
-                                new Utils().parseMessage(
-                                    plugin.getConfig().getString("messages.actionbar-completed-low-tps-message")
-                                        .replace("{ENTITIES}", String.valueOf(removedEntities)))));
+                            bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
+                                .deserialize(new Utils().parseMessage(plugin.getConfig()
+                                    .getString("messages.actionbar-completed-low-tps-message")
+                                    .replace("{ENTITIES}", String.valueOf(removedEntities)))));
                         }
-                    } else if (!plugin.getConfig().getString("messages.actionbar-completed-message").isBlank()) {
+                    } else if (!plugin.getConfig().getString("messages.actionbar-completed-message")
+                        .isBlank()) {
                         new Utils().logDebug(Level.INFO,
                             "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
@@ -217,7 +226,8 @@ public class ClearTask implements CommandExecutor {
 
                     // Chat
                     if (tpsLow) {
-                        if (!plugin.getConfig().getString("messages.chat-completed-low-tps-message").isBlank()) {
+                        if (!plugin.getConfig().getString("messages.chat-completed-low-tps-message")
+                            .isBlank()) {
                             new Utils().logDebug(Level.INFO,
                                 "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
 
@@ -231,20 +241,22 @@ public class ClearTask implements CommandExecutor {
                             "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
                         bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
-                            new Utils().parseMessage(plugin.getConfig().getString("messages.chat-completed-message"))
+                            new Utils().parseMessage(
+                                    plugin.getConfig().getString("messages.chat-completed-message"))
                                 .replace("{ENTITIES}", String.valueOf(removedEntities))));
                     }
 
                     // Play the sound
-                    new Utils().logDebug(Level.INFO, "Playing sound " + plugin.getConfig()
-                        .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
+                    new Utils().logDebug(Level.INFO, "Playing sound " + plugin.getConfig().getString(
+                        "sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
                     try {
-                        player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
-                            SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
+                        player.playSound(player.getLocation(),
+                            "minecraft:" + plugin.getConfig().getString("sound"), SoundCategory.MASTER, 1,
+                            Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
                     } catch (NumberFormatException e) {
-                        new Utils().sendError(
-                            "Cleared pitch \"" + plugin.getConfig().getString("cleared-pitch") + "\" is not a number!");
+                        new Utils().sendError("Cleared pitch \"" + plugin.getConfig()
+                            .getString("cleared-pitch") + "\" is not a number!");
 
                         if (Utils.debug) {
                             new Utils().logDebug(Level.SEVERE, e.toString());
@@ -260,7 +272,8 @@ public class ClearTask implements CommandExecutor {
 
             if (Utils.debug) {
                 new Utils().logDebug(Level.SEVERE, e.toString());
-                for (StackTraceElement ste : e.getStackTrace()) new Utils().logDebug(Level.SEVERE, ste.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new Utils().logDebug(Level.SEVERE, ste.toString());
             } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
             else new Utils().logDebug(Level.WARNING,
                     "Enable 'print-stack-traces' in your config to see the whole error.");
@@ -280,7 +293,8 @@ public class ClearTask implements CommandExecutor {
                 Utils.debugFile.close();
             } catch (IOException e) {
                 new Utils().logDebug(Level.INFO, e.toString());
-                for (StackTraceElement ste : e.getStackTrace()) new Utils().logDebug(Level.INFO, ste.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new Utils().logDebug(Level.INFO, ste.toString());
             }
             Utils.debug = false;
         }
@@ -308,7 +322,8 @@ public class ClearTask implements CommandExecutor {
                 for (Entity nearbyEntity : new ArrayList<>(nearbyEntities)) {
                     boolean isInList = false;
 
-                    for (String entityType : plugin.getConfig().getStringList(path + "." + worldName + ".entities")) {
+                    for (String entityType : plugin.getConfig()
+                        .getStringList(path + "." + worldName + ".entities")) {
                         boolean nearbyIsMythicMob = false;
 
                         // If the nearby entity is a MythicMob
@@ -379,7 +394,8 @@ public class ClearTask implements CommandExecutor {
             // Don't remove named
             // And it doesn't have a name
             if (entity.getCustomName() == null) {
-                new Utils().logDebug(Level.INFO, "MythicMob " + entity.getType() + " doesn't have a custom name!");
+                new Utils().logDebug(Level.INFO,
+                    "MythicMob " + entity.getType() + " doesn't have a custom name!");
                 // Remove it!
                 new Utils().logDebug(Level.INFO, "Removing MythicMob " + entity.getType() + "...");
                 entity.remove();
@@ -406,7 +422,8 @@ public class ClearTask implements CommandExecutor {
             // Don't remove named
             // And it doesn't have a name
             if (entity.getCustomName() == null) {
-                new Utils().logDebug(Level.INFO, "Entity " + entity.getType() + " doesn't have a custom name!");
+                new Utils().logDebug(Level.INFO,
+                    "Entity " + entity.getType() + " doesn't have a custom name!");
                 // Remove it!
                 new Utils().logDebug(Level.INFO, "Removing entity " + entity.getType() + "...");
                 entity.remove();
@@ -425,7 +442,8 @@ public class ClearTask implements CommandExecutor {
                 entity.getType() + " with name " + entity.getCustomName() + " removed! Total removed is " + removedEntities);
             new Utils().logDebug(Level.INFO, "");
         } else {
-            new Utils().logDebug(Level.INFO, entity.getType() + " removed! Total removed is " + removedEntities + ".");
+            new Utils().logDebug(Level.INFO,
+                entity.getType() + " removed! Total removed is " + removedEntities + ".");
             new Utils().logDebug(Level.INFO, "");
         }
     }

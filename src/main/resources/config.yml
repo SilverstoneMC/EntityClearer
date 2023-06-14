@@ -55,7 +55,7 @@ worlds:
   your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
 
     # The entities to be removed from the world
-    # See https://jd.papermc.io/paper/1.19/org/bukkit/entity/EntityType.html for all entity types
+    # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
     # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
     # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
     entities:
@@ -78,7 +78,7 @@ worlds:
     spawn-reason:
       enabled: false
 
-      # See https://jd.papermc.io/paper/1.19/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+      # See https://jd.papermc.io/paper/1.20/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
       reasons:
         - SPAWNER
         - SPAWNER_EGG
@@ -152,7 +152,7 @@ commands:
 
 messages:
   # Set the message to "" to disable it
-  # This plugin supports MiniMessage markdown and formatting - see https://docs.adventure.kyori.net/minimessage.html#format
+  # This plugin supports MiniMessage markdown and formatting - see https://docs.advntr.dev/minimessage/format.html
 
   # Placeholders:
   # {TIMELEFT} - the time remaining before the clear task is run
@@ -199,7 +199,7 @@ low-tps:
     your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
 
       # The entities to be removed from the world
-      # See https://jd.papermc.io/paper/1.19/org/bukkit/entity/EntityType.html for all entity types
+      # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
       # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
       # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
       entities:
@@ -230,7 +230,7 @@ low-tps:
       spawn-reason:
         enabled: false
 
-        # See https://jd.papermc.io/paper/1.19/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+        # See https://jd.papermc.io/paper/1.20/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
         reasons:
           - SPAWNER
           - SPAWNER_EGG

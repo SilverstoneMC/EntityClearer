@@ -103,12 +103,6 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
 
-        <!-- Adventure / MiniMessage -->
-        <repository>
-            <id>sonatype-oss-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-
         <!--  MythicMobs  -->
         <repository>
             <id>nexus</id>
@@ -131,29 +125,31 @@
             </exclusions>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.kyori/adventure-text-minimessage -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.14.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.kyori/adventure-platform-bukkit -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
             <version>4.3.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.bstats/bstats-bukkit -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.0</version>
-            <scope>compile</scope>
+            <version>3.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.3.1</version>
+            <version>5.3.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

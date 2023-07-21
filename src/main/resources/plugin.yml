@@ -5,6 +5,7 @@ version: %VERSION%
 author: JasonHorkles
 website: https://github.com/SilverstoneMC/EntityClearer
 api-version: 1.17
+folia-supported: true
 softdepend:
   - MythicMobs
 

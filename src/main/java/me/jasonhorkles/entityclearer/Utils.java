@@ -52,7 +52,7 @@ public class Utils {
         try {
             debugFile.write(message + "\n");
         } catch (IOException e) {
-            if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

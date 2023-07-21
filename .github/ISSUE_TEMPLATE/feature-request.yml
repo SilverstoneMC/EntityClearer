@@ -1,0 +1,16 @@
+name: Feature Request
+description: Submit a suggestion
+labels: [ Suggestion ]
+body:
+  - type: textarea
+    attributes:
+      label: The suggestion
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Why it would be useful
+      placeholder: "It would be useful because..."
+    validations:
+      required: true

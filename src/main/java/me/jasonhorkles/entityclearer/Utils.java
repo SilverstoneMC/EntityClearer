@@ -36,8 +36,16 @@ public class Utils {
             return;
         }
 
-        long interval = plugin.getConfig().getInt("interval") * 60L * 20;
-        setNextKillTask(interval);
+        // interval - countdown time = time to wait (in secs)
+        long interval = (plugin.getConfig().getInt("interval") * 60L) - new Countdown().getCountdownSorted()
+            .get(0);
+        if (interval < 0) {
+            sendError("The interval is set to a value less than the highest countdown time!");
+            return;
+        }
+
+        long intervalTicks = interval * 20;
+        setNextKillTask(intervalTicks);
 
         savedKillTask = new BukkitRunnable() {
             @Override
@@ -45,13 +53,13 @@ public class Utils {
                 new Countdown().countdown();
                 setNextKillTask(interval);
             }
-        }.runTaskTimer(plugin, interval, interval);
+        }.runTaskTimer(plugin, intervalTicks, intervalTicks);
     }
 
     private void setNextKillTask(long interval) {
         // ticks * 50 = ms
         if (EntityClearer.getInstance().getPlaceholderAPI() != null)
-            if (interval != -1) nextKillTask = System.currentTimeMillis() + (interval * 50);
+            if (interval != -1) nextKillTask = System.currentTimeMillis() + (interval * 1000);
     }
 
     public void logDebug(Level level, String message) {

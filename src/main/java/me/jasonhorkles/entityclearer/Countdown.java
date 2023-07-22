@@ -15,10 +15,8 @@ public class Countdown {
         new Utils().logDebug(Level.INFO, "║        COUNTDOWN TASK STARTED        ║");
         new Utils().logDebug(Level.INFO, "╚══════════════════════════════════════╝");
 
-        int initialTime;
-        List<Integer> times = plugin.getConfig().getIntegerList("warning-messages");
-        times.sort(Comparator.reverseOrder());
-        initialTime = times.get(0);
+        List<Integer> times = getCountdownSorted();
+        int initialTime = times.get(0);
 
         new Utils().logDebug(Level.INFO,
             "Starting countdown at " + initialTime + " seconds (" + initialTime / 60 + " minutes)...");
@@ -43,5 +41,11 @@ public class Countdown {
             }
         };
         task.runTaskTimer(plugin, 0, 20);
+    }
+
+    public List<Integer> getCountdownSorted() {
+        List<Integer> times = plugin.getConfig().getIntegerList("warning-messages");
+        times.sort(Comparator.reverseOrder());
+        return times;
     }
 }

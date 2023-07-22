@@ -67,7 +67,8 @@
                             <relocations>
                                 <relocation>
                                     <pattern>net.kyori.adventure</pattern>
-                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.adventure</shadedPattern>
+                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.adventure
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
@@ -92,6 +93,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.16.0</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                    <allowMajorUpdates>true</allowMajorUpdates>
+                    <allowMinorUpdates>true</allowMinorUpdates>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -131,21 +143,18 @@
             </exclusions>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/net.kyori/adventure-text-minimessage -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.14.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/net.kyori/adventure-platform-bukkit -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
             <version>4.3.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.bstats/bstats-bukkit -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
@@ -155,7 +164,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.3.3</version>
+            <version>5.3.5</version>
             <scope>provided</scope>
         </dependency>
 

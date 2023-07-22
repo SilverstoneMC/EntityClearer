@@ -2,12 +2,15 @@ package me.jasonhorkles.entityclearer;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 
 public class Countdown {
+    public static BukkitTask savedCountdownTask;
+
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public void countdown() {
@@ -23,7 +26,7 @@ public class Countdown {
         new Utils().logDebug(Level.INFO, "Sending messages at " + times + " seconds remaining...");
 
         final int[] timeLeft = {initialTime};
-        BukkitRunnable task = new BukkitRunnable() {
+        savedCountdownTask = new BukkitRunnable() {
             @Override
             public void run() {
                 if (timeLeft[0] <= 0) {
@@ -39,8 +42,7 @@ public class Countdown {
 
                 timeLeft[0] -= 1;
             }
-        };
-        task.runTaskTimer(plugin, 0, 20);
+        }.runTaskTimer(plugin, 0, 20);
     }
 
     public List<Integer> getCountdownSorted() {

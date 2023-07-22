@@ -19,6 +19,7 @@ public class Utils {
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public static boolean debug = false;
+    public static BukkitTask savedCountTask;
     public static BukkitTask savedKillTask;
     public static FileWriter debugFile;
     public static long nextKillTask = -1;
@@ -33,33 +34,39 @@ public class Utils {
         if (plugin.getConfig().getInt("interval") < 1) {
             if (debug) plugin.getLogger()
                 .warning("The interval is set to a value less than 1, so it's been disabled!");
+            nextKillTask = -1;
             return;
         }
 
         // interval - countdown time = time to wait (in secs)
-        long interval = (plugin.getConfig().getInt("interval") * 60L) - new Countdown().getCountdownSorted()
-            .get(0);
-        if (interval < 0) {
+        long interval = plugin.getConfig().getInt("interval") * 60L;
+        long countdownLength = new Countdown().getCountdownSorted().get(0);
+        long delay = interval - countdownLength;
+
+        if (delay < 0) {
             sendError("The interval is set to a value less than the highest countdown time!");
+            nextKillTask = -1;
             return;
         }
 
-        long intervalTicks = interval * 20;
-        setNextKillTask(intervalTicks);
+        if (EntityClearer.getInstance().getPlaceholderAPI() != null) savedCountTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                setNextKillTask(interval + 1);
+            }
+        }.runTaskTimer(plugin, 0, interval * 20);
 
         savedKillTask = new BukkitRunnable() {
             @Override
             public void run() {
                 new Countdown().countdown();
-                setNextKillTask(interval);
             }
-        }.runTaskTimer(plugin, intervalTicks, intervalTicks);
+        }.runTaskTimer(plugin, delay * 20, interval * 20);
     }
 
     private void setNextKillTask(long interval) {
         // ticks * 50 = ms
-        if (EntityClearer.getInstance().getPlaceholderAPI() != null)
-            if (interval != -1) nextKillTask = System.currentTimeMillis() + (interval * 1000);
+        if (interval != -1) nextKillTask = System.currentTimeMillis() + (interval * 1000);
     }
 
     public void logDebug(Level level, String message) {

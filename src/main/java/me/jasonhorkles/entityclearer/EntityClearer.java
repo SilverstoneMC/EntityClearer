@@ -47,7 +47,6 @@ public class EntityClearer extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         getCommand("clearentities").setExecutor(new ClearTask());
-        getCommand("test").setExecutor(new test());
         getCommand("entityclearer").setTabCompleter(new TabComplete());
 
         getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
@@ -72,6 +71,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
                 TpsMonitoring.tickList.clear();
 
+                if (Utils.savedCountTask != null && !Utils.savedCountTask.isCancelled())
+                    Utils.savedCountTask.cancel();
+                if (Countdown.savedCountdownTask != null && !Countdown.savedCountdownTask.isCancelled())
+                    Countdown.savedCountdownTask.cancel();
                 if (Utils.savedKillTask != null && !Utils.savedKillTask.isCancelled())
                     Utils.savedKillTask.cancel();
                 if (TpsMonitoring.savedTpsTask != null && !TpsMonitoring.savedTpsTask.isCancelled())

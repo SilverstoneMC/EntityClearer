@@ -67,7 +67,8 @@ public class ClearTask implements CommandExecutor {
             for (String world : keys) worlds.add(Bukkit.getWorld(world));
         }
 
-        new Utils().logDebug(Level.INFO, "World list: " + Bukkit.getWorlds());
+        new Utils().logDebug(Level.INFO, "World list: ");
+        for (World world : worlds) new Utils().logDebug(Level.INFO, world.getName());
         new Utils().logDebug(Level.INFO, "");
 
         try {

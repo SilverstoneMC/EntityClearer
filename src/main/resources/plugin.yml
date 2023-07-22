@@ -18,8 +18,6 @@ commands:
   clearentities:
     description: "Clears the entities defined in the config"
     permission: entityclearer.clear
-  test:
-    description: testing
 
 permissions:
   entityclearer.reload:

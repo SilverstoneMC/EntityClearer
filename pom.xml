@@ -168,7 +168,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Hook-into-PlaceholderAPI -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>

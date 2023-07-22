@@ -21,28 +21,31 @@ public class Utils {
     public static boolean debug = false;
     public static BukkitTask savedKillTask;
     public static FileWriter debugFile;
+    public static long nextKillTask = -1;
 
     public void killTimer() {
-        if (plugin.getConfig().getBoolean("debug")) {
+        if (debug) {
             plugin.getLogger().info("╔══════════════════════════════════════╗");
             plugin.getLogger().info("║        STARTING REMOVAL TIMER        ║");
             plugin.getLogger().info("╚══════════════════════════════════════╝");
         }
 
-        if (plugin.getConfig().getInt("interval") <= 0) {
-            if (plugin.getConfig().getBoolean("debug")) plugin.getLogger()
+        if (plugin.getConfig().getInt("interval") < 1) {
+            if (debug) plugin.getLogger()
                 .warning("The interval is set to a value less than 1, so it's been disabled!");
             return;
         }
 
-        BukkitRunnable task = new BukkitRunnable() {
+        long interval = plugin.getConfig().getInt("interval") * 60L * 20;
+
+        savedKillTask = new BukkitRunnable() {
             @Override
             public void run() {
                 new Countdown().countdown();
+                // ticks * 50 = ms
+                if (EntityClearer.papiEnabled) nextKillTask = System.currentTimeMillis() + (interval * 50);
             }
-        };
-        savedKillTask = task.runTaskTimer(plugin, ((plugin.getConfig().getInt("interval") * 60L) * 20),
-            ((plugin.getConfig().getInt("interval") * 60L) * 20));
+        }.runTaskTimer(plugin, interval, interval);
     }
 
     public void logDebug(Level level, String message) {

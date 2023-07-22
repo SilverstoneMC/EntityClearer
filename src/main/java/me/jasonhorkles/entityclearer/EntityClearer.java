@@ -3,6 +3,7 @@ package me.jasonhorkles.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,11 +19,12 @@ import java.util.logging.Level;
 
 @SuppressWarnings("DataFlowIssue")
 public class EntityClearer extends JavaPlugin implements Listener {
-
     private BukkitAudiences adventure;
     private Metrics metrics;
     private MythicPlugin mythicPlugin;
     private static EntityClearer instance;
+
+    public static boolean papiEnabled = false;
 
     // Startup
     @Override
@@ -33,6 +35,11 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
         mythicPlugin = (MythicPlugin) getServer().getPluginManager().getPlugin("MythicMobs");
         if (mythicPlugin != null) getLogger().log(Level.INFO, "Enabled MythicMobs hook!");
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderAPI(this).register();
+            papiEnabled = true;
+        }
 
         metrics = new Metrics(this, 10915);
         new Utils().sendMetrics();

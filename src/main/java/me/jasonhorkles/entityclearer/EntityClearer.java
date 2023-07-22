@@ -3,11 +3,11 @@ package me.jasonhorkles.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -22,9 +22,8 @@ public class EntityClearer extends JavaPlugin implements Listener {
     private BukkitAudiences adventure;
     private Metrics metrics;
     private MythicPlugin mythicPlugin;
+    private Plugin placeholderAPI;
     private static EntityClearer instance;
-
-    public static boolean papiEnabled = false;
 
     // Startup
     @Override
@@ -36,9 +35,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
         mythicPlugin = (MythicPlugin) getServer().getPluginManager().getPlugin("MythicMobs");
         if (mythicPlugin != null) getLogger().log(Level.INFO, "Enabled MythicMobs hook!");
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderAPI(this).register();
-            papiEnabled = true;
+        placeholderAPI = getServer().getPluginManager().getPlugin("PlaceholderAPI");
+        if (placeholderAPI != null) {
+            new PapiHook().register();
+            getLogger().log(Level.INFO, "Enabled PlaceholderAPI hook!");
         }
 
         metrics = new Metrics(this, 10915);
@@ -47,6 +47,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         getCommand("clearentities").setExecutor(new ClearTask());
+        getCommand("test").setExecutor(new test());
         getCommand("entityclearer").setTabCompleter(new TabComplete());
 
         getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
@@ -151,6 +152,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
     public MythicPlugin getMythicPlugin() {
         return mythicPlugin;
+    }
+
+    public Plugin getPlaceholderAPI() {
+        return placeholderAPI;
     }
 
     public Metrics getMetrics() {

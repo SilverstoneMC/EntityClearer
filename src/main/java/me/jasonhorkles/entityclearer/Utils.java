@@ -37,15 +37,21 @@ public class Utils {
         }
 
         long interval = plugin.getConfig().getInt("interval") * 60L * 20;
+        setNextKillTask(interval);
 
         savedKillTask = new BukkitRunnable() {
             @Override
             public void run() {
                 new Countdown().countdown();
-                // ticks * 50 = ms
-                if (EntityClearer.papiEnabled) nextKillTask = System.currentTimeMillis() + (interval * 50);
+                setNextKillTask(interval);
             }
         }.runTaskTimer(plugin, interval, interval);
+    }
+
+    private void setNextKillTask(long interval) {
+        // ticks * 50 = ms
+        if (EntityClearer.getInstance().getPlaceholderAPI() != null)
+            if (interval != -1) nextKillTask = System.currentTimeMillis() + (interval * 50);
     }
 
     public void logDebug(Level level, String message) {

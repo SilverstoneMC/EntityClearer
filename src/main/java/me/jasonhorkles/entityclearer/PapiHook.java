@@ -2,16 +2,9 @@ package me.jasonhorkles.entityclearer;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class PlaceholderAPI extends PlaceholderExpansion {
-    public PlaceholderAPI(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    private final JavaPlugin plugin;
-
+public class PapiHook extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
         return "entityclearer";
@@ -34,15 +27,24 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        if (params.equalsIgnoreCase("time_left_minutes")) return String.valueOf(Utils.nextKillTask / 60000);
+        if (params.equalsIgnoreCase("remaining_minutes")) {
+            if (Utils.nextKillTask == -1) return "DISABLED";
 
-        if (params.equalsIgnoreCase("time_left_seconds")) return String.valueOf(Utils.nextKillTask / 1000);
+            return String.valueOf((Utils.nextKillTask - System.currentTimeMillis()) / 60000);
+        }
 
-        if (params.equalsIgnoreCase("time_left_remaining_seconds")) {
-            int seconds = (int) (Utils.nextKillTask / 1000);
-            int minutes = seconds / 60;
+        if (params.equalsIgnoreCase("remaining_seconds")) {
+            if (Utils.nextKillTask == -1) return "DISABLED";
+            
+            return String.valueOf((Utils.nextKillTask - System.currentTimeMillis()) / 1000);
+        }
+
+        if (params.equalsIgnoreCase("remaining_seconds_left")) {
+            if (Utils.nextKillTask == -1) return "DISABLED";
+
+            int seconds = (int) ((Utils.nextKillTask - System.currentTimeMillis()) / 1000);
             seconds %= 60;
-            return String.format("%02d:%02d", minutes, seconds);
+            return String.valueOf(seconds);
         }
 
         return null; // Placeholder is unknown by the Expansion

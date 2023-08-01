@@ -109,7 +109,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
                 } catch (IOException e) {
                     new Utils().sendError("Failed to create debug file! Check console for the debug output.");
-                    if (getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                    e.printStackTrace();
                 }
                 Utils.debug = true;
 
@@ -129,10 +129,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
 
                         """);
+                    getLogger().info("Config file dumped!");
                 } catch (IOException e) {
-                    if (getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                    e.printStackTrace();
                 }
-                getLogger().info("Config file dumped!");
 
                 if (getConfig().getBoolean("countdown-on-command")) new Countdown().countdown();
                 else new ClearTask().removeEntities(false);

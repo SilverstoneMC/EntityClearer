@@ -159,8 +159,7 @@ public class ClearTask implements CommandExecutor {
                                         new Utils().logDebug(Level.SEVERE, e.toString());
                                         for (StackTraceElement ste : e.getStackTrace())
                                             new Utils().logDebug(Level.SEVERE, ste.toString());
-                                    } else if (plugin.getConfig().getBoolean("print-stack-traces"))
-                                        e.printStackTrace();
+                                    } else e.printStackTrace();
 
                                     logCooldown = true;
                                     BukkitRunnable cooldown = new BukkitRunnable() {
@@ -264,7 +263,7 @@ public class ClearTask implements CommandExecutor {
                             new Utils().logDebug(Level.SEVERE, e.toString());
                             for (StackTraceElement ste : e.getStackTrace())
                                 new Utils().logDebug(Level.SEVERE, ste.toString());
-                        } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                        } else e.printStackTrace();
                     }
                 }
             }
@@ -276,9 +275,7 @@ public class ClearTask implements CommandExecutor {
                 new Utils().logDebug(Level.SEVERE, e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
                     new Utils().logDebug(Level.SEVERE, ste.toString());
-            } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
-            else new Utils().logDebug(Level.WARNING,
-                    "Enable 'print-stack-traces' in your config to see the whole error.");
+            } else e.printStackTrace();
         }
 
         new Utils().logDebug(Level.INFO, "");

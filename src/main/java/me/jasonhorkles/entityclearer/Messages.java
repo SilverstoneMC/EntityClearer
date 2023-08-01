@@ -91,7 +91,7 @@ public class Messages {
                             new Utils().logDebug(Level.SEVERE, e.toString());
                             for (StackTraceElement ste : e.getStackTrace())
                                 new Utils().logDebug(Level.SEVERE, ste.toString());
-                        } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                        } else e.printStackTrace();
                     }
                 }
             }
@@ -105,7 +105,7 @@ public class Messages {
                 new Utils().logDebug(Level.SEVERE, e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
                     new Utils().logDebug(Level.SEVERE, ste.toString());
-            } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+            } else e.printStackTrace();
         }
     }
 }

@@ -3,7 +3,9 @@ package me.jasonhorkles.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
@@ -108,8 +110,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
                     else Utils.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
 
                 } catch (IOException e) {
-                    new Utils().sendError("Failed to create debug file! Check console for the debug output.");
+                    new Utils().sendError(
+                        "Failed to create debug file! Check console for more information...");
                     e.printStackTrace();
+                    return true;
                 }
                 Utils.debug = true;
 
@@ -131,8 +135,23 @@ public class EntityClearer extends JavaPlugin implements Listener {
                         """);
                     getLogger().info("Config file dumped!");
                 } catch (IOException e) {
+                    new Utils().sendError(
+                        "Failed to dump config file! Check console for more information...");
                     e.printStackTrace();
                 }
+
+                // Dump stats
+                new Utils().logDebug(Level.INFO, "╔══════════════════════════════════════╗");
+                new Utils().logDebug(Level.INFO, "║             INFORMATION              ║");
+                new Utils().logDebug(Level.INFO, "╚══════════════════════════════════════╝");
+
+                new Utils().logDebug(Level.INFO, "Plugin version: " + getDescription().getVersion());
+                new Utils().logDebug(Level.INFO, "Server version: " + Bukkit.getVersion());
+                new Utils().logDebug(Level.INFO, "Java version: " + System.getProperty("java.version"));
+
+                new Utils().logDebug(Level.INFO, "Available world list: ");
+                for (World world : Bukkit.getWorlds())
+                    new Utils().logDebug(Level.INFO, " " + world.getName());
 
                 if (getConfig().getBoolean("countdown-on-command")) new Countdown().countdown();
                 else new ClearTask().removeEntities(false);

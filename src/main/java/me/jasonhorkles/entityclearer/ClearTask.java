@@ -66,9 +66,6 @@ public class ClearTask implements CommandExecutor {
             new Utils().logDebug(Level.INFO, "Adding all worlds defined in config to removal list...");
             for (String world : keys) worlds.add(Bukkit.getWorld(world));
         }
-
-        new Utils().logDebug(Level.INFO, "World list: ");
-        for (World world : worlds) new Utils().logDebug(Level.INFO, world.getName());
         new Utils().logDebug(Level.INFO, "");
 
         try {
@@ -89,12 +86,20 @@ public class ClearTask implements CommandExecutor {
 
                 // Get the loaded entities
                 for (Entity entity : world.getEntities())
+
                     // For each entity type in the config
                     for (String entityType : plugin.getConfig()
                         .getStringList(path + "." + worldName + ".entities")) {
+
+                        // If the entityType includes named
+                        boolean includeNamed = false;
+                        if (entityType.endsWith("-NAMED")) {
+                            includeNamed = true;
+                            entityType = entityType.replace("-NAMED", "");
+                        }
+
                         // If the entity is a MythicMob
                         boolean isValidMythicMob = false;
-
                         if (mythicPlugin != null) {
                             ActiveMob mythicMob = MythicBukkit.inst().getMobManager()
                                 .getActiveMob(entity.getUniqueId()).orElse(null);
@@ -122,10 +127,11 @@ public class ClearTask implements CommandExecutor {
                             else new Utils().logDebug(Level.INFO,
                                 "Entity " + entity.getType() + " matches the config's!");
 
+                            // Skip detecting spawn reasons and nearby entities if a dropped item
                             if (entity.getType() == EntityType.DROPPED_ITEM) {
                                 new Utils().logDebug(Level.INFO,
                                     "Skipping detection of spawn reasons and nearby entities...");
-                                checkNamed(entity, isValidMythicMob);
+                                checkNamed(entity, isValidMythicMob, includeNamed);
                                 continue;
                             }
 
@@ -144,7 +150,8 @@ public class ClearTask implements CommandExecutor {
                                             .equalsIgnoreCase(spawnReason)) {
                                             new Utils().logDebug(Level.INFO,
                                                 entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason() + " matches the config's!");
-                                            checkNearby(entity, path, worldName, isValidMythicMob);
+                                            checkNearby(entity, path, worldName, isValidMythicMob,
+                                                includeNamed);
                                         }
 
                                 } catch (NoClassDefFoundError | NoSuchMethodError e) {
@@ -175,7 +182,7 @@ public class ClearTask implements CommandExecutor {
                             } else {
                                 new Utils().logDebug(Level.INFO,
                                     "Removing entities regardless of their spawn reason...");
-                                checkNearby(entity, path, worldName, isValidMythicMob);
+                                checkNearby(entity, path, worldName, isValidMythicMob, includeNamed);
                             }
                         }
                     }
@@ -278,7 +285,6 @@ public class ClearTask implements CommandExecutor {
             } else e.printStackTrace();
         }
 
-        new Utils().logDebug(Level.INFO, "");
         new Utils().logDebug(Level.INFO, "╔══════════════════════════════════════╗");
         new Utils().logDebug(Level.INFO, "║           TASKS COMPLETED            ║");
         new Utils().logDebug(Level.INFO, "║      IF SUPPORT IS NEEDED, FIND      ║");
@@ -299,7 +305,7 @@ public class ClearTask implements CommandExecutor {
         }
     }
 
-    private void checkNearby(Entity entity, String path, String worldName, boolean isMythicMob) {
+    private void checkNearby(Entity entity, String path, String worldName, boolean isMythicMob, boolean includeNamed) {
         boolean nearby = plugin.getConfig().getBoolean("nearby-entities.enabled");
         boolean onlyCountFromList = plugin.getConfig().getBoolean("nearby-entities.only-count-from-list");
         double x = plugin.getConfig().getDouble("nearby-entities.x");
@@ -323,6 +329,8 @@ public class ClearTask implements CommandExecutor {
 
                     for (String entityType : plugin.getConfig()
                         .getStringList(path + "." + worldName + ".entities")) {
+                        if (entityType.endsWith("-NAMED")) entityType = entityType.replace("-NAMED", "");
+
                         boolean nearbyIsMythicMob = false;
 
                         // If the nearby entity is a MythicMob
@@ -365,66 +373,40 @@ public class ClearTask implements CommandExecutor {
                     "Found " + nearbyEntities.size() + " nearby entities that were on the list.");
             }
 
-            if (nearbyEntities.size() > count) checkNamed(entity, isMythicMob);
+            if (nearbyEntities.size() > count) checkNamed(entity, isMythicMob, includeNamed);
             else {
-                new Utils().logDebug(Level.INFO, "Checking next entity if available...");
+                new Utils().logDebug(Level.INFO, "Not enough entities nearby! Skipping...");
                 new Utils().logDebug(Level.INFO, "");
             }
 
             // If nearby check is disabled, just remove the entities
         } else {
             new Utils().logDebug(Level.INFO, "Check nearby entities option disabled.");
-            checkNamed(entity, isMythicMob);
+            checkNamed(entity, isMythicMob, includeNamed);
         }
 
     }
 
-    private void checkNamed(Entity entity, boolean isMythicMob) {
-        // MythicMobs
-        if (isMythicMob) if (plugin.getConfig().getBoolean("remove-named-mythicmobs")) {
-            new Utils().logDebug(Level.INFO, "Removing MythicMob regardless of a name...");
+    private void checkNamed(Entity entity, boolean isMythicMob, boolean includeNamed) {
+        String entityType;
+        if (isMythicMob) entityType = "MythicMob";
+        else entityType = "entity";
+
+        if (includeNamed) {
             // Remove it!
-            new Utils().logDebug(Level.INFO, "Removing MythicMob " + entity.getType() + "...");
+            new Utils().logDebug(Level.INFO,
+                "Removing " + entityType + " " + entity.getType() + " because we don't care about its name...");
             entity.remove();
             removedEntities++;
 
         } else {
-            new Utils().logDebug(Level.INFO, "Removing MythicMob without a name only...");
+            new Utils().logDebug(Level.INFO, "Removing " + entityType + " without a name only...");
             // Don't remove named
             // And it doesn't have a name
             if (entity.getCustomName() == null) {
                 new Utils().logDebug(Level.INFO,
-                    "MythicMob " + entity.getType() + " doesn't have a custom name!");
+                    "The " + entityType + " " + entity.getType() + " doesn't have a custom name! Removing it...");
                 // Remove it!
-                new Utils().logDebug(Level.INFO, "Removing MythicMob " + entity.getType() + "...");
-                entity.remove();
-                removedEntities++;
-
-            } else {
-                new Utils().logDebug(Level.INFO,
-                    entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
-                new Utils().logDebug(Level.INFO, "");
-                return;
-            }
-        }
-
-            // Vanilla
-        else if (plugin.getConfig().getBoolean("remove-named")) {
-            new Utils().logDebug(Level.INFO, "Removing entity regardless of a name...");
-            // Remove it!
-            new Utils().logDebug(Level.INFO, "Removing entity " + entity.getType() + "...");
-            entity.remove();
-            removedEntities++;
-
-        } else {
-            new Utils().logDebug(Level.INFO, "Removing entity without a name only...");
-            // Don't remove named
-            // And it doesn't have a name
-            if (entity.getCustomName() == null) {
-                new Utils().logDebug(Level.INFO,
-                    "Entity " + entity.getType() + " doesn't have a custom name!");
-                // Remove it!
-                new Utils().logDebug(Level.INFO, "Removing entity " + entity.getType() + "...");
                 entity.remove();
                 removedEntities++;
 

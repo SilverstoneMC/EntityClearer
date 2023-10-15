@@ -4,7 +4,7 @@
 
     <groupId>me.jasonhorkles</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>1.17.0</version>
+    <version>1.17.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -164,7 +164,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.3.5</version>
+            <version>5.4.1</version>
             <scope>provided</scope>
         </dependency>
 

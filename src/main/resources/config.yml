@@ -198,16 +198,13 @@ low-tps:
 
   # Should the list of entities to remove be separate from the one defined above?
   separate-entity-list: false
+
   # This list will not be active unless the above option is true
   worlds:
 
     # Example 1
     your_world_name: # <- Replace your_world_name with the desired world name or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
 
-      # The entities to be removed from the world
-      # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
-      # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
-      # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
       entities:
         - BEE
         - ARMOR_STAND
@@ -217,7 +214,7 @@ low-tps:
         - CHICKEN
         - CREEPER
         - FALLING_BLOCK
-        - MINECART
+        - MINECART-OCCUPIED
         - MINECART_CHEST
         - MINECART_FURNACE
         - MINECART_HOPPER
@@ -230,12 +227,8 @@ low-tps:
         - WOLF
         - ZOMBIE
 
-      # Should only entities with a specific spawn reason be removed?
-      # Setting this to false will check for any spawn reason
-      # Note: This only works on Paper and its forks!
       spawn-reason:
         enabled: false
-        # See https://jd.papermc.io/paper/1.20/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
         reasons:
           - SPAWNER
           - SPAWNER_EGG

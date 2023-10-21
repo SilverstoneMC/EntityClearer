@@ -1,5 +1,6 @@
 package me.jasonhorkles.entityclearer;
 
+import me.jasonhorkles.entityclearer.utils.ParseMessage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -11,12 +12,12 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 
 public class TpsMonitoring {
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
-    private final JavaPlugin plugin = EntityClearer.getInstance();
-
     public static boolean tpsTimerRan = false;
     public static BukkitTask savedTpsTask;
     public static final ArrayList<Integer> tickList = new ArrayList<>();
+
+    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
+    private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public void tpsTimer(int delay) {
         plugin.getLogger().info("TPS monitoring activated.");
@@ -66,11 +67,11 @@ public class TpsMonitoring {
         if (plugin.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
             if (player.hasPermission("entityclearer.lowtps")) bukkitAudiences.player(player).sendMessage(
                 MiniMessage.miniMessage().deserialize(
-                    new Utils().parseMessage(plugin.getConfig().getString("low-tps.chat-message"))
+                    new ParseMessage().parse(plugin.getConfig().getString("low-tps.chat-message"))
                         .replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed instantly
-        new ClearTask().removeEntities(true);
+        new ClearTask().removeEntitiesPreTask(true);
 
         // Cooldown
         tpsTimerRan = true;

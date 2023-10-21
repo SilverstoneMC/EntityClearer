@@ -15,6 +15,8 @@ public class TabComplete implements TabCompleter {
             if (!arguments.contains("reload")) arguments.add("reload");
         if (sender.hasPermission("entityclearer.debug"))
             if (!arguments.contains("debug")) arguments.add("debug");
+        if (sender.hasPermission("entityclearer.clear"))
+            if (!arguments.contains("clearnow")) arguments.add("clearnow");
 
         List<String> result = new ArrayList<>();
         if (args.length == 1) {

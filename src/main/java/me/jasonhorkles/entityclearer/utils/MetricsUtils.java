@@ -29,23 +29,18 @@ public class MetricsUtils {
         EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("sound", () -> sound));
 
         // TPS
-        String tpsEnabled;
-        if (plugin.getConfig().getBoolean("low-tps.enabled")) tpsEnabled = "Enabled";
-        else tpsEnabled = "Disabled";
+        String tpsEnabled = plugin.getConfig().getBoolean("low-tps.enabled") ? "Enabled" : "Disabled";
         EntityClearer.getInstance().getMetrics()
             .addCustomChart(new SimplePie("low_tps_check", () -> tpsEnabled));
 
         // Nearby
-        String nearbyEnabled;
-        if (plugin.getConfig().getBoolean("nearby-entities.enabled")) nearbyEnabled = "Enabled";
-        else nearbyEnabled = "Disabled";
+        String nearbyEnabled = plugin.getConfig()
+            .getBoolean("nearby-entities.enabled") ? "Enabled" : "Disabled";
         EntityClearer.getInstance().getMetrics()
             .addCustomChart(new SimplePie("nearby_entities_check", () -> nearbyEnabled));
 
         // MythicMobs
-        String mmEnabled;
-        if (EntityClearer.getInstance().getMythicPlugin() != null) mmEnabled = "Yes";
-        else mmEnabled = "No";
+        String mmEnabled = EntityClearer.getInstance().getMythicPlugin() != null ? "Yes" : "No";
         EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("mythicmobs", () -> mmEnabled));
     }
 }

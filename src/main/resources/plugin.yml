@@ -4,34 +4,35 @@ description: Remove entities from your worlds!
 version: %VERSION%
 author: JasonHorkles
 website: https://github.com/SilverstoneMC/EntityClearer
-api-version: 1.17
+api-version: 1.18
 folia-supported: true
 softdepend:
   - MythicMobs
+  - PlaceholderAPI
 
 commands:
   entityclearer:
     aliases: [ ecl ]
-    description: "Base command for the EntityClearer plugin"
-    permission: entityclearer.reload
-    usage: "§cUsage: /entityclearer <debug | reload>"
-  clearentities:
-    description: "Clears the entities defined in the config"
-    permission: entityclearer.clear
+    description: "Main command for the EntityClearer plugin"
+    permission: entityclearer.basecommand
+    usage: "§cUsage: /entityclearer <debug | reload | clearnow>"
 
 permissions:
-  entityclearer.reload:
+  entityclearer.basecommand:
     default: op
-    description: Reload the plugin
-  entityclearer.debug:
-    default: op
-    description: Create debug dump
+    description: Base command for the EntityClearer plugin (does nothing by itself)
   entityclearer.clear:
     default: op
     description: Force clear the entities
+  entityclearer.debug:
+    default: op
+    description: Create debug dump
   entityclearer.lowtps:
     default: op
     description: Notifications when the TPS is low
   entityclearer.notify:
     default: op
     description: Notifications when there are problems within the plugin
+  entityclearer.reload:
+    default: op
+    description: Reload the plugin

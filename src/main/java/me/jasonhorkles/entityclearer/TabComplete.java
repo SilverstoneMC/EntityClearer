@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabComplete implements TabCompleter {
-
     final List<String> arguments = new ArrayList<>();
 
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
@@ -16,6 +15,8 @@ public class TabComplete implements TabCompleter {
             if (!arguments.contains("reload")) arguments.add("reload");
         if (sender.hasPermission("entityclearer.debug"))
             if (!arguments.contains("debug")) arguments.add("debug");
+        if (sender.hasPermission("entityclearer.clear"))
+            if (!arguments.contains("clearnow")) arguments.add("clearnow");
 
         List<String> result = new ArrayList<>();
         if (args.length == 1) {

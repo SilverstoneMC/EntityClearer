@@ -16,7 +16,7 @@
 interval: 0
 
 # The sound to play when showing the warnings
-# See https://minecraft.fandom.com/wiki/Sounds.json#:~:text=be%20found%20here.-,Sound%20events,-A%20sound%20event for all sounds
+# See https://minecraft.wiki/w/Sounds.json#Java_Edition_values:~:text=Java%20Edition%20values-,%5Bshow%5D,-%5Bedit%5D for all sounds
 # Set to '' for no sound
 sound: 'ui.button.click'
 
@@ -28,7 +28,7 @@ countdown-pitch: 0.9
 # Valid values are between 0.0-2.0
 cleared-pitch: 1.0
 
-# Should using the command /clearentities start the countdown or instantly remove the entities?
+# Should using the command /ecl clearnow start the countdown or instantly remove the entities?
 countdown-on-command: false
 
 # When should the warning messages send?
@@ -52,11 +52,21 @@ warning-messages:
 worlds:
 
   # Example 1
-  your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
+  your_world_name: # <- Replace your_world_name with the desired world name or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
 
     # The entities to be removed from the world
     # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
-    # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
+    #
+    # By default, named entities will not be removed
+    # Add "-NAMED" to the end of the entity type to also remove named ones
+    #
+    # By default, occupied vehicles will not be removed
+    # Add "-OCCUPIED" to the end of the entity type to also remove occupied ones
+    #
+    # The above tags can be used together in any order
+    #
+    # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded in quotation marks
+    #
     # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
     entities:
       - BEE
@@ -67,17 +77,17 @@ worlds:
       - SKELETON
       - SLIME
       - SPIDER
-      - SQUID
+      - SQUID-NAMED
       - WOLF
       - ZOMBIE
-      #- "MythicMob:SkeletalKnight"
+      #- HORSE-NAMED-OCCUPIED
+      #- "MythicMob:SkeletalKnight-NAMED"
 
     # Should only entities with a specific spawn reason be removed?
     # Setting this to false will check for any spawn reason
     # Note: This only works on Paper and its forks!
     spawn-reason:
       enabled: false
-
       # See https://jd.papermc.io/paper/1.20/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
       reasons:
         - SPAWNER
@@ -136,11 +146,7 @@ nearby-entities:
   # How many additional entities must be around the first entity to be removed?
   count: 14
 
-# Should entities with names also be removed?
-remove-named: false
-remove-named-mythicmobs: false
-
-# The command(s) to run after the entity clearing task completes
+# The command(s) to run after the entity clearing task completes (if successful)
 commands:
 #  - nuke
 
@@ -158,16 +164,16 @@ messages:
   # {TIMELEFT} - the time remaining before the clear task is run
   # {TIME} - will output "minute(s)" or "second(s)" depending on the time left
 
-  actionbar-message: "<#ff9b0f>&lCommon entities will be removed in &e&l{TIMELEFT} <#ff9b0f>&l{TIME}!"
-  chat-message: "&cCommon entities will be removed in &7{TIMELEFT} &c{TIME}!"
+  actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow>{TIMELEFT} <#ff9b0f>{TIME}!"
+  chat-message: "<red>Common entities will be removed in <gray>{TIMELEFT} <red>{TIME}!"
   
   # Placeholders:
   # {ENTITIES} - the amount of entities removed after the clear task has run
   
-  actionbar-completed-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities!"
-  actionbar-completed-low-tps-message: "<#ff9b0f>&lRemoved &e&l{ENTITIES} <#ff9b0f>&lentities due to low TPS!"
-  chat-completed-message: "&cRemoved &7{ENTITIES} &centities!"
-  chat-completed-low-tps-message: "&cRemoved &7{ENTITIES} &centities due to low TPS!"
+  actionbar-completed-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES} <#ff9b0f>entities!"
+  actionbar-completed-low-tps-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES} <#ff9b0f>entities due to low TPS!"
+  chat-completed-message: "<red>Removed <gray>{ENTITIES} <red>entities!"
+  chat-completed-low-tps-message: "<red>Removed <gray>{ENTITIES} <red>entities due to low TPS!"
 
 
 
@@ -188,20 +194,17 @@ low-tps:
 
   # Placeholders:
   # {TPS} - the current TPS of the server
-  chat-message: "&c&lWarning: TPS low &8&l(&7&l{TPS}&8&l)&c&l! Removing entities..."
+  chat-message: "<red><bold>Warning: TPS low <dark_gray>(<gray>{TPS}<dark_gray>)<red>! Removing entities..."
 
   # Should the list of entities to remove be separate from the one defined above?
   separate-entity-list: false
+
   # This list will not be active unless the above option is true
   worlds:
 
     # Example 1
-    your_world_name: # <- Change your_world_name to be whatever world name you'd like, or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
+    your_world_name: # <- Replace your_world_name with the desired world name or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
 
-      # The entities to be removed from the world
-      # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
-      # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded by quotation marks
-      # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
       entities:
         - BEE
         - ARMOR_STAND
@@ -211,7 +214,7 @@ low-tps:
         - CHICKEN
         - CREEPER
         - FALLING_BLOCK
-        - MINECART
+        - MINECART-OCCUPIED
         - MINECART_CHEST
         - MINECART_FURNACE
         - MINECART_HOPPER
@@ -220,17 +223,12 @@ low-tps:
         - SKELETON
         - SLIME
         - SPIDER
-        - SQUID
+        - SQUID-NAMED
         - WOLF
         - ZOMBIE
 
-      # Should only entities with a specific spawn reason be removed?
-      # Setting this to false will check for any spawn reason
-      # Note: This only works on Paper and its forks!
       spawn-reason:
         enabled: false
-
-        # See https://jd.papermc.io/paper/1.20/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
         reasons:
           - SPAWNER
           - SPAWNER_EGG
@@ -254,11 +252,3 @@ low-tps:
         reasons:
           - SPAWNER
           - SPAWNER_EGG
-
-
-
-###############################################
-#                    DEBUG                    #
-###############################################
-
-print-stack-traces: false

@@ -3,55 +3,59 @@ package me.jasonhorkles.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
+import me.jasonhorkles.entityclearer.utils.EntityData;
+import me.jasonhorkles.entityclearer.utils.LogDebug;
+import me.jasonhorkles.entityclearer.utils.ParseMessage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class ClearTask implements CommandExecutor {
+@SuppressWarnings({"DataFlowIssue", "resource"})
+public class ClearTask {
+    private final ArrayList<EntityData> entityDataList = new ArrayList<>();
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
     private final MythicPlugin mythicPlugin = EntityClearer.getInstance().getMythicPlugin();
     private int removedEntities;
     private static boolean logCooldown = false;
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        sender.sendMessage(ChatColor.YELLOW + "Clearing entities...");
-        // If it should count down first
-        // Otherwise just go
-        if (plugin.getConfig().getBoolean("countdown-on-command")) new Countdown().countdown();
-        else removeEntities(false);
-        return true;
-    }
+    public void removeEntitiesPreTask(boolean tpsLow) {
+        new LogDebug().debug(Level.INFO, "╔══════════════════════════════════════╗");
+        new LogDebug().debug(Level.INFO, "║     REMOVE ENTITIES TASK STARTED     ║");
+        new LogDebug().debug(Level.INFO, "╚══════════════════════════════════════╝");
 
-    @SuppressWarnings("DataFlowIssue")
-    public void removeEntities(boolean tpsLow) {
-        new Utils().logDebug(Level.INFO, "╔══════════════════════════════════════╗");
-        new Utils().logDebug(Level.INFO, "║     REMOVE ENTITIES TASK STARTED     ║");
-        new Utils().logDebug(Level.INFO, "╚══════════════════════════════════════╝");
-
-        if (mythicPlugin != null) new Utils().logDebug(Level.INFO, "MythicMobs plugin found!");
-
+        if (mythicPlugin != null) new LogDebug().debug(Level.INFO, "MythicMobs plugin found!");
         removedEntities = 0;
 
+        try {
+            removeEntities(tpsLow);
+        } catch (Error | Exception e) {
+            new LogDebug().error("Something went wrong clearing entities! Is your config outdated?");
+
+            if (LogDebug.debugActive) {
+                new LogDebug().debug(Level.SEVERE, e.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new LogDebug().debug(Level.SEVERE, ste.toString());
+            } else e.printStackTrace();
+        }
+    }
+
+    private void removeEntities(boolean tpsLow) {
         String path = "worlds";
         if (tpsLow) if (plugin.getConfig().getBoolean("low-tps.separate-entity-list")) {
-            new Utils().logDebug(Level.INFO, "Separate entity list enabled!");
+            new LogDebug().debug(Level.INFO, "Separate entity list enabled!");
             path = "low-tps.worlds";
         }
 
@@ -60,391 +64,339 @@ public class ClearTask implements CommandExecutor {
             plugin.getConfig().getConfigurationSection(path).getKeys(false));
 
         if (keys.contains("ALL")) {
-            new Utils().logDebug(Level.INFO, "'ALL' found! Adding all worlds to removal list...");
+            new LogDebug().debug(Level.INFO, "'ALL' found! Adding all worlds to removal list...");
             worlds.addAll(Bukkit.getWorlds());
         } else {
-            new Utils().logDebug(Level.INFO, "Adding all worlds defined in config to removal list...");
+            new LogDebug().debug(Level.INFO, "Adding all worlds defined in config to removal list...");
             for (String world : keys) worlds.add(Bukkit.getWorld(world));
         }
 
-        new Utils().logDebug(Level.INFO, "");
+        // For each world in the config
+        int index = -1;
+        for (World world : worlds) {
+            index++;
 
-        try {
-            // For each world in the config
-            int index = -1;
-            for (World world : worlds) {
-                index++;
-
-                // If that world doesn't exist, complain
-                if (world == null) {
-                    new Utils().sendError("Couldn't find the world \"" + keys.get(
-                        index) + "\"! Please double check your config.");
-                    continue;
-                }
-
-                String worldName = world.getName();
-                if (keys.contains("ALL")) worldName = "ALL";
-
-                // Get the loaded entities
-                for (Entity entity : world.getEntities())
-                    // For each entity type in the config
-                    for (String entityType : plugin.getConfig()
-                        .getStringList(path + "." + worldName + ".entities")) {
-                        // If the entity is a MythicMob
-                        boolean isValidMythicMob = false;
-
-                        if (mythicPlugin != null) {
-                            ActiveMob mythicMob = MythicBukkit.inst().getMobManager()
-                                .getActiveMob(entity.getUniqueId()).orElse(null);
-
-                            // Check if mob is vanilla
-                            if (mythicMob != null && !entity.getType().toString()
-                                .equalsIgnoreCase(mythicMob.getMobType()))
-                                if (entityType.startsWith("MythicMob:")) {
-                                    if (mythicMob.getMobType()
-                                        .equalsIgnoreCase(entityType.replaceFirst("MythicMob:", ""))) {
-                                        new Utils().logDebug(Level.INFO, "Entity is a MythicMob!");
-                                        isValidMythicMob = true;
-                                        entityType = entityType.replaceFirst("MythicMob:", "");
-                                    }
-                                } else continue;
-                        }
-
-
-                        // If the entity is actually in the config
-                        if (entity.getType().toString().equalsIgnoreCase(entityType) || isValidMythicMob) {
-                            if (isValidMythicMob) new Utils().logDebug(Level.INFO,
-                                "MythicMob '" + MythicBukkit.inst().getMobManager()
-                                    .getActiveMob(entity.getUniqueId()).orElse(null)
-                                    .getMobType() + "' matches the config's!");
-                            else new Utils().logDebug(Level.INFO,
-                                "Entity " + entity.getType() + " matches the config's!");
-
-                            if (entity.getType() == EntityType.DROPPED_ITEM) {
-                                new Utils().logDebug(Level.INFO,
-                                    "Skipping detection of spawn reasons and nearby entities...");
-                                checkNamed(entity, isValidMythicMob);
-                                continue;
-                            }
-
-                            // If only entities with a specific reason should be removed
-                            if (plugin.getConfig()
-                                .getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
-                                new Utils().logDebug(Level.INFO,
-                                    "Only removing entities with a specific spawn reason...");
-
-                                try {
-                                    // For each spawn reason in the config
-                                    // If the entity's spawn reason matches the config's
-                                    for (String spawnReason : plugin.getConfig()
-                                        .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
-                                        if (entity.getEntitySpawnReason().name()
-                                            .equalsIgnoreCase(spawnReason)) {
-                                            new Utils().logDebug(Level.INFO,
-                                                entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason() + " matches the config's!");
-                                            checkNearby(entity, path, worldName, isValidMythicMob);
-                                        }
-
-                                } catch (NoClassDefFoundError | NoSuchMethodError e) {
-                                    if (logCooldown) continue;
-
-                                    new Utils().sendError(
-                                        "Unable to check for entity spawn reason! Are you not running Paper?");
-                                    new Utils().logDebug(Level.WARNING,
-                                        "Please use Paper or its forks for this feature to work.");
-
-                                    if (Utils.debug) {
-                                        new Utils().logDebug(Level.SEVERE, e.toString());
-                                        for (StackTraceElement ste : e.getStackTrace())
-                                            new Utils().logDebug(Level.SEVERE, ste.toString());
-                                    } else if (plugin.getConfig().getBoolean("print-stack-traces"))
-                                        e.printStackTrace();
-
-                                    logCooldown = true;
-                                    BukkitRunnable cooldown = new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            logCooldown = false;
-                                        }
-                                    };
-                                    cooldown.runTaskLater(plugin, 200);
-                                }
-
-                                // If any entity should be removed, regardless of the spawn reason
-                            } else {
-                                new Utils().logDebug(Level.INFO,
-                                    "Removing entities regardless of their spawn reason...");
-                                checkNearby(entity, path, worldName, isValidMythicMob);
-                            }
-                        }
-                    }
+            // If that world doesn't exist, complain
+            if (world == null) {
+                new LogDebug().error(
+                    "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                continue;
             }
 
-            for (String command : plugin.getConfig().getStringList("commands"))
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            new LogDebug().debug(Level.INFO, "");
+            new LogDebug().debug(Level.INFO, "Scanning world " + world.getName() + "...");
 
-            // Submit stats
-            int finalRemovedEntities = removedEntities;
-            if (removedEntities > 0) EntityClearer.getInstance().getMetrics()
-                .addCustomChart(new SingleLineChart("entities_removed", () -> finalRemovedEntities));
+            String worldName = world.getName();
+            if (keys.contains("ALL")) worldName = "ALL";
 
-            // For each world in the config
-            index = -1;
-            for (World world : worlds) {
-                index++;
-                // If that world doesn't exist, complain
-                if (world == null) {
-                    new Utils().sendError("Couldn't find the world \"" + keys.get(
-                        index) + "\"! Please double check your config.");
-                    continue;
-                }
+            // Save the entity data from the config
+            for (String entityType : plugin.getConfig().getStringList(path + "." + worldName + ".entities"))
+                entityDataList.add(new EntityData(entityType));
+            new LogDebug().debug(Level.INFO, "");
 
-                // For each player in said world
-                for (Player player : world.getPlayers()) {
-                    // Action bar
-                    if (tpsLow) {
-                        if (!plugin.getConfig().getString("messages.actionbar-completed-low-tps-message")
-                            .isBlank()) {
-                            new Utils().logDebug(Level.INFO,
-                                "Sending low TPS action bar to player " + player.getName() + " in world " + world.getName() + ".");
+            // Get the loaded entities
+            for (Entity entity : world.getEntities()) {
+                EntityData entityData = matchEntityFromConfig(entity);
 
-                            bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
-                                .deserialize(new Utils().parseMessage(plugin.getConfig()
-                                    .getString("messages.actionbar-completed-low-tps-message")
-                                    .replace("{ENTITIES}", String.valueOf(removedEntities)))));
-                        }
-                    } else if (!plugin.getConfig().getString("messages.actionbar-completed-message")
-                        .isBlank()) {
-                        new Utils().logDebug(Level.INFO,
-                            "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
+                if (entityData == null) continue;
 
-                        bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
-                            new Utils().parseMessage(
-                                plugin.getConfig().getString("messages.actionbar-completed-message")
-                                    .replace("{ENTITIES}", String.valueOf(removedEntities)))));
-                    }
+                // If the entity is a MythicMob matched in the config
+                if (entityData.getMythicMobType() != null) {
+                    ActiveMob mythicMob = MythicBukkit.inst().getMobManager()
+                        .getActiveMob(entity.getUniqueId()).orElse(null);
 
-                    // Chat
-                    if (tpsLow) {
-                        if (!plugin.getConfig().getString("messages.chat-completed-low-tps-message")
-                            .isBlank()) {
-                            new Utils().logDebug(Level.INFO,
-                                "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
-
-                            bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
-                                new Utils().parseMessage(
-                                        plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
-                                    .replace("{ENTITIES}", String.valueOf(removedEntities))));
-                        }
-                    } else if (!plugin.getConfig().getString("messages.chat-completed-message").isBlank()) {
-                        new Utils().logDebug(Level.INFO,
-                            "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
-
-                        bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
-                            new Utils().parseMessage(
-                                    plugin.getConfig().getString("messages.chat-completed-message"))
-                                .replace("{ENTITIES}", String.valueOf(removedEntities))));
-                    }
-
-                    // Play the sound
-                    new Utils().logDebug(Level.INFO, "Playing sound " + plugin.getConfig().getString(
-                        "sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
-
-                    try {
-                        player.playSound(player.getLocation(),
-                            "minecraft:" + plugin.getConfig().getString("sound"), SoundCategory.MASTER, 1,
-                            Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
-                    } catch (NumberFormatException e) {
-                        new Utils().sendError("Cleared pitch \"" + plugin.getConfig()
-                            .getString("cleared-pitch") + "\" is not a number!");
-
-                        if (Utils.debug) {
-                            new Utils().logDebug(Level.SEVERE, e.toString());
-                            for (StackTraceElement ste : e.getStackTrace())
-                                new Utils().logDebug(Level.SEVERE, ste.toString());
-                        } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
+                    if (mythicMob.getMobType().equalsIgnoreCase(entityData.getMythicMobType())) {
+                        checkOccupied(entity, entityData, path, worldName);
+                        continue;
                     }
                 }
+
+                // Skip all the checks if a dropped item
+                if (entity.getType() == EntityType.DROPPED_ITEM) removeEntity(entity);
+                else checkOccupied(entity, entityData, path, worldName);
             }
 
-        } catch (Error | Exception e) {
-            new Utils().sendError("Something went wrong clearing entities! Is your config outdated?");
-
-            if (Utils.debug) {
-                new Utils().logDebug(Level.SEVERE, e.toString());
-                for (StackTraceElement ste : e.getStackTrace())
-                    new Utils().logDebug(Level.SEVERE, ste.toString());
-            } else if (plugin.getConfig().getBoolean("print-stack-traces")) e.printStackTrace();
-            else new Utils().logDebug(Level.WARNING,
-                    "Enable 'print-stack-traces' in your config to see the whole error.");
+            // For each player in said world
+            for (Player player : world.getPlayers()) {
+                sendActionBar(world, player, tpsLow);
+                sendChat(world, player, tpsLow);
+                playSound(world, player);
+            }
         }
 
-        new Utils().logDebug(Level.INFO, "");
-        new Utils().logDebug(Level.INFO, "╔══════════════════════════════════════╗");
-        new Utils().logDebug(Level.INFO, "║           TASKS COMPLETED            ║");
-        new Utils().logDebug(Level.INFO, "║      IF SUPPORT IS NEEDED, FIND      ║");
-        new Utils().logDebug(Level.INFO, "║     THE DUMP FILE LOCATED IN THE     ║");
-        new Utils().logDebug(Level.INFO, "║         ENTITYCLEARER FOLDER         ║");
-        new Utils().logDebug(Level.INFO, "║         AND SEND IT TO US AT         ║");
-        new Utils().logDebug(Level.INFO, "║     https://discord.gg/p6FuXyx6wA    ║");
-        new Utils().logDebug(Level.INFO, "╚══════════════════════════════════════╝");
-        if (Utils.debug) {
-            try {
-                Utils.debugFile.close();
-            } catch (IOException e) {
-                new Utils().logDebug(Level.INFO, e.toString());
-                for (StackTraceElement ste : e.getStackTrace())
-                    new Utils().logDebug(Level.INFO, ste.toString());
+        for (String command : plugin.getConfig().getStringList("commands"))
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+
+        removeEntitiesPostTask();
+    }
+
+    @Nullable
+    private EntityData matchEntityFromConfig(Entity entity) {
+        // Try to match entity with one from the config
+        EntityData entityData = entityDataList.stream()
+            .filter(entityData1 -> entityData1.getType() == entity.getType()).findFirst().orElse(null);
+
+        // If the entity is a MythicMob
+        if (entityData == null && mythicPlugin != null) {
+            ActiveMob mythicMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
+                .orElse(null);
+
+            if (mythicMob == null) {
+                new LogDebug().debug(Level.WARNING,
+                    "Entity " + entity.getType() + " is not a MythicMob nor a valid type from the config!");
+                return null;
             }
-            Utils.debug = false;
+
+            // Try to match mythic entity with one from the config
+            EntityData mythicEntityData = entityDataList.stream().filter(entityData1 -> {
+                if (entityData1.getMythicMobType() == null) return false;
+                return entityData1.getMythicMobType().equalsIgnoreCase(mythicMob.getMobType());
+            }).findFirst().orElse(null);
+
+            if (mythicEntityData == null) {
+                new LogDebug().debug(Level.WARNING,
+                    "Entity " + entity.getType() + " is not a valid MythicMob nor a valid type from the config!");
+                return null;
+            }
+
+            if (mythicMob.getMobType().equalsIgnoreCase(mythicEntityData.getMythicMobType())) {
+                new LogDebug().debug(Level.INFO,
+                    "Entity " + mythicMob.getMobType() + " is a MythicMob that matches the config's!");
+                return mythicEntityData;
+            }
+        }
+
+        // If the entity isn't a MythicMob and is found in the config
+        if (entityData != null) {
+            new LogDebug().debug(Level.INFO, "Entity " + entity.getType() + " matches the config's!");
+            return entityData;
+        }
+
+        new LogDebug().debug(Level.WARNING,
+            "Entity " + entity.getType() + " is not a valid type from the config!");
+        return null;
+    }
+
+    private void checkOccupied(Entity entity, EntityData entityData, String path, String worldName) {
+        // Skip entity if it is occupied and the config doesn't allow it
+        if (!entityData.includeOccupied()) for (Entity passenger : entity.getPassengers())
+            if (passenger.getType() == EntityType.PLAYER) {
+                new LogDebug().debug(Level.INFO,
+                    "Skipping entity " + entity.getType() + " because it is occupied!");
+                return;
+            }
+
+        checkNamed(entity, entityData, path, worldName);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void checkNamed(Entity entity, EntityData entityData, String path, String worldName) {
+        String entityType = (entityData.getMythicMobType() != null) ? "MythicMob" : "entity";
+
+        if (entityData.includeNamed()) {
+            // We don't care if it has a name
+            checkSpawnReason(entity, path, worldName);
+            return;
+        }
+
+        // Don't remove named
+        new LogDebug().debug(Level.INFO, "Removing " + entityType + " without a name only...");
+        // And it doesn't have a name
+        if (entity.getCustomName() == null) {
+            new LogDebug().debug(Level.INFO,
+                "The " + entityType + " " + entity.getType() + " doesn't have a custom name!");
+            checkSpawnReason(entity, path, worldName);
+        }
+        // And it does have a name
+        else {
+            new LogDebug().debug(Level.INFO,
+                entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
+            new LogDebug().debug(Level.INFO, "");
         }
     }
 
-    private void checkNearby(Entity entity, String path, String worldName, boolean isMythicMob) {
-        boolean nearby = plugin.getConfig().getBoolean("nearby-entities.enabled");
-        boolean onlyCountFromList = plugin.getConfig().getBoolean("nearby-entities.only-count-from-list");
+    private void checkSpawnReason(Entity entity, String path, String worldName) {
+        // If any entity should be removed, regardless of the spawn reason
+        if (!plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
+            new LogDebug().debug(Level.INFO, "Removing entities regardless of their spawn reason...");
+            checkNearby(entity);
+            return;
+        }
+
+        new LogDebug().debug(Level.INFO, "Only removing entities with a specific spawn reason...");
+
+        try {
+            ArrayList<String> spawnReasons = new ArrayList<>();
+            for (String spawnReason : plugin.getConfig()
+                .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
+                spawnReasons.add(spawnReason.toUpperCase());
+
+            // If the entity's spawn reason matches the config's
+            if (spawnReasons.contains(entity.getEntitySpawnReason().name())) {
+                new LogDebug().debug(Level.INFO,
+                    entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason() + " matches the config's!");
+                checkNearby(entity);
+
+            } else new LogDebug().debug(Level.INFO,
+                entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason()
+                    .name() + " doesn't match the config's! (" + spawnReasons + ")");
+
+        } catch (NoClassDefFoundError | NoSuchMethodError e) {
+            if (logCooldown) return;
+
+            new LogDebug().error("Unable to check for entity spawn reason! Are you not running Paper?");
+            plugin.getLogger().warning("Please use Paper or its forks for this feature to work.");
+
+            if (LogDebug.debugActive) {
+                new LogDebug().debug(Level.SEVERE, e.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new LogDebug().debug(Level.SEVERE, ste.toString());
+            } else e.printStackTrace();
+
+            logCooldown = true;
+            BukkitRunnable cooldown = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    logCooldown = false;
+                }
+            };
+            cooldown.runTaskLater(plugin, 200);
+        }
+    }
+
+    private void checkNearby(Entity entity) {
+        // If nearby check is disabled, just move on
+        if (!plugin.getConfig().getBoolean("nearby-entities.enabled")) {
+            new LogDebug().debug(Level.INFO, "Check nearby entities option disabled.");
+            removeEntity(entity);
+            return;
+        }
+
+        // Get nearby entities
         double x = plugin.getConfig().getDouble("nearby-entities.x");
         double y = plugin.getConfig().getDouble("nearby-entities.y");
         double z = plugin.getConfig().getDouble("nearby-entities.z");
-        int count = plugin.getConfig().getInt("nearby-entities.count");
+        ArrayList<Entity> nearbyEntities = new ArrayList<>(entity.getNearbyEntities(x, y, z));
+        new LogDebug().debug(Level.INFO, "Found " + nearbyEntities.size() + " nearby entities!");
 
-        // If the config option is enabled
-        if (nearby) {
-            new Utils().logDebug(Level.INFO, "Checking nearby entity count...");
+        // If only entities on the list should be counted
+        if (plugin.getConfig().getBoolean("nearby-entities.only-count-from-list")) {
+            new LogDebug().debug(Level.INFO, "However, only entities on the list should be counted...");
 
-            ArrayList<Entity> nearbyEntities = new ArrayList<>(entity.getNearbyEntities(x, y, z));
+            for (Entity nearbyEntity : new ArrayList<>(nearbyEntities)) {
+                EntityData nearbyEntityData = matchEntityFromConfig(nearbyEntity);
 
-            new Utils().logDebug(Level.INFO, "Found " + nearbyEntities.size() + " nearby entities.");
-
-            if (onlyCountFromList) {
-                new Utils().logDebug(Level.INFO, "However, only entities on the list should be counted...");
-
-                for (Entity nearbyEntity : new ArrayList<>(nearbyEntities)) {
-                    boolean isInList = false;
-
-                    for (String entityType : plugin.getConfig()
-                        .getStringList(path + "." + worldName + ".entities")) {
-                        boolean nearbyIsMythicMob = false;
-
-                        // If the nearby entity is a MythicMob
-                        if (mythicPlugin != null) {
-                            ActiveMob mythicMob = MythicBukkit.inst().getMobManager()
-                                .getActiveMob(nearbyEntity.getUniqueId()).orElse(null);
-
-                            // Check if mob is vanilla
-                            if (mythicMob != null && !nearbyEntity.getType().toString()
-                                .equalsIgnoreCase(mythicMob.getMobType())) {
-                                nearbyIsMythicMob = true;
-
-                                if (entityType.startsWith("MythicMob:")) if (mythicMob.getMobType()
-                                    .equalsIgnoreCase(entityType.replaceFirst("MythicMob:", ""))) {
-                                    new Utils().logDebug(Level.INFO,
-                                        "Found MythicMob '" + mythicMob.getMobType() + "' from the config nearby!");
-                                    isInList = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!nearbyIsMythicMob) if (nearbyEntity.getType().toString().equals(entityType)) {
-                            new Utils().logDebug(Level.INFO,
-                                "Found entity " + nearbyEntity.getType() + " from the config nearby!");
-                            isInList = true;
-                            break;
-                        }
-                    }
-
-                    if (!isInList) {
-                        nearbyEntities.remove(nearbyEntity);
-
-                        new Utils().logDebug(Level.INFO,
-                            "Nearby entity " + nearbyEntity.getType() + " was removed from the nearby entity list.");
-                    }
+                if (nearbyEntityData == null) {
+                    nearbyEntities.remove(nearbyEntity);
+                    new LogDebug().debug(Level.INFO,
+                        "Nearby entity " + nearbyEntity.getType() + " was removed from the nearby entity list.");
                 }
-
-                new Utils().logDebug(Level.INFO,
-                    "Found " + nearbyEntities.size() + " nearby entities that were on the list.");
             }
 
-            if (nearbyEntities.size() > count) checkNamed(entity, isMythicMob);
-            else {
-                new Utils().logDebug(Level.INFO, "Checking next entity if available...");
-                new Utils().logDebug(Level.INFO, "");
-            }
-
-            // If nearby check is disabled, just remove the entities
-        } else {
-            new Utils().logDebug(Level.INFO, "Check nearby entities option disabled.");
-            checkNamed(entity, isMythicMob);
+            new LogDebug().debug(Level.INFO,
+                "Found " + nearbyEntities.size() + " nearby entities that were on the list.");
         }
 
+        if (nearbyEntities.size() > plugin.getConfig().getInt("nearby-entities.count")) removeEntity(entity);
+        else {
+            new LogDebug().debug(Level.INFO, "Not enough entities nearby! Skipping...");
+            new LogDebug().debug(Level.INFO, "");
+        }
     }
 
-    private void checkNamed(Entity entity, boolean isMythicMob) {
-        // MythicMobs
-        if (isMythicMob) if (plugin.getConfig().getBoolean("remove-named-mythicmobs")) {
-            new Utils().logDebug(Level.INFO, "Removing MythicMob regardless of a name...");
-            // Remove it!
-            new Utils().logDebug(Level.INFO, "Removing MythicMob " + entity.getType() + "...");
-            entity.remove();
-            removedEntities++;
+    private void removeEntity(Entity entity) {
+        entity.remove();
+        removedEntities++;
 
-        } else {
-            new Utils().logDebug(Level.INFO, "Removing MythicMob without a name only...");
-            // Don't remove named
-            // And it doesn't have a name
-            if (entity.getCustomName() == null) {
-                new Utils().logDebug(Level.INFO,
-                    "MythicMob " + entity.getType() + " doesn't have a custom name!");
-                // Remove it!
-                new Utils().logDebug(Level.INFO, "Removing MythicMob " + entity.getType() + "...");
-                entity.remove();
-                removedEntities++;
+        new LogDebug().debug(Level.INFO,
+            entity.getType() + " removed! Total removed is " + removedEntities + ".");
+        new LogDebug().debug(Level.INFO, "");
+    }
 
-            } else {
-                new Utils().logDebug(Level.INFO,
-                    entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
-                new Utils().logDebug(Level.INFO, "");
-                return;
+    private void removeEntitiesPostTask() {
+        new LogDebug().debug(Level.INFO, "");
+        new LogDebug().debug(Level.INFO, "╔══════════════════════════════════════╗");
+        new LogDebug().debug(Level.INFO, "║           TASKS COMPLETED            ║");
+        new LogDebug().debug(Level.INFO, "║      IF SUPPORT IS NEEDED, FIND      ║");
+        new LogDebug().debug(Level.INFO, "║     THE DEBUG FILE LOCATED IN THE    ║");
+        new LogDebug().debug(Level.INFO, "║         ENTITYCLEARER FOLDER         ║");
+        new LogDebug().debug(Level.INFO, "║         AND SEND IT TO US AT         ║");
+        new LogDebug().debug(Level.INFO, "║     https://discord.gg/p6FuXyx6wA    ║");
+        new LogDebug().debug(Level.INFO, "╚══════════════════════════════════════╝");
+        new LogDebug().debug(Level.INFO, "");
+        if (LogDebug.debugActive) {
+            try {
+                LogDebug.debugFile.close();
+            } catch (IOException e) {
+                new LogDebug().debug(Level.INFO, e.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new LogDebug().debug(Level.INFO, ste.toString());
             }
+            LogDebug.debugActive = false;
         }
+    }
 
-            // Vanilla
-        else if (plugin.getConfig().getBoolean("remove-named")) {
-            new Utils().logDebug(Level.INFO, "Removing entity regardless of a name...");
-            // Remove it!
-            new Utils().logDebug(Level.INFO, "Removing entity " + entity.getType() + "...");
-            entity.remove();
-            removedEntities++;
+    private void sendActionBar(World world, Player player, boolean tpsLow) {
+        if (tpsLow) {
+            if (!plugin.getConfig().getString("messages.actionbar-completed-low-tps-message").isBlank()) {
+                new LogDebug().debug(Level.INFO,
+                    "Sending low TPS action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
-        } else {
-            new Utils().logDebug(Level.INFO, "Removing entity without a name only...");
-            // Don't remove named
-            // And it doesn't have a name
-            if (entity.getCustomName() == null) {
-                new Utils().logDebug(Level.INFO,
-                    "Entity " + entity.getType() + " doesn't have a custom name!");
-                // Remove it!
-                new Utils().logDebug(Level.INFO, "Removing entity " + entity.getType() + "...");
-                entity.remove();
-                removedEntities++;
-
-            } else {
-                new Utils().logDebug(Level.INFO,
-                    entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
-                new Utils().logDebug(Level.INFO, "");
-                return;
+                bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
+                    new ParseMessage().parse(
+                        plugin.getConfig().getString("messages.actionbar-completed-low-tps-message")
+                            .replace("{ENTITIES}", String.valueOf(removedEntities)))));
             }
-        }
 
-        if (entity.getCustomName() != null) {
-            new Utils().logDebug(Level.INFO,
-                entity.getType() + " with name " + entity.getCustomName() + " removed! Total removed is " + removedEntities);
-            new Utils().logDebug(Level.INFO, "");
-        } else {
-            new Utils().logDebug(Level.INFO,
-                entity.getType() + " removed! Total removed is " + removedEntities + ".");
-            new Utils().logDebug(Level.INFO, "");
+        } else if (!plugin.getConfig().getString("messages.actionbar-completed-message").isBlank()) {
+            new LogDebug().debug(Level.INFO,
+                "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
+
+            bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
+                new ParseMessage().parse(plugin.getConfig().getString("messages.actionbar-completed-message")
+                    .replace("{ENTITIES}", String.valueOf(removedEntities)))));
+        }
+    }
+
+    private void sendChat(World world, Player player, boolean tpsLow) {
+        if (tpsLow) {
+            if (!plugin.getConfig().getString("messages.chat-completed-low-tps-message").isBlank()) {
+                new LogDebug().debug(Level.INFO,
+                    "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
+
+                bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
+                    new ParseMessage().parse(
+                            plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
+                        .replace("{ENTITIES}", String.valueOf(removedEntities))));
+            }
+
+        } else if (!plugin.getConfig().getString("messages.chat-completed-message").isBlank()) {
+            new LogDebug().debug(Level.INFO,
+                "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
+
+            bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
+                new ParseMessage().parse(plugin.getConfig().getString("messages.chat-completed-message"))
+                    .replace("{ENTITIES}", String.valueOf(removedEntities))));
+        }
+    }
+
+    private void playSound(World world, Player player) {
+        new LogDebug().debug(Level.INFO, "Playing sound " + plugin.getConfig()
+            .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
+
+        try {
+            player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
+                SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
+
+        } catch (NumberFormatException e) {
+            new LogDebug().error(
+                "Cleared pitch \"" + plugin.getConfig().getString("cleared-pitch") + "\" is not a number!");
+
+            if (LogDebug.debugActive) {
+                new LogDebug().debug(Level.SEVERE, e.toString());
+                for (StackTraceElement ste : e.getStackTrace())
+                    new LogDebug().debug(Level.SEVERE, ste.toString());
+            } else e.printStackTrace();
         }
     }
 }

@@ -37,8 +37,7 @@ public class EntityData {
         if (entityType != null) try {
             this.entityType = EntityType.valueOf(entityType);
         } catch (IllegalArgumentException e) {
-            new LogDebug().error(
-                "Couldn't find the entity type \"" + entityType + "\"! Please double check your config.");
+            new LogDebug().error("Couldn't find the entity type \"" + entityType + "\"! Please double check your config.");
 
             if (LogDebug.debugActive) {
                 new LogDebug().debug(Level.SEVERE, e.toString());
@@ -47,7 +46,8 @@ public class EntityData {
             } else e.printStackTrace();
         }
 
-        new LogDebug().debug(Level.INFO,
+        new LogDebug().debug(
+            Level.INFO,
             "Entity " + (this.entityType != null ? this.entityType : this.mythicMobType) + " is specified with the following properties:");
         new LogDebug().debug(Level.INFO, " Include named: " + this.includeNamed);
         new LogDebug().debug(Level.INFO, " Include occupied: " + this.includeOccupied);

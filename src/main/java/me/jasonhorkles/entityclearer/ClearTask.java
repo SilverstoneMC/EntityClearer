@@ -60,8 +60,8 @@ public class ClearTask {
         }
 
         ArrayList<World> worlds = new ArrayList<>();
-        ArrayList<String> keys = new ArrayList<>(
-            plugin.getConfig().getConfigurationSection(path).getKeys(false));
+        ArrayList<String> keys = new ArrayList<>(plugin.getConfig().getConfigurationSection(path)
+            .getKeys(false));
 
         if (keys.contains("ALL")) {
             new LogDebug().debug(Level.INFO, "'ALL' found! Adding all worlds to removal list...");
@@ -78,8 +78,7 @@ public class ClearTask {
 
             // If that world doesn't exist, complain
             if (world == null) {
-                new LogDebug().error(
-                    "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
+                new LogDebug().error("Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
                 continue;
             }
 
@@ -132,42 +131,46 @@ public class ClearTask {
 
     @Nullable
     private EntityData matchEntityFromConfig(Entity entity) {
+        // If the entity is a MythicMob
+        if (mythicPlugin != null) {
+            ActiveMob mythicMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
+                .orElse(null);
+
+            if (mythicMob != null) {
+                // Try to match mythic entity with one from the config
+                EntityData mythicEntityData = entityDataList.stream().filter(entityData1 -> {
+                    if (entityData1.getMythicMobType() == null) return false;
+                    return entityData1.getMythicMobType().equalsIgnoreCase(mythicMob.getMobType());
+                }).findFirst().orElse(null);
+
+                if (mythicEntityData != null) {
+                    new LogDebug().debug(
+                        Level.INFO,
+                        "Entity " + mythicMob.getMobType() + " is a MythicMob that matches the config's!");
+                    return mythicEntityData;
+                }
+            }
+        }
+
         // Try to match entity with one from the config
         EntityData entityData = entityDataList.stream()
             .filter(entityData1 -> entityData1.getType() == entity.getType()).findFirst().orElse(null);
 
-        // If the entity is a MythicMob
-        if (entityData == null && mythicPlugin != null) {
-            ActiveMob mythicMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
-                .orElse(null);
-
-            if (mythicMob == null) {
-                new LogDebug().debug(Level.WARNING,
-                    "Entity " + entity.getType() + " is not a MythicMob nor a valid type from the config!");
-                return null;
-            }
-
-            // Try to match mythic entity with one from the config
-            EntityData mythicEntityData = entityDataList.stream().filter(entityData1 -> {
-                if (entityData1.getMythicMobType() == null) return false;
-                return entityData1.getMythicMobType().equalsIgnoreCase(mythicMob.getMobType());
-            }).findFirst().orElse(null);
-
-            if (mythicEntityData == null) {
-                new LogDebug().debug(Level.WARNING,
-                    "Entity " + entity.getType() + " is not a valid MythicMob nor a valid type from the config!");
-                return null;
-            }
-
-            if (mythicMob.getMobType().equalsIgnoreCase(mythicEntityData.getMythicMobType())) {
-                new LogDebug().debug(Level.INFO,
-                    "Entity " + mythicMob.getMobType() + " is a MythicMob that matches the config's!");
-                return mythicEntityData;
-            }
-        }
-
         // If the entity isn't a MythicMob and is found in the config
         if (entityData != null) {
+            // Check if it's a MythicMob again so it doesn't get removed as a regular entity
+            if (mythicPlugin != null) {
+                ActiveMob mythicMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
+                    .orElse(null);
+
+                if (mythicMob != null) {
+                    new LogDebug().debug(
+                        Level.WARNING,
+                        "Entity " + mythicMob.getMobType() + " is a MythicMob not in the config! Skipping...");
+                    return null;
+                }
+            }
+
             new LogDebug().debug(Level.INFO, "Entity " + entity.getType() + " matches the config's!");
             return entityData;
         }
@@ -342,18 +345,19 @@ public class ClearTask {
                 new LogDebug().debug(Level.INFO,
                     "Sending low TPS action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
-                bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
-                    new ParseMessage().parse(
-                        plugin.getConfig().getString("messages.actionbar-completed-low-tps-message")
-                            .replace("{ENTITIES}", String.valueOf(removedEntities)))));
+                bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
+                    .deserialize(new ParseMessage().parse(plugin.getConfig()
+                        .getString("messages.actionbar-completed-low-tps-message")
+                        .replace("{ENTITIES}", String.valueOf(removedEntities)))));
             }
 
         } else if (!plugin.getConfig().getString("messages.actionbar-completed-message").isBlank()) {
             new LogDebug().debug(Level.INFO,
                 "Sending action bar to player " + player.getName() + " in world " + world.getName() + ".");
 
-            bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage().deserialize(
-                new ParseMessage().parse(plugin.getConfig().getString("messages.actionbar-completed-message")
+            bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
+                .deserialize(new ParseMessage().parse(plugin.getConfig()
+                    .getString("messages.actionbar-completed-message")
                     .replace("{ENTITIES}", String.valueOf(removedEntities)))));
         }
     }
@@ -364,9 +368,9 @@ public class ClearTask {
                 new LogDebug().debug(Level.INFO,
                     "Sending low TPS message to player " + player.getName() + " in world " + world.getName() + ".");
 
-                bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
-                    new ParseMessage().parse(
-                            plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
+                bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
+                    .deserialize(new ParseMessage()
+                        .parse(plugin.getConfig().getString("messages.chat-completed-low-tps-message"))
                         .replace("{ENTITIES}", String.valueOf(removedEntities))));
             }
 
@@ -374,23 +378,30 @@ public class ClearTask {
             new LogDebug().debug(Level.INFO,
                 "Sending message to player " + player.getName() + " in world " + world.getName() + ".");
 
-            bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(
-                new ParseMessage().parse(plugin.getConfig().getString("messages.chat-completed-message"))
+            bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
+                .deserialize(new ParseMessage()
+                    .parse(plugin.getConfig().getString("messages.chat-completed-message"))
                     .replace("{ENTITIES}", String.valueOf(removedEntities))));
         }
     }
 
     private void playSound(World world, Player player) {
-        new LogDebug().debug(Level.INFO, "Playing sound " + plugin.getConfig()
-            .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
+        new LogDebug().debug(
+            Level.INFO,
+            "Playing sound " + plugin.getConfig()
+                .getString("sound") + " at player " + player.getName() + " in world " + world.getName() + ".");
 
         try {
-            player.playSound(player.getLocation(), "minecraft:" + plugin.getConfig().getString("sound"),
-                SoundCategory.MASTER, 1, Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
+            player.playSound(
+                player.getLocation(),
+                "minecraft:" + plugin.getConfig().getString("sound"),
+                SoundCategory.MASTER,
+                1,
+                Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
 
         } catch (NumberFormatException e) {
-            new LogDebug().error(
-                "Cleared pitch \"" + plugin.getConfig().getString("cleared-pitch") + "\" is not a number!");
+            new LogDebug().error("Cleared pitch \"" + plugin.getConfig()
+                .getString("cleared-pitch") + "\" is not a number!");
 
             if (LogDebug.debugActive) {
                 new LogDebug().debug(Level.SEVERE, e.toString());

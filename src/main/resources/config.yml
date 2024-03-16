@@ -12,8 +12,9 @@
 ###############################################
 
 # Interval in minutes the clear task should run
+# Applies to all worlds with an interval set to -1
 # To disable the timer, set the interval to 0 (useful if only using TPS monitoring)
-interval: 0
+global-interval: 0
 
 # The sound to play when showing the warnings
 # See https://minecraft.wiki/w/Sounds.json#Java_Edition_values:~:text=Java%20Edition%20values-,%5Bshow%5D,-%5Bedit%5D for all sounds
@@ -54,6 +55,11 @@ worlds:
   # Example 1
   your_world_name: # <- Replace your_world_name with the desired world name or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
 
+    # Interval in minutes the clear task should run
+    # To use the global value above, set the interval to -1
+    # To disable the timer, set the interval to 0 (useful if only using TPS monitoring)
+    interval: -1
+
     # The entities to be removed from the world
     # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
     #
@@ -93,8 +99,10 @@ worlds:
         - SPAWNER
         - SPAWNER_EGG
 
+
   # Example 2
   your_world_name_nether:
+    interval: -1
     entities:
       - BLAZE
       - ZOMBIFIED_PIGLIN
@@ -104,8 +112,10 @@ worlds:
         - SPAWNER
         - SPAWNER_EGG
 
+
   # Example 3
   creative:
+    interval: -1
     entities:
       - ARMOR_STAND
       - ARROW
@@ -204,7 +214,6 @@ low-tps:
 
     # Example 1
     your_world_name: # <- Replace your_world_name with the desired world name or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
-
       entities:
         - BEE
         - ARMOR_STAND
@@ -226,12 +235,12 @@ low-tps:
         - SQUID-NAMED
         - WOLF
         - ZOMBIE
-
       spawn-reason:
         enabled: false
         reasons:
           - SPAWNER
           - SPAWNER_EGG
+
 
     # Example 2
     your_world_name_nether:

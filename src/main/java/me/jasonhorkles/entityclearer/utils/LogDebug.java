@@ -25,7 +25,7 @@ public class LogDebug {
 
         EntityClearer.getInstance().getLogger().log(level, worldName + message);
         try {
-            debugFile.write(message + "\n");
+            debugFile.write(worldName + message + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }

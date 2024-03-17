@@ -2,57 +2,67 @@ package me.jasonhorkles.entityclearer.utils;
 
 import me.jasonhorkles.entityclearer.Countdown;
 import me.jasonhorkles.entityclearer.EntityClearer;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.logging.Level;
+import java.util.HashMap;
 
 public class KillTimer {
-    public static BukkitTask savedTimeTillKillTask;
-    public static BukkitTask savedStartCountdown;
-    public static long nextKillTask = -1;
+    public static final HashMap<String, BukkitTask> savedTimeTillKillTasks = new HashMap<>();
+    public static final HashMap<String, BukkitTask> savedStartCountdowns = new HashMap<>();
+    public static final HashMap<String, Long> nextKillTask = new HashMap<>();
 
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public void start() {
-        new LogDebug().debug(Level.INFO, "");
-        new LogDebug().debug(Level.INFO, "╔══════════════════════════════════════╗");
-        new LogDebug().debug(Level.INFO, "║        STARTING REMOVAL TIMER        ║");
-        new LogDebug().debug(Level.INFO, "╚══════════════════════════════════════╝");
+        // For each world in the config, start a timer
+        for (World world : new ConfigUtils().getWorlds("worlds")) {
+            String worldName = world.getName();
+            if (ConfigUtils.isAll) worldName = "ALL";
 
-        if (plugin.getConfig().getInt("interval") < 1) {
-            new LogDebug().debug(Level.WARNING,
-                "The interval is set to a value less than 1, so it's been disabled!");
-            nextKillTask = -1;
-            return;
-        }
+            int interval = plugin.getConfig().getInt("worlds." + worldName + ".interval");
+            if (interval <= -1) interval = plugin.getConfig().getInt("global-interval");
 
-        // interval - countdown time = time to wait (in secs)
-        long interval = plugin.getConfig().getInt("interval") * 60L;
-        long countdownLength = new Countdown().getCountdownSorted().get(0);
-        long delay = interval - countdownLength;
 
-        if (delay < 0) {
-            new LogDebug().error("The interval is set to a value less than the highest countdown time!");
-            nextKillTask = -1;
-            return;
-        }
+            if (interval == 0) {
+                nextKillTask.put(worldName, -1L);
+                continue;
+            }
 
-        // Papi countdown
-        if (EntityClearer.getInstance().getPlaceholderAPI() != null)
-            savedTimeTillKillTask = new BukkitRunnable() {
+            // interval - countdown time = time to wait/delay (in secs)
+            interval = interval * 60;
+            long countdownLength = new Countdown().getCountdownSorted().get(0);
+            long delay = interval - countdownLength;
+
+            if (delay < 0) {
+                new LogDebug().error(worldName,
+                    "The interval is set to a value less than the highest countdown time!");
+                nextKillTask.put(worldName, -1L);
+                continue;
+            }
+
+            // Papi countdown
+            if (EntityClearer.getInstance().getPlaceholderAPI() != null) {
+                String finalWorldName = worldName;
+                int finalInterval = interval;
+
+                savedTimeTillKillTasks.put(worldName, new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        nextKillTask.put(finalWorldName,
+                            System.currentTimeMillis() + ((finalInterval + 1) * 1000L));
+                    }
+                }.runTaskTimer(plugin, 0, interval * 20L));
+            }
+
+            savedStartCountdowns.put(worldName, new BukkitRunnable() {
                 @Override
                 public void run() {
-                    nextKillTask = System.currentTimeMillis() + ((interval + 1) * 1000);
+                    new Countdown().countdown(world);
                 }
-            }.runTaskTimer(plugin, 0, interval * 20);
-
-        savedStartCountdown = new BukkitRunnable() {
-            @Override
-            public void run() {
-                new Countdown().countdown();
-            }
-        }.runTaskTimer(plugin, delay * 20, interval * 20);
+            }.runTaskTimer(plugin, delay * 20, interval * 20L));
+        }
     }
 }

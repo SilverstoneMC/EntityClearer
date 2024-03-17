@@ -29,9 +29,6 @@ countdown-pitch: 0.9
 # Valid values are between 0.0-2.0
 cleared-pitch: 1.0
 
-# Should using the command /ecl clearnow start the countdown or instantly remove the entities?
-countdown-on-command: false
-
 # When should the warning messages send?
 # Time is in seconds remaining before the clear task
 warning-messages:

@@ -9,7 +9,7 @@ public class MetricsUtils {
 
     public void send() {
         // Interval
-        int interval = plugin.getConfig().getInt("interval");
+        int interval = plugin.getConfig().getInt("global-interval");
         String parsedInterval;
         if (interval <= 0) parsedInterval = "Disabled";
         else if (interval <= 10) parsedInterval = "1-10 Minutes";

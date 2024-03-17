@@ -17,10 +17,13 @@ public class LogDebug {
 
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
 
-    public void debug(Level level, String message) {
+    public void debug(Level level, String worldName, String message) {
         if (!debugActive) return;
 
-        EntityClearer.getInstance().getLogger().log(level, message);
+        worldName = worldName.toUpperCase() + ": ";
+        if (worldName.equals((": "))) worldName = "";
+
+        EntityClearer.getInstance().getLogger().log(level, worldName + message);
         try {
             debugFile.write(message + "\n");
         } catch (IOException e) {
@@ -28,11 +31,13 @@ public class LogDebug {
         }
     }
 
-    public void error(String message) {
-        for (Player players : Bukkit.getOnlinePlayers())
-            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players)
-                .sendMessage(Component.text("[EntityClearer] " + message, NamedTextColor.RED));
+    public void error(String worldName, String message) {
+        worldName = worldName.toUpperCase();
 
-        debug(Level.SEVERE, message);
+        for (Player players : Bukkit.getOnlinePlayers())
+            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
+                Component.text("[EntityClearer] " + worldName + ": " + message, NamedTextColor.RED));
+
+        debug(Level.SEVERE, worldName, message);
     }
 }

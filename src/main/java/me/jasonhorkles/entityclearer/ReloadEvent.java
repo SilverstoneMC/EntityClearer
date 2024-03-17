@@ -20,7 +20,7 @@ public class ReloadEvent implements Listener {
         if (event.getType() == ServerLoadEvent.LoadType.RELOAD) {
             String message = "Server reload detected - things may break! Please restart your server as you should never use /reload on a production server!";
 
-            new LogDebug().error(message);
+            new LogDebug().error("SERVER", message);
             plugin.getLogger().log(Level.SEVERE, message);
         }
     }

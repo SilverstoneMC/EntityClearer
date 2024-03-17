@@ -2,6 +2,7 @@ package me.jasonhorkles.entityclearer;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.jasonhorkles.entityclearer.utils.KillTimer;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,22 +29,34 @@ public class PapiHook extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        if (params.equalsIgnoreCase("remaining_minutes")) {
-            if (KillTimer.nextKillTask == -1) return "DISABLED";
+        if (params.toLowerCase().startsWith("remaining_minutes_")) {
+            String worldName = params.replace("remaining_minutes_", "");
 
-            return String.valueOf((KillTimer.nextKillTask - System.currentTimeMillis()) / 60000);
+            if (Bukkit.getWorld(worldName) == null) return "UNKNOWN";
+            if (!KillTimer.nextKillTask.containsKey(worldName)) return "DISABLED";
+            if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED";
+
+            return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 60000);
         }
 
-        if (params.equalsIgnoreCase("remaining_seconds")) {
-            if (KillTimer.nextKillTask == -1) return "DISABLED";
+        if (params.startsWith("remaining_seconds_")) {
+            String worldName = params.replace("remaining_seconds_", "");
 
-            return String.valueOf((KillTimer.nextKillTask - System.currentTimeMillis()) / 1000);
+            if (Bukkit.getWorld(worldName) == null) return "UNKNOWN";
+            if (!KillTimer.nextKillTask.containsKey(worldName)) return "DISABLED";
+            if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED";
+
+            return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
         }
 
-        if (params.equalsIgnoreCase("remaining_seconds_left")) {
-            if (KillTimer.nextKillTask == -1) return "DISABLED";
+        if (params.startsWith("remaining_seconds_left_")) {
+            String worldName = params.replace("remaining_seconds_left_", "");
 
-            int seconds = (int) ((KillTimer.nextKillTask - System.currentTimeMillis()) / 1000);
+            if (Bukkit.getWorld(worldName) == null) return "UNKNOWN";
+            if (!KillTimer.nextKillTask.containsKey(worldName)) return "DISABLED";
+            if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED";
+
+            int seconds = (int) ((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
             seconds %= 60;
             return String.valueOf(seconds);
         }

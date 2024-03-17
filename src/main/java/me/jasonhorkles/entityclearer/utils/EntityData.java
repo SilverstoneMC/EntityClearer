@@ -12,7 +12,7 @@ public class EntityData {
     private boolean includeNamed = false;
     private boolean includeOccupied = false;
 
-    public EntityData(String entityType) {
+    public EntityData(String entityType, String worldName) {
         entityType = entityType.toUpperCase();
 
         // If the entityType includes named
@@ -37,21 +37,24 @@ public class EntityData {
         if (entityType != null) try {
             this.entityType = EntityType.valueOf(entityType);
         } catch (IllegalArgumentException e) {
-            new LogDebug().error("Couldn't find the entity type \"" + entityType + "\"! Please double check your config.");
+            new LogDebug().error(
+                worldName,
+                "Couldn't find the entity type \"" + entityType + "\"! Please double check your config.");
 
             if (LogDebug.debugActive) {
-                new LogDebug().debug(Level.SEVERE, e.toString());
+                new LogDebug().debug(Level.SEVERE, worldName, e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
-                    new LogDebug().debug(Level.SEVERE, ste.toString());
+                    new LogDebug().debug(Level.SEVERE, worldName, ste.toString());
             } else e.printStackTrace();
         }
 
         new LogDebug().debug(
             Level.INFO,
+            worldName,
             "Entity " + (this.entityType != null ? this.entityType : this.mythicMobType) + " is specified with the following properties:");
-        new LogDebug().debug(Level.INFO, " Include named: " + this.includeNamed);
-        new LogDebug().debug(Level.INFO, " Include occupied: " + this.includeOccupied);
-        new LogDebug().debug(Level.INFO, " MythicMob: " + (this.mythicMobType != null));
+        new LogDebug().debug(Level.INFO, worldName, " Include named: " + this.includeNamed);
+        new LogDebug().debug(Level.INFO, worldName, " Include occupied: " + this.includeOccupied);
+        new LogDebug().debug(Level.INFO, worldName, " MythicMob: " + (this.mythicMobType != null));
     }
 
     @Nullable

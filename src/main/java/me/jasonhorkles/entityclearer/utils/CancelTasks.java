@@ -5,13 +5,19 @@ import me.jasonhorkles.entityclearer.Countdown;
 public class CancelTasks {
     public void all() {
         // Papi
-        if (KillTimer.savedTimeTillKillTask != null && !KillTimer.savedTimeTillKillTask.isCancelled())
-            KillTimer.savedTimeTillKillTask.cancel();
+        KillTimer.savedTimeTillKillTasks.values().forEach(task -> {
+            if (task != null) if (!task.isCancelled()) task.cancel();
+        });
+        KillTimer.savedTimeTillKillTasks.clear();
 
-        if (KillTimer.savedStartCountdown != null && !KillTimer.savedStartCountdown.isCancelled())
-            KillTimer.savedStartCountdown.cancel();
+        KillTimer.savedStartCountdowns.values().forEach(task -> {
+            if (task != null) if (!task.isCancelled()) task.cancel();
+        });
+        KillTimer.savedStartCountdowns.clear();
 
-        if (Countdown.savedCountingDown != null && !Countdown.savedCountingDown.isCancelled())
-            Countdown.savedCountingDown.cancel();
+        Countdown.savedCountingDowns.values().forEach(task -> {
+            if (task != null) if (!task.isCancelled()) task.cancel();
+        });
+        Countdown.savedCountingDowns.clear();
     }
 }

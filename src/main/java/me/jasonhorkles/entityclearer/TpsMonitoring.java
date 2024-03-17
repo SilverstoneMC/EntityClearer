@@ -1,5 +1,7 @@
 package me.jasonhorkles.entityclearer;
 
+import me.jasonhorkles.entityclearer.utils.ConfigUtils;
+import me.jasonhorkles.entityclearer.utils.LogDebug;
 import me.jasonhorkles.entityclearer.utils.ParseMessage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -10,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class TpsMonitoring {
     public static boolean tpsTimerRan = false;
@@ -70,8 +73,15 @@ public class TpsMonitoring {
                     new ParseMessage().parse(plugin.getConfig().getString("low-tps.chat-message"))
                         .replace("{TPS}", String.valueOf(tps))));
 
-        // If the entities should be removed instantly
-        new ClearTask().removeEntitiesPreTask(true);
+        // If the entities should be removed from the regular list
+        String path = "worlds";
+        boolean tpsList = plugin.getConfig().getBoolean("low-tps.separate-entity-list");
+        if (tpsList) {
+            new LogDebug().debug(Level.INFO, "", "Separate entity list enabled!");
+            path = "low-tps.worlds";
+        }
+
+        new ClearTask().removeEntitiesPreTask(new ConfigUtils().getWorlds(path), tpsList, true);
 
         // Cooldown
         tpsTimerRan = true;

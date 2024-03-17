@@ -292,7 +292,7 @@ public class ClearTask {
         if (nearbyEntities.size() > plugin.getConfig().getInt("nearby-entities.count")) removeEntity(entity,
             worldName);
         else {
-            new LogDebug().debug(Level.INFO, "", "Not enough entities nearby! Skipping...");
+            new LogDebug().debug(Level.INFO, worldName, "Not enough entities nearby! Skipping...");
             new LogDebug().debug(Level.INFO, "", "");
         }
     }

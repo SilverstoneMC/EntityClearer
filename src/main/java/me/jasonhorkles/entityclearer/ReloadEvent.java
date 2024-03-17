@@ -14,7 +14,7 @@ public class ReloadEvent implements Listener {
     }
 
     private final JavaPlugin plugin;
-    
+
     @EventHandler
     public void onReload(ServerLoadEvent event) {
         if (event.getType() == ServerLoadEvent.LoadType.RELOAD) {

@@ -69,9 +69,9 @@ public class TpsMonitoring {
         // If a chat message should be sent
         if (plugin.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
             if (player.hasPermission("entityclearer.lowtps")) bukkitAudiences.player(player).sendMessage(
-                MiniMessage.miniMessage().deserialize(
-                    new ParseMessage().parse(plugin.getConfig().getString("low-tps.chat-message"))
-                        .replace("{TPS}", String.valueOf(tps))));
+                MiniMessage.miniMessage().deserialize(new ParseMessage()
+                    .parse(plugin.getConfig().getString("low-tps.chat-message"))
+                    .replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed from the regular list
         String path = "worlds";

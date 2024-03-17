@@ -21,8 +21,8 @@ public class MetricsUtils {
         else if (interval < 720) parsedInterval = "8-12 Hours";
         else if (interval < 1440) parsedInterval = "12-24 Hours";
         else parsedInterval = "24+ Hours";
-        EntityClearer.getInstance().getMetrics()
-            .addCustomChart(new SimplePie("interval", () -> parsedInterval));
+        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("interval",
+            () -> parsedInterval));
 
         // Sound
         String sound = plugin.getConfig().getString("sound");
@@ -30,14 +30,14 @@ public class MetricsUtils {
 
         // TPS
         String tpsEnabled = plugin.getConfig().getBoolean("low-tps.enabled") ? "Enabled" : "Disabled";
-        EntityClearer.getInstance().getMetrics()
-            .addCustomChart(new SimplePie("low_tps_check", () -> tpsEnabled));
+        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("low_tps_check",
+            () -> tpsEnabled));
 
         // Nearby
         String nearbyEnabled = plugin.getConfig()
             .getBoolean("nearby-entities.enabled") ? "Enabled" : "Disabled";
-        EntityClearer.getInstance().getMetrics()
-            .addCustomChart(new SimplePie("nearby_entities_check", () -> nearbyEnabled));
+        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("nearby_entities_check",
+            () -> nearbyEnabled));
 
         // MythicMobs
         String mmEnabled = EntityClearer.getInstance().getMythicPlugin() != null ? "Yes" : "No";

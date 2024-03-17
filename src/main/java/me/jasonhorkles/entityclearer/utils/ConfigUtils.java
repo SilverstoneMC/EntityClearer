@@ -34,7 +34,8 @@ public class ConfigUtils {
 
                 // If that world doesn't exist, complain
                 if (Bukkit.getWorld(world) == null) {
-                    new LogDebug().error("SERVER",
+                    new LogDebug().error(
+                        "SERVER",
                         "Couldn't find the world \"" + keys.get(index) + "\"! Please double check your config.");
                     continue;
                 }

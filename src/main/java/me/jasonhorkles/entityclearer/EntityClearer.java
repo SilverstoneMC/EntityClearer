@@ -61,8 +61,8 @@ public class EntityClearer extends JavaPlugin implements Listener {
     }
 
     public BukkitAudiences getAdventure() {
-        if (this.adventure == null)
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        if (this.adventure == null) throw new IllegalStateException(
+            "Tried to access Adventure when the plugin was disabled!");
         return this.adventure;
     }
 

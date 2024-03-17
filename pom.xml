@@ -4,7 +4,7 @@
 
     <groupId>me.jasonhorkles</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>3.0.0-beta</version>
+    <version>3.0.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

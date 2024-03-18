@@ -12,7 +12,7 @@
 ###############################################
 
 # Interval in minutes the clear task should run
-# Applies to all worlds with an interval set to -1
+# Applies to all worlds where their own interval is set to -1
 # To disable the timer, set the interval to 0 (useful if only using TPS monitoring)
 global-interval: 0
 

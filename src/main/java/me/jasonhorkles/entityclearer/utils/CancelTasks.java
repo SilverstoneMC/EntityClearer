@@ -19,5 +19,7 @@ public class CancelTasks {
             if (task != null) if (!task.isCancelled()) task.cancel();
         });
         Countdown.savedCountingDowns.clear();
+
+        KillTimer.nextKillTask.clear();
     }
 }

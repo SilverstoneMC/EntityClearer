@@ -20,9 +20,10 @@ public class KillTimer {
         // For each world in the config, start a timer
         for (World world : new ConfigUtils().getWorlds("worlds")) {
             String worldName = world.getName();
-            if (ConfigUtils.isAll) worldName = "ALL";
+            String worldConfigName = worldName;
+            if (ConfigUtils.isAll) worldConfigName = "ALL";
 
-            int interval = plugin.getConfig().getInt("worlds." + worldName + ".interval");
+            int interval = plugin.getConfig().getInt("worlds." + worldConfigName + ".interval");
             if (interval <= -1) interval = plugin.getConfig().getInt("global-interval");
 
 
@@ -45,13 +46,13 @@ public class KillTimer {
 
             // Papi countdown
             if (EntityClearer.getInstance().getPlaceholderAPI() != null) {
-                String finalWorldName = worldName;
                 int finalInterval = interval;
 
                 savedTimeTillKillTasks.put(worldName, new BukkitRunnable() {
                     @Override
                     public void run() {
-                        nextKillTask.put(finalWorldName,
+                        nextKillTask.put(
+                            worldName,
                             System.currentTimeMillis() + ((finalInterval + 1) * 1000L));
                     }
                 }.runTaskTimer(plugin, 0, interval * 20L));

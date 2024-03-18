@@ -21,11 +21,11 @@ public class ConfigUtils {
             .getKeys(false));
 
         if (keys.contains("ALL")) {
-            new LogDebug().debug(Level.INFO, "", "'ALL' found! Adding all worlds to message list...");
+            new LogDebug().debug(Level.INFO, "", "'ALL' found! Adding all worlds to list...");
             isAll = true;
             worlds.addAll(Bukkit.getWorlds());
         } else {
-            new LogDebug().debug(Level.INFO, "", "Adding all worlds defined in config to message list...");
+            new LogDebug().debug(Level.INFO, "", "Adding all worlds defined in config to list...");
             isAll = false;
 
             int index = -1;

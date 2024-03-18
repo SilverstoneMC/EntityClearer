@@ -64,7 +64,6 @@ public class ClearTask {
             String worldName = world.getName();
 
             new LogDebug().debug(Level.INFO, "", "");
-            new LogDebug().debug(Level.INFO, worldName, "Scanning world...");
 
             String worldConfigName = worldName;
             if (ConfigUtils.isAll) worldConfigName = "ALL";
@@ -74,6 +73,8 @@ public class ClearTask {
                 .getStringList(path + "." + worldConfigName + ".entities"))
                 entityDataList.add(new EntityData(entityType, worldName));
             new LogDebug().debug(Level.INFO, "", "");
+
+            new LogDebug().debug(Level.INFO, worldName, "Scanning world...");
 
             // Get the loaded entities
             for (Entity entity : world.getEntities()) {
@@ -340,7 +341,7 @@ public class ClearTask {
         } else if (!plugin.getConfig().getString("messages.actionbar-completed-message").isBlank()) {
             new LogDebug().debug(Level.INFO,
                 world.getName(),
-                "Sending action bar to player " + player.getName());
+                "Sending action bar to player " + player.getName() + " about " + removedEntities + " entities");
 
             bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
                 .deserialize(new ParseMessage().parse(plugin.getConfig()
@@ -360,7 +361,7 @@ public class ClearTask {
         } else if (!plugin.getConfig().getString("messages.chat-completed-message").isBlank()) {
             new LogDebug().debug(Level.INFO,
                 world.getName(),
-                "Sending message to player " + player.getName());
+                "Sending message to player " + player.getName() + " about " + removedEntities + " entities");
 
             bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
                 .deserialize(new ParseMessage()

@@ -1,5 +1,5 @@
 # EntityClearer
-Spigot page: https://www.spigotmc.org/resources/entityclearer.90802
+Spigot page: https://www.spigotmc.org/resources/90802
 
 Hangar page: https://hangar.papermc.io/JasonHorkles/EntityClearer
 

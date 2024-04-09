@@ -315,7 +315,7 @@ public class ClearTask {
         new LogDebug().debug(Level.INFO, "", "║     THE DEBUG FILE LOCATED IN THE    ║");
         new LogDebug().debug(Level.INFO, "", "║         ENTITYCLEARER FOLDER         ║");
         new LogDebug().debug(Level.INFO, "", "║         AND SEND IT TO US AT         ║");
-        new LogDebug().debug(Level.INFO, "", "║     https://discord.gg/p6FuXyx6wA    ║");
+        new LogDebug().debug(Level.INFO, "", "║     https://discord.gg/4wRHMyrTgv    ║");
         new LogDebug().debug(Level.INFO, "", "╚══════════════════════════════════════╝");
         new LogDebug().debug(Level.INFO, "", "");
         if (LogDebug.debugActive) {

@@ -72,7 +72,7 @@ public class LogDebug {
                     JSONObject json = new JSONObject();
                     json.put("name", "EntityClearer Dump");
                     json.put("visibility", "unlisted");
-                    json.put("expires", Instant.now().plus(1, ChronoUnit.DAYS));
+                    json.put("expires", Instant.now().plus(7, ChronoUnit.DAYS));
 
                     JSONObject fileJson = new JSONObject();
                     fileJson.put("name", file.getName());

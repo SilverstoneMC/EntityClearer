@@ -74,6 +74,8 @@ public class ClearTask {
             for (String entityType : plugin.getConfig()
                 .getStringList(path + "." + worldConfigName + ".entities"))
                 entityDataList.add(new EntityData(entityType, worldName));
+            if (entityDataList.isEmpty()) new LogDebug().error(worldName,
+                "No entities are set to be removed in the config!");
             new LogDebug().debug(Level.INFO, "", "");
 
             new LogDebug().debug(Level.INFO, worldName, "Scanning world...");

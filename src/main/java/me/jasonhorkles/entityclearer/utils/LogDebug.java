@@ -66,7 +66,6 @@ public class LogDebug {
         new BukkitRunnable() {
             @Override
             public void run() {
-
                 // Build the json
                 try {
                     JSONObject json = new JSONObject();

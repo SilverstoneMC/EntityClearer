@@ -19,7 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -310,23 +312,27 @@ public class ClearTask {
     private void removeEntitiesPostTask() {
         new LogDebug().debug(Level.INFO, "", "");
         new LogDebug().debug(Level.INFO, "", "╔══════════════════════════════════════╗");
-        new LogDebug().debug(Level.INFO, "", "║           TASKS COMPLETED            ║");
-        new LogDebug().debug(Level.INFO, "", "║      IF SUPPORT IS NEEDED, FIND      ║");
-        new LogDebug().debug(Level.INFO, "", "║     THE DEBUG FILE LOCATED IN THE    ║");
-        new LogDebug().debug(Level.INFO, "", "║         ENTITYCLEARER FOLDER         ║");
-        new LogDebug().debug(Level.INFO, "", "║         AND SEND IT TO US AT         ║");
+        new LogDebug().debug(Level.INFO, "", "║           TASKS COMPLETED.           ║");
+        new LogDebug().debug(Level.INFO, "", "║      IF SUPPORT IS NEEDED, SEND      ║");
+        new LogDebug().debug(Level.INFO, "", "║     US THE LINK GIVEN IN CHAT AT     ║");
         new LogDebug().debug(Level.INFO, "", "║     https://discord.gg/4wRHMyrTgv    ║");
         new LogDebug().debug(Level.INFO, "", "╚══════════════════════════════════════╝");
         new LogDebug().debug(Level.INFO, "", "");
         if (LogDebug.debugActive) {
             try {
                 LogDebug.debugFile.close();
+
+                Path path = Path.of(plugin.getDataFolder().getPath(), "debug");
+                File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
+
+                new LogDebug().upload(file);
             } catch (IOException e) {
                 new LogDebug().debug(Level.INFO, "", e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
                     new LogDebug().debug(Level.INFO, "", ste.toString());
             }
             LogDebug.debugActive = false;
+            LogDebug.fileId = null;
         }
     }
 

@@ -3,18 +3,20 @@ package me.jasonhorkles.entityclearer.utils;
 import me.jasonhorkles.entityclearer.EntityClearer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
@@ -22,6 +24,7 @@ import java.util.logging.Level;
 public class LogDebug {
     public static boolean debugActive = false;
     public static FileWriter debugFile;
+    public static Long fileId;
 
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
 
@@ -49,72 +52,75 @@ public class LogDebug {
         debug(Level.SEVERE, worldName, message);
     }
 
-    public void upload() {
-        // Build the json
-        try {
-            JSONObject json = new JSONObject();
-            json.put("name", "Silverstone");
-            json.put("visibility", "unlisted");
-            json.put("expires", Instant.now().plus(7, ChronoUnit.DAYS));
+    private void dumpLink(String link) {
+        for (Player players : Bukkit.getOnlinePlayers())
+            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
+                Component.text("[EntityClearer] SERVER: The debug dump can be found at ", NamedTextColor.GRAY)
+                    .append(Component.text(link, NamedTextColor.AQUA).clickEvent(ClickEvent.openUrl(link))));
 
-            JSONArray files = new JSONArray();
-            for (Message.Attachment attachment : attachments) {
-                JSONObject file = new JSONObject();
+        EntityClearer.getInstance().getLogger().log(Level.INFO, "The debug dump can be found at " + link);
+    }
 
-                boolean isLog = attachment.getFileExtension().equalsIgnoreCase("log");
-                if (isLog) file.put("name", attachment.getFileName().replace(".log", ".accesslog"));
-                else file.put("name", attachment.getFileName());
+    public void upload(File file) {
+        // Run async
+        new BukkitRunnable() {
+            @Override
+            public void run() {
 
-                JSONObject content = new JSONObject();
-                content.put("format", "text");
-                try (InputStream bytes = attachment.getProxy().download().join()) {
-                    content.put("value", new String(bytes.readAllBytes(), StandardCharsets.UTF_8));
+                // Build the json
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("name", "EntityClearer Dump");
+                    json.put("visibility", "unlisted");
+                    json.put("expires", Instant.now().plus(1, ChronoUnit.DAYS));
+
+                    JSONObject fileJson = new JSONObject();
+                    fileJson.put("name", file.getName());
+
+                    JSONObject content = new JSONObject();
+                    content.put("format", "text");
+                    content.put("value", Files.readString(file.toPath()));
+                    fileJson.put("content", content);
+
+                    json.put("files", new JSONArray().put(fileJson));
+
+                    // Send the request
+                    URL url = new URL("https://api.paste.gg/v1/pastes");
+                    URLConnection con = url.openConnection();
+                    HttpURLConnection http = (HttpURLConnection) con;
+                    http.setRequestMethod("POST");
+                    http.setDoInput(true);
+                    http.setDoOutput(true);
+
+                    byte[] out = json.toString().getBytes(StandardCharsets.UTF_8);
+                    int length = out.length;
+
+                    http.setFixedLengthStreamingMode(length);
+                    http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    http.connect();
+                    try (OutputStream os = http.getOutputStream()) {
+                        os.write(out);
+                    }
+
+                    // Read the response
+                    InputStream input = http.getInputStream();
+                    JSONObject returnedText = new JSONObject(new String(input.readAllBytes(),
+                        StandardCharsets.UTF_8));
+
+                    if (returnedText.getString("status").equals("success")) {
+                        String id = returnedText.getJSONObject("result").getString("id");
+                        String link = "https://paste.gg/p/anonymous/" + id;
+                        dumpLink(link);
+
+                    } else if (returnedText.getString("status").equals("error")) error("SERVER",
+                        returnedText.getString("error") + "\n" + returnedText.getString("message"));
+
+                } catch (Exception e) {
+                    error("SERVER",
+                        "An error occurred while uploading the debug dump! (" + e.getMessage() + ")");
+                    e.printStackTrace();
                 }
-                file.put("content", content);
-
-                files.put(file);
             }
-            json.put("files", files);
-
-            // Send the request
-            URL url = new URL("https://api.paste.gg/v1/pastes");
-            URLConnection con = url.openConnection();
-            HttpURLConnection http = (HttpURLConnection) con;
-            http.setRequestMethod("POST");
-            http.setDoOutput(true);
-
-            byte[] out = json.toString().getBytes(StandardCharsets.UTF_8);
-            int length = out.length;
-
-            http.setFixedLengthStreamingMode(length);
-            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            http.setRequestProperty(
-                "Authorization",
-                "Key " + new me.jasonhorkles.silverstone.Secrets().getPasteKey());
-            http.connect();
-            try (OutputStream os = http.getOutputStream()) {
-                os.write(out);
-            }
-
-            // Read the response
-            InputStream input = http.getInputStream();
-            JSONObject returnedText = new JSONObject(new String(input.readAllBytes(),
-                StandardCharsets.UTF_8));
-
-            if (returnedText.getString("status").equals("success")) {
-                String id = returnedText.getJSONObject("result").getString("id");
-                event.getHook().editOriginal("<https://paste.gg/p/JasonHorkles/" + id + ">").queue();
-
-            } else if (returnedText.getString("status").equals("error")) event.getHook().editOriginal(
-                    "## Error: " + returnedText.getString("error") + "\n" + returnedText.getString("message"))
-                .queue();
-
-        } catch (Exception e) {
-            System.out.print(new me.jasonhorkles.silverstone.Utils().getTime(me.jasonhorkles.silverstone.Utils.LogColor.RED));
-            e.printStackTrace();
-            event.getHook()
-                .editOriginal("An error occurred while uploading the file(s)! (" + e.getMessage() + ")")
-                .queue();
-        }
+        }.runTaskAsynchronously(EntityClearer.getInstance());
     }
 }

@@ -69,7 +69,8 @@ public class Commands implements CommandExecutor {
         try {
             Path path = Path.of(plugin.getDataFolder().getPath(), "debug");
             Files.createDirectories(path);
-            File file = new File(path.toFile(), "debug-" + System.currentTimeMillis() + ".yml");
+            LogDebug.fileId = System.currentTimeMillis();
+            File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
 
             if (!file.createNewFile())
                 sender.sendMessage(ChatColor.RED + "Failed to create debug file! Check console for the debug output.");

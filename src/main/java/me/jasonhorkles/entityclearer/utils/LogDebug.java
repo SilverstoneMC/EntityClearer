@@ -105,6 +105,7 @@ public class LogDebug {
                     InputStream input = http.getInputStream();
                     JSONObject returnedText = new JSONObject(new String(input.readAllBytes(),
                         StandardCharsets.UTF_8));
+                    input.close();
 
                     if (returnedText.getString("status").equals("success")) {
                         String id = returnedText.getJSONObject("result").getString("id");

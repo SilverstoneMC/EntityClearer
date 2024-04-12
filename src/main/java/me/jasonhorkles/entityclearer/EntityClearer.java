@@ -3,11 +3,13 @@ package me.jasonhorkles.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import me.jasonhorkles.entityclearer.utils.KillTimer;
 import me.jasonhorkles.entityclearer.utils.MetricsUtils;
+import me.jasonhorkles.entityclearer.utils.UpdateChecker;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 
@@ -43,9 +45,22 @@ public class EntityClearer extends JavaPlugin implements Listener {
         getCommand("entityclearer").setTabCompleter(new TabComplete());
 
         getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
+        getServer().getPluginManager().registerEvents(new UpdateChecker(this), this);
 
         new KillTimer().start();
         if (getConfig().getBoolean("low-tps.enabled")) new TpsMonitoring().tpsTimer(600);
+
+        // Log version update
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                String latest = new UpdateChecker(instance).getLatestVersion();
+                String current = instance.getDescription().getVersion();
+
+                if (latest == null) return;
+                if (!current.equals(latest)) new UpdateChecker(instance).logUpdate(current, latest);
+            }
+        }.runTaskAsynchronously(this);
     }
 
     @Override

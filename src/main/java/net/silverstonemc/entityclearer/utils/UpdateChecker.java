@@ -1,10 +1,6 @@
 package net.silverstonemc.entityclearer.utils;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.silverstonemc.entityclearer.EntityClearer;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -21,7 +17,6 @@ public class UpdateChecker implements Listener {
         this.plugin = plugin;
     }
 
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin;
 
     @EventHandler(ignoreCancelled = true)
@@ -36,13 +31,8 @@ public class UpdateChecker implements Listener {
                     String current = plugin.getDescription().getVersion();
 
                     if (latest == null) return;
-                    if (!current.equals(latest)) bukkitAudiences.player(event.getPlayer()).sendMessage(
-                        Component.text("An update is available for " + pluginName + "! ",
-                            NamedTextColor.YELLOW).append(Component.text("(" + current + " → " + latest + ")",
-                            NamedTextColor.GOLD)).appendNewline().append(Component.text(
-                                "https://github.com/SilverstoneMC/" + pluginName + "/releases/latest",
-                                NamedTextColor.DARK_AQUA)
-                            .clickEvent(ClickEvent.openUrl("https://github.com/SilverstoneMC/" + pluginName + "/releases/latest"))));
+                    if (!current.equals(latest)) event.getPlayer()
+                        .sendMessage(ChatColor.YELLOW + "An update is available for " + pluginName + "! " + ChatColor.GOLD + "(" + current + " → " + latest + ")\n" + ChatColor.DARK_AQUA + "https://github.com/SilverstoneMC/" + pluginName + "/releases/latest");
                 }
             }.runTaskAsynchronously(plugin);
     }
@@ -67,7 +57,7 @@ public class UpdateChecker implements Listener {
 
         return null;
     }
-    
+
     public void logUpdate(String current, String latest) {
         String pluginName = plugin.getDescription().getName();
 

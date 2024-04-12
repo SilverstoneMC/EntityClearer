@@ -1,6 +1,6 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
-import me.jasonhorkles.entityclearer.utils.LogDebug;
+import net.silverstonemc.entityclearer.utils.LogDebug;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;

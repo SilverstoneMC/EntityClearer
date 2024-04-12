@@ -1,4 +1,4 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

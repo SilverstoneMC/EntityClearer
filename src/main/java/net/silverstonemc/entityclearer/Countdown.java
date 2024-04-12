@@ -1,9 +1,9 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
-import me.jasonhorkles.entityclearer.utils.LogDebug;
-import me.jasonhorkles.entityclearer.utils.ParseMessage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silverstonemc.entityclearer.utils.LogDebug;
+import net.silverstonemc.entityclearer.utils.ParseMessage;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

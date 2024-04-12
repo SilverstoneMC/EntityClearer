@@ -1,6 +1,6 @@
-package me.jasonhorkles.entityclearer.utils;
+package net.silverstonemc.entityclearer.utils;
 
-import me.jasonhorkles.entityclearer.Countdown;
+import net.silverstonemc.entityclearer.Countdown;
 
 public class CancelTasks {
     public void all() {

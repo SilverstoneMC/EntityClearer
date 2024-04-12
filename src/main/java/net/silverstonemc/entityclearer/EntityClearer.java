@@ -1,10 +1,10 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
 import io.lumine.mythic.api.MythicPlugin;
-import me.jasonhorkles.entityclearer.utils.KillTimer;
-import me.jasonhorkles.entityclearer.utils.MetricsUtils;
-import me.jasonhorkles.entityclearer.utils.UpdateChecker;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silverstonemc.entityclearer.utils.KillTimer;
+import net.silverstonemc.entityclearer.utils.MetricsUtils;
+import net.silverstonemc.entityclearer.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;

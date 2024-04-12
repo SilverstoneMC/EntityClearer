@@ -1,4 +1,4 @@
-package me.jasonhorkles.entityclearer.utils;
+package net.silverstonemc.entityclearer.utils;
 
 import org.bukkit.entity.EntityType;
 import org.checkerframework.checker.nullness.qual.NonNull;

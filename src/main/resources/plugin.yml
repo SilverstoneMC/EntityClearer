@@ -1,4 +1,4 @@
-main: me.jasonhorkles.entityclearer.EntityClearer
+main: net.silverstonemc.entityclearer.EntityClearer
 name: EntityClearer
 description: Remove entities from your worlds!
 version: %VERSION%

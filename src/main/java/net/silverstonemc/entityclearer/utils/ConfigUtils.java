@@ -1,6 +1,6 @@
-package me.jasonhorkles.entityclearer.utils;
+package net.silverstonemc.entityclearer.utils;
 
-import me.jasonhorkles.entityclearer.EntityClearer;
+import net.silverstonemc.entityclearer.EntityClearer;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;

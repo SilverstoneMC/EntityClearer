@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.jasonhorkles</groupId>
+    <groupId>net.silverstonemc</groupId>
     <artifactId>EntityClearer</artifactId>
     <version>3.2.0-beta</version>
 
@@ -67,13 +67,14 @@
                             <relocations>
                                 <relocation>
                                     <pattern>net.kyori.adventure</pattern>
-                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.adventure
+                                    <shadedPattern>net.silverstonemc.entityclearer.shaded.adventure
                                     </shadedPattern>
                                 </relocation>
 
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.jasonhorkles.entityclearer.shaded.bstats</shadedPattern>
+                                    <shadedPattern>net.silverstonemc.entityclearer.shaded.bstats
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

@@ -1,10 +1,10 @@
-package me.jasonhorkles.entityclearer.utils;
+package net.silverstonemc.entityclearer.utils;
 
-import me.jasonhorkles.entityclearer.EntityClearer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.silverstonemc.entityclearer.EntityClearer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

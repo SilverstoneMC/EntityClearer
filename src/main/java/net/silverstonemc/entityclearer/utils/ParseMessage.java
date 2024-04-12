@@ -1,4 +1,4 @@
-package me.jasonhorkles.entityclearer.utils;
+package net.silverstonemc.entityclearer.utils;
 
 public class ParseMessage {
     public String parse(String message) {

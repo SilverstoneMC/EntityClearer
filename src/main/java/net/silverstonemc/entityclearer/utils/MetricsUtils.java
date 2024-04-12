@@ -1,6 +1,6 @@
-package me.jasonhorkles.entityclearer.utils;
+package net.silverstonemc.entityclearer.utils;
 
-import me.jasonhorkles.entityclearer.EntityClearer;
+import net.silverstonemc.entityclearer.EntityClearer;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -1,7 +1,7 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.jasonhorkles.entityclearer.utils.KillTimer;
+import net.silverstonemc.entityclearer.utils.KillTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

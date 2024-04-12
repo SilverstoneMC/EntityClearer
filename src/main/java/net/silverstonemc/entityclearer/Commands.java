@@ -1,6 +1,6 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
-import me.jasonhorkles.entityclearer.utils.*;
+import net.silverstonemc.entityclearer.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;

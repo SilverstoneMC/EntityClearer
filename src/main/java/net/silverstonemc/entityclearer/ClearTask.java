@@ -1,14 +1,14 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
 import io.lumine.mythic.api.MythicPlugin;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
-import me.jasonhorkles.entityclearer.utils.ConfigUtils;
-import me.jasonhorkles.entityclearer.utils.EntityData;
-import me.jasonhorkles.entityclearer.utils.LogDebug;
-import me.jasonhorkles.entityclearer.utils.ParseMessage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silverstonemc.entityclearer.utils.ConfigUtils;
+import net.silverstonemc.entityclearer.utils.EntityData;
+import net.silverstonemc.entityclearer.utils.LogDebug;
+import net.silverstonemc.entityclearer.utils.ParseMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;

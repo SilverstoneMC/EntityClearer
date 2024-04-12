@@ -1,10 +1,10 @@
-package me.jasonhorkles.entityclearer;
+package net.silverstonemc.entityclearer;
 
-import me.jasonhorkles.entityclearer.utils.ConfigUtils;
-import me.jasonhorkles.entityclearer.utils.LogDebug;
-import me.jasonhorkles.entityclearer.utils.ParseMessage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silverstonemc.entityclearer.utils.ConfigUtils;
+import net.silverstonemc.entityclearer.utils.LogDebug;
+import net.silverstonemc.entityclearer.utils.ParseMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

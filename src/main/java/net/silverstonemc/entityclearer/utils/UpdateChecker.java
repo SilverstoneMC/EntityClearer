@@ -1,11 +1,16 @@
 package net.silverstonemc.entityclearer.utils;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.silverstonemc.entityclearer.EntityClearer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -17,11 +22,13 @@ public class UpdateChecker implements Listener {
         this.plugin = plugin;
     }
 
+    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin;
 
     @EventHandler(ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent event) {
         String pluginName = plugin.getDescription().getName();
+
         if (event.getPlayer().hasPermission(pluginName.toLowerCase() + ".updatenotifs"))
             // Check for updates asynchronously
             new BukkitRunnable() {
@@ -31,12 +38,18 @@ public class UpdateChecker implements Listener {
                     String current = plugin.getDescription().getVersion();
 
                     if (latest == null) return;
-                    if (!current.equals(latest)) event.getPlayer()
-                        .sendMessage(ChatColor.YELLOW + "An update is available for " + pluginName + "! " + ChatColor.GOLD + "(" + current + " → " + latest + ")\n" + ChatColor.DARK_AQUA + "https://github.com/SilverstoneMC/" + pluginName + "/releases/latest");
+                    if (!current.equals(latest)) bukkitAudiences.player(event.getPlayer()).sendMessage(
+                        Component.text("An update is available for " + pluginName + "! ",
+                            NamedTextColor.YELLOW).append(Component.text("(" + current + " → " + latest + ")",
+                            NamedTextColor.GOLD)).appendNewline().append(Component.text(
+                                "https://github.com/SilverstoneMC/" + pluginName + "/releases/latest",
+                                NamedTextColor.DARK_AQUA)
+                            .clickEvent(ClickEvent.openUrl("https://github.com/SilverstoneMC/" + pluginName + "/releases/latest"))));
                 }
             }.runTaskAsynchronously(plugin);
     }
 
+    @Nullable
     public String getLatestVersion() {
         String pluginName = plugin.getDescription().getName();
 

@@ -23,41 +23,44 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 @SuppressWarnings({"DataFlowIssue", "resource"})
 public class ClearTask {
-    private final ArrayList<EntityData> entityDataList = new ArrayList<>();
+    private final List<EntityData> entityDataList = new ArrayList<>();
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
     private final MythicPlugin mythicPlugin = EntityClearer.getInstance().getMythicPlugin();
     private int removedEntities;
-    private static boolean logCooldown = false;
+    private static boolean logCooldown;
 
-    public void removeEntitiesPreTask(ArrayList<World> worlds, boolean useTpsList, boolean tpsLow) {
-        new LogDebug().debug(Level.INFO, "", "");
-        new LogDebug().debug(Level.INFO, "", "╔══════════════════════════════════════╗");
-        new LogDebug().debug(Level.INFO, "", "║     REMOVE ENTITIES TASK STARTED     ║");
-        new LogDebug().debug(Level.INFO, "", "╚══════════════════════════════════════╝");
+    public void removeEntitiesPreTask(Iterable<World> worlds, boolean useTpsList, boolean tpsLow) {
+        LogDebug debug = new LogDebug();
+        debug.debug(Level.INFO, "", "");
+        debug.debug(Level.INFO, "", "╔══════════════════════════════════════╗");
+        debug.debug(Level.INFO, "", "║     REMOVE ENTITIES TASK STARTED     ║");
+        debug.debug(Level.INFO, "", "╚══════════════════════════════════════╝");
 
-        if (mythicPlugin != null) new LogDebug().debug(Level.INFO, "", "MythicMobs plugin found!");
+        if (mythicPlugin != null) debug.debug(Level.INFO, "", "MythicMobs plugin found!");
         removedEntities = 0;
 
         try {
             removeEntities(worlds, useTpsList, tpsLow);
         } catch (Error | Exception e) {
-            new LogDebug().error("SERVER",
-                "Something went wrong clearing entities! Is your config outdated?");
+            debug.error("SERVER", "Something went wrong clearing entities! Is your config outdated?");
 
             if (LogDebug.debugActive) {
-                new LogDebug().debug(Level.SEVERE, "", e.toString());
+                debug.debug(Level.SEVERE, "", e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
-                    new LogDebug().debug(Level.SEVERE, "", ste.toString());
+                    debug.debug(Level.SEVERE, "", ste.toString());
             } else e.printStackTrace();
         }
     }
 
-    private void removeEntities(ArrayList<World> worlds, boolean useTpsList, boolean tpsLow) {
+    private void removeEntities(Iterable<World> worlds, boolean useTpsList, boolean tpsLow) {
+        LogDebug debug = new LogDebug();
+
         String path = "worlds";
         if (useTpsList) path = "low-tps.worlds";
 
@@ -65,7 +68,7 @@ public class ClearTask {
         for (World world : worlds) {
             String worldName = world.getName();
 
-            new LogDebug().debug(Level.INFO, "", "");
+            debug.debug(Level.INFO, "", "");
 
             String worldConfigName = worldName;
             if (ConfigUtils.isAll) worldConfigName = "ALL";
@@ -74,11 +77,12 @@ public class ClearTask {
             for (String entityType : plugin.getConfig()
                 .getStringList(path + "." + worldConfigName + ".entities"))
                 entityDataList.add(new EntityData(entityType, worldName));
-            if (entityDataList.isEmpty()) new LogDebug().error(worldName,
+            if (entityDataList.isEmpty()) debug.error(
+                worldName,
                 "No entities are set to be removed in the config!");
-            new LogDebug().debug(Level.INFO, "", "");
+            debug.debug(Level.INFO, "", "");
 
-            new LogDebug().debug(Level.INFO, worldName, "Scanning world...");
+            debug.debug(Level.INFO, worldName, "Scanning world...");
 
             // Get the loaded entities
             for (Entity entity : world.getEntities()) {
@@ -118,6 +122,8 @@ public class ClearTask {
 
     @Nullable
     private EntityData matchEntityFromConfig(Entity entity, String worldName) {
+        LogDebug debug = new LogDebug();
+
         // If the entity is a MythicMob
         if (mythicPlugin != null) {
             ActiveMob mythicMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId())
@@ -131,7 +137,7 @@ public class ClearTask {
                 }).findFirst().orElse(null);
 
                 if (mythicEntityData != null) {
-                    new LogDebug().debug(Level.INFO, worldName,
+                    debug.debug(Level.INFO, worldName,
                         "Entity " + mythicMob.getMobType() + " is a MythicMob that matches the config's!");
                     return mythicEntityData;
                 }
@@ -150,19 +156,17 @@ public class ClearTask {
                     .orElse(null);
 
                 if (mythicMob != null) {
-                    new LogDebug().debug(Level.WARNING, worldName,
+                    debug.debug(Level.WARNING, worldName,
                         "Entity " + mythicMob.getMobType() + " is a MythicMob not in the config! Skipping...");
                     return null;
                 }
             }
 
-            new LogDebug().debug(Level.INFO,
-                worldName,
-                "Entity " + entity.getType() + " matches the config's!");
+            debug.debug(Level.INFO, worldName, "Entity " + entity.getType() + " matches the config's!");
             return entityData;
         }
 
-        new LogDebug().debug(Level.WARNING, worldName,
+        debug.debug(Level.WARNING, worldName,
             "Entity " + entity.getType() + " is not a valid type from the config!");
         return null;
     }
@@ -181,6 +185,8 @@ public class ClearTask {
 
     @SuppressWarnings("deprecation")
     private void checkNamed(Entity entity, EntityData entityData, String path, String worldName) {
+        LogDebug debug = new LogDebug();
+
         String entityType = (entityData.getMythicMobType() != null) ? "MythicMob" : "entity";
 
         if (entityData.includeNamed()) {
@@ -190,61 +196,61 @@ public class ClearTask {
         }
 
         // Don't remove named
-        new LogDebug().debug(Level.INFO, worldName, "Removing " + entityType + " without a name only...");
+        debug.debug(Level.INFO, worldName, "Removing " + entityType + " without a name only...");
         // And it doesn't have a name
         if (entity.getCustomName() == null) {
-            new LogDebug().debug(Level.INFO, worldName,
+            debug.debug(Level.INFO, worldName,
                 "The " + entityType + " " + entity.getType() + " doesn't have a custom name!");
             checkSpawnReason(entity, path, worldName);
         }
         // And it does have a name
         else {
-            new LogDebug().debug(Level.INFO, worldName,
+            debug.debug(Level.INFO, worldName,
                 entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
-            new LogDebug().debug(Level.INFO, "", "");
+            debug.debug(Level.INFO, "", "");
         }
     }
 
     private void checkSpawnReason(Entity entity, String path, String worldName) {
+        LogDebug debug = new LogDebug();
+
         // If any entity should be removed, regardless of the spawn reason
         if (!plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
-            new LogDebug().debug(Level.INFO,
-                worldName,
-                "Removing entities regardless of their spawn reason...");
+            debug.debug(Level.INFO, worldName, "Removing entities regardless of their spawn reason...");
             checkNearby(entity, worldName);
             return;
         }
 
-        new LogDebug().debug(Level.INFO, worldName, "Only removing entities with a specific spawn reason...");
+        debug.debug(Level.INFO, worldName, "Only removing entities with a specific spawn reason...");
 
         try {
-            ArrayList<String> spawnReasons = new ArrayList<>();
+            List<String> spawnReasons = new ArrayList<>();
             for (String spawnReason : plugin.getConfig()
                 .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
                 spawnReasons.add(spawnReason.toUpperCase());
 
             // If the entity's spawn reason matches the config's
             if (spawnReasons.contains(entity.getEntitySpawnReason().name())) {
-                new LogDebug().debug(Level.INFO,
+                debug.debug(
+                    Level.INFO,
                     worldName,
                     entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason() + " matches the config's!");
                 checkNearby(entity, worldName);
 
-            } else new LogDebug().debug(Level.INFO, worldName,
+            } else debug.debug(Level.INFO, worldName,
                 entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason()
                     .name() + " doesn't match the config's! (" + spawnReasons + ")");
 
         } catch (NoClassDefFoundError | NoSuchMethodError e) {
             if (logCooldown) return;
 
-            new LogDebug().error(worldName,
-                "Unable to check for entity spawn reason! Are you not running Paper?");
+            debug.error(worldName, "Unable to check for entity spawn reason! Are you not running Paper?");
             plugin.getLogger().warning("Please use Paper or its forks for this feature to work.");
 
             if (LogDebug.debugActive) {
-                new LogDebug().debug(Level.SEVERE, worldName, e.toString());
+                debug.debug(Level.SEVERE, worldName, e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
-                    new LogDebug().debug(Level.SEVERE, worldName, ste.toString());
+                    debug.debug(Level.SEVERE, worldName, ste.toString());
             } else e.printStackTrace();
 
             logCooldown = true;
@@ -259,9 +265,11 @@ public class ClearTask {
     }
 
     private void checkNearby(Entity entity, String worldName) {
+        LogDebug debug = new LogDebug();
+
         // If nearby check is disabled, just move on
         if (!plugin.getConfig().getBoolean("nearby-entities.enabled")) {
-            new LogDebug().debug(Level.INFO, worldName, "Check nearby entities option disabled.");
+            debug.debug(Level.INFO, worldName, "Check nearby entities option disabled.");
             removeEntity(entity, worldName);
             return;
         }
@@ -271,34 +279,33 @@ public class ClearTask {
         double y = plugin.getConfig().getDouble("nearby-entities.y");
         double z = plugin.getConfig().getDouble("nearby-entities.z");
         ArrayList<Entity> nearbyEntities = new ArrayList<>(entity.getNearbyEntities(x, y, z));
-        new LogDebug().debug(Level.INFO, worldName, "Found " + nearbyEntities.size() + " nearby entities!");
+        debug.debug(Level.INFO, worldName, "Found " + nearbyEntities.size() + " nearby entities!");
 
         // If only entities on the list should be counted
         if (plugin.getConfig().getBoolean("nearby-entities.only-count-from-list")) {
-            new LogDebug().debug(Level.INFO,
-                worldName,
-                "However, only entities on the list should be counted...");
+            debug.debug(Level.INFO, worldName, "However, only entities on the list should be counted...");
 
             for (Entity nearbyEntity : new ArrayList<>(nearbyEntities)) {
                 EntityData nearbyEntityData = matchEntityFromConfig(nearbyEntity, worldName);
 
                 if (nearbyEntityData == null) {
                     nearbyEntities.remove(nearbyEntity);
-                    new LogDebug().debug(Level.INFO,
+                    debug.debug(
+                        Level.INFO,
                         worldName,
                         "Nearby entity " + nearbyEntity.getType() + " was removed from the nearby entity list.");
                 }
             }
 
-            new LogDebug().debug(Level.INFO, worldName,
+            debug.debug(Level.INFO, worldName,
                 "Found " + nearbyEntities.size() + " nearby entities that were on the list.");
         }
 
         if (nearbyEntities.size() > plugin.getConfig().getInt("nearby-entities.count")) removeEntity(entity,
             worldName);
         else {
-            new LogDebug().debug(Level.INFO, worldName, "Not enough entities nearby! Skipping...");
-            new LogDebug().debug(Level.INFO, "", "");
+            debug.debug(Level.INFO, worldName, "Not enough entities nearby! Skipping...");
+            debug.debug(Level.INFO, "", "");
         }
     }
 
@@ -306,20 +313,22 @@ public class ClearTask {
         entity.remove();
         removedEntities++;
 
-        new LogDebug().debug(Level.INFO, worldName,
+        LogDebug debug = new LogDebug();
+        debug.debug(Level.INFO, worldName,
             entity.getType() + " removed! Total removed is " + removedEntities + ".");
-        new LogDebug().debug(Level.INFO, "", "");
+        debug.debug(Level.INFO, "", "");
     }
 
     private void removeEntitiesPostTask() {
-        new LogDebug().debug(Level.INFO, "", "");
-        new LogDebug().debug(Level.INFO, "", "╔══════════════════════════════════════╗");
-        new LogDebug().debug(Level.INFO, "", "║           TASKS COMPLETED.           ║");
-        new LogDebug().debug(Level.INFO, "", "║      IF SUPPORT IS NEEDED, SEND      ║");
-        new LogDebug().debug(Level.INFO, "", "║     US THE LINK GIVEN IN CHAT AT     ║");
-        new LogDebug().debug(Level.INFO, "", "║     https://discord.gg/4wRHMyrTgv    ║");
-        new LogDebug().debug(Level.INFO, "", "╚══════════════════════════════════════╝");
-        new LogDebug().debug(Level.INFO, "", "");
+        LogDebug debug = new LogDebug();
+        debug.debug(Level.INFO, "", "");
+        debug.debug(Level.INFO, "", "╔══════════════════════════════════════╗");
+        debug.debug(Level.INFO, "", "║           TASKS COMPLETED.           ║");
+        debug.debug(Level.INFO, "", "║      IF SUPPORT IS NEEDED, SEND      ║");
+        debug.debug(Level.INFO, "", "║     US THE LINK GIVEN IN CHAT AT     ║");
+        debug.debug(Level.INFO, "", "║     https://discord.gg/4wRHMyrTgv    ║");
+        debug.debug(Level.INFO, "", "╚══════════════════════════════════════╝");
+        debug.debug(Level.INFO, "", "");
         if (LogDebug.debugActive) {
             try {
                 LogDebug.debugFile.close();
@@ -327,11 +336,11 @@ public class ClearTask {
                 Path path = Path.of(plugin.getDataFolder().getPath(), "debug");
                 File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
 
-                new LogDebug().upload(file);
+                debug.upload(file);
             } catch (IOException e) {
-                new LogDebug().debug(Level.INFO, "", e.toString());
+                debug.debug(Level.INFO, "", e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
-                    new LogDebug().debug(Level.INFO, "", ste.toString());
+                    debug.debug(Level.INFO, "", ste.toString());
             }
             LogDebug.debugActive = false;
             LogDebug.fileId = null;
@@ -379,9 +388,12 @@ public class ClearTask {
     }
 
     private void playSound(World world, Player player) {
+        LogDebug debug = new LogDebug();
+
         String worldName = world.getName();
 
-        new LogDebug().debug(Level.INFO,
+        debug.debug(
+            Level.INFO,
             worldName,
             "Playing sound " + plugin.getConfig().getString("sound") + " at player " + player.getName());
 
@@ -394,13 +406,14 @@ public class ClearTask {
                 Float.parseFloat(plugin.getConfig().getString("cleared-pitch")));
 
         } catch (NumberFormatException e) {
-            new LogDebug().error(world.getName(),
+            debug.error(
+                world.getName(),
                 "Cleared pitch \"" + plugin.getConfig().getString("cleared-pitch") + "\" is not a number!");
 
             if (LogDebug.debugActive) {
-                new LogDebug().debug(Level.SEVERE, worldName, e.toString());
+                debug.debug(Level.SEVERE, worldName, e.toString());
                 for (StackTraceElement ste : e.getStackTrace())
-                    new LogDebug().debug(Level.SEVERE, worldName, ste.toString());
+                    debug.debug(Level.SEVERE, worldName, ste.toString());
             } else e.printStackTrace();
         }
     }

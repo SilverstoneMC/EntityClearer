@@ -15,7 +15,7 @@ import java.util.*;
 
 @SuppressWarnings("DataFlowIssue")
 public class Countdown {
-    public static final HashMap<String, BukkitTask> savedCountingDowns = new HashMap<>();
+    public static final Map<String, BukkitTask> savedCountingDowns = new HashMap<>();
 
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
@@ -26,7 +26,7 @@ public class Countdown {
         List<Integer> times = getCountdownSorted();
         int initialTime = times.get(0);
 
-        final int[] timeLeft = {initialTime};
+        int[] timeLeft = {initialTime};
         savedCountingDowns.put(worldName, new BukkitRunnable() {
             @Override
             public void run() {
@@ -34,7 +34,7 @@ public class Countdown {
                     new ClearTask().removeEntitiesPreTask(new ArrayList<>(Collections.singletonList(world)),
                         false,
                         false);
-                    this.cancel();
+                    cancel();
                     savedCountingDowns.remove(worldName);
                     return;
                 }
@@ -56,8 +56,9 @@ public class Countdown {
     }
 
     public void message(int timeLeft, World world) {
+        //noinspection ProhibitedExceptionCaught
         try {
-            StringBuilder time = new StringBuilder();
+            StringBuilder time = new StringBuilder(7);
             int divideBy = 1;
             if (timeLeft > 60) {
                 divideBy = 60;
@@ -74,9 +75,9 @@ public class Countdown {
             }
 
         } catch (NullPointerException e) {
-            new LogDebug().error(world.getName(),
-                "Something went wrong sending messages! Is your config outdated?");
-            new LogDebug().error(
+            LogDebug debug = new LogDebug();
+            debug.error(world.getName(), "Something went wrong sending messages! Is your config outdated?");
+            debug.error(
                 world.getName(),
                 "Please see https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml for the most recent config.");
 

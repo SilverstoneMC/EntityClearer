@@ -65,9 +65,9 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        if (this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
+        if (adventure != null) {
+            adventure.close();
+            adventure = null;
         }
     }
 
@@ -76,9 +76,9 @@ public class EntityClearer extends JavaPlugin implements Listener {
     }
 
     public BukkitAudiences getAdventure() {
-        if (this.adventure == null) throw new IllegalStateException(
+        if (adventure == null) throw new IllegalStateException(
             "Tried to access Adventure when the plugin was disabled!");
-        return this.adventure;
+        return adventure;
     }
 
     public MythicPlugin getMythicPlugin() {

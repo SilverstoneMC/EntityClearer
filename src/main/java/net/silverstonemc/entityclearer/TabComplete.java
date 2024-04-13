@@ -3,6 +3,7 @@ package net.silverstonemc.entityclearer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public class TabComplete implements TabCompleter {
     final List<String> arguments = new ArrayList<>();
 
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if (sender.hasPermission("entityclearer.reload")) if (!arguments.contains("reload")) arguments.add(
             "reload");
         if (sender.hasPermission("entityclearer.debug")) if (!arguments.contains("debug")) arguments.add(

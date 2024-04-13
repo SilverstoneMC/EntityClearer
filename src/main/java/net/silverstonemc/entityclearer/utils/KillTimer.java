@@ -8,10 +8,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class KillTimer {
-    public static final HashMap<String, BukkitTask> savedTimeTillKillTasks = new HashMap<>();
-    public static final HashMap<String, BukkitTask> savedStartCountdowns = new HashMap<>();
+    public static final Map<String, BukkitTask> savedTimeTillKillTasks = new HashMap<>();
+    public static final Map<String, BukkitTask> savedStartCountdowns = new HashMap<>();
     public static final HashMap<String, Long> nextKillTask = new HashMap<>();
 
     private final JavaPlugin plugin = EntityClearer.getInstance();

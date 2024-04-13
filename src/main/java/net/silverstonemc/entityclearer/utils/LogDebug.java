@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
 
 public class LogDebug {
-    public static boolean debugActive = false;
+    public static boolean debugActive;
     public static FileWriter debugFile;
     public static Long fileId;
 
@@ -50,15 +50,6 @@ public class LogDebug {
                 Component.text("[EntityClearer] " + worldName + ": " + message, NamedTextColor.RED));
 
         debug(Level.SEVERE, worldName, message);
-    }
-
-    private void dumpLink(String link) {
-        for (Player players : Bukkit.getOnlinePlayers())
-            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
-                Component.text("[EntityClearer] SERVER: The debug dump can be found at ", NamedTextColor.GRAY)
-                    .append(Component.text(link, NamedTextColor.AQUA).clickEvent(ClickEvent.openUrl(link))));
-
-        EntityClearer.getInstance().getLogger().log(Level.INFO, "The debug dump can be found at " + link);
     }
 
     public void upload(File file) {
@@ -120,6 +111,18 @@ public class LogDebug {
                         "An error occurred while uploading the debug dump! (" + e.getMessage() + ")");
                     e.printStackTrace();
                 }
+            }
+
+            private void dumpLink(String link) {
+                for (Player players : Bukkit.getOnlinePlayers())
+                    if (players.hasPermission("entityclearer.notify"))
+                        bukkitAudiences.player(players).sendMessage(Component.text(
+                            "[EntityClearer] SERVER: The debug dump can be found at ",
+                            NamedTextColor.GRAY).append(Component.text(link, NamedTextColor.AQUA)
+                            .clickEvent(ClickEvent.openUrl(link))));
+
+                EntityClearer.getInstance().getLogger().log(Level.INFO,
+                    "The debug dump can be found at " + link);
             }
         }.runTaskAsynchronously(EntityClearer.getInstance());
     }

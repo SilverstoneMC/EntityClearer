@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,7 +22,7 @@ import java.util.logging.Level;
 public class Commands implements CommandExecutor {
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (args.length > 0) {
             switch (args[0].toLowerCase()) {
                 case "reload" -> reload(sender);
@@ -59,6 +60,8 @@ public class Commands implements CommandExecutor {
     }
 
     private void debug(CommandSender sender) {
+        LogDebug debug = new LogDebug();
+
         if (LogDebug.debugActive) {
             sender.sendMessage(ChatColor.RED + "Debug is already active!");
             return;
@@ -72,14 +75,12 @@ public class Commands implements CommandExecutor {
             LogDebug.fileId = System.currentTimeMillis();
             File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
 
-            if (!file.createNewFile())
+            if (file.createNewFile()) LogDebug.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
+            else
                 sender.sendMessage(ChatColor.RED + "Failed to create debug file! Check console for the debug output.");
 
-            else LogDebug.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
-
         } catch (IOException e) {
-            new LogDebug().error("SERVER",
-                "Failed to create debug file! Check console for more information...");
+            debug.error("SERVER", "Failed to create debug file! Check console for more information...");
             e.printStackTrace();
             return;
         }
@@ -88,8 +89,10 @@ public class Commands implements CommandExecutor {
         // Dump config into debug file
         plugin.getLogger().info("Dumping config into debug file...");
         try {
-            Scanner scanner = new Scanner(new File(plugin.getDataFolder(), "config.yml"));
+            Scanner scanner = new Scanner(new File(plugin.getDataFolder(), "config.yml"),
+                StandardCharsets.UTF_8);
             while (scanner.hasNextLine()) LogDebug.debugFile.write(scanner.nextLine() + "\n");
+            scanner.close();
             LogDebug.debugFile.write("""
 
 
@@ -103,24 +106,24 @@ public class Commands implements CommandExecutor {
                 """);
             plugin.getLogger().info("Config file dumped!");
         } catch (IOException e) {
-            new LogDebug().error("SERVER",
-                "Failed to dump config file! Check console for more information...");
+            debug.error("SERVER", "Failed to dump config file! Check console for more information...");
             e.printStackTrace();
         }
 
         // Dump stats
-        new LogDebug().debug(Level.INFO, "", "");
-        new LogDebug().debug(Level.INFO, "", "╔══════════════════════════════════════╗");
-        new LogDebug().debug(Level.INFO, "", "║             INFORMATION              ║");
-        new LogDebug().debug(Level.INFO, "", "╚══════════════════════════════════════╝");
+        debug.debug(Level.INFO, "", "");
+        debug.debug(Level.INFO, "", "╔══════════════════════════════════════╗");
+        debug.debug(Level.INFO, "", "║             INFORMATION              ║");
+        debug.debug(Level.INFO, "", "╚══════════════════════════════════════╝");
 
-        new LogDebug().debug(Level.INFO, "", "Plugin version: " + plugin.getDescription().getVersion());
-        new LogDebug().debug(Level.INFO, "", "Server version: " + Bukkit.getVersion());
-        new LogDebug().debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));
+        debug.debug(Level.INFO, "", "Plugin version: " + plugin.getDescription().getVersion());
+        debug.debug(Level.INFO, "", "Server version: " + Bukkit.getVersion());
+        //noinspection AccessOfSystemProperties
+        debug.debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));
 
-        new LogDebug().debug(Level.INFO, "", "Available world list: ");
+        debug.debug(Level.INFO, "", "Available world list: ");
         for (World world : Bukkit.getWorlds())
-            new LogDebug().debug(Level.INFO, "", " " + world.getName());
+            debug.debug(Level.INFO, "", " " + world.getName());
 
         new ClearTask().removeEntitiesPreTask(new ConfigUtils().getWorlds("worlds"), false, false);
     }

@@ -12,12 +12,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class TpsMonitoring {
-    public static boolean tpsTimerRan = false;
+    public static boolean tpsTimerRan;
     public static BukkitTask savedTpsTask;
-    public static final ArrayList<Integer> tickList = new ArrayList<>();
+    public static final List<Integer> tickList = new ArrayList<>();
 
     private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
@@ -32,33 +33,33 @@ public class TpsMonitoring {
 
                 long now = System.currentTimeMillis();
                 BukkitRunnable countTicks = new BukkitRunnable() {
-                    int ticks = 0;
+                    int ticks;
 
                     @Override
                     public void run() {
                         ticks++;
                         if (now + 1000 <= System.currentTimeMillis()) {
-                            this.cancel();
+                            cancel();
                             averageTPS(ticks);
                         }
+                    }
+
+                    private void averageTPS(int tps) {
+                        tickList.add(tps);
+                        if (tickList.size() > 10) tickList.remove(0);
+                        else return;
+
+                        int sum = 0;
+                        double average;
+                        for (int x : tickList) sum += x;
+                        average = (double) sum / tickList.size();
+                        tpsLow(average);
                     }
                 };
                 countTicks.runTaskTimer(plugin, 0, 1);
             }
         };
         savedTpsTask = taskTimer.runTaskTimerAsynchronously(plugin, delay, 20);
-    }
-
-    private void averageTPS(int tps) {
-        tickList.add(tps);
-        if (tickList.size() > 10) tickList.remove(0);
-        else return;
-
-        int sum = 0;
-        double average;
-        for (int x : tickList) sum += x;
-        average = (double) sum / tickList.size();
-        tpsLow(average);
     }
 
     @SuppressWarnings("DataFlowIssue")

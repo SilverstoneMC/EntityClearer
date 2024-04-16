@@ -1,5 +1,5 @@
 # EntityClearer
-Hangar: https://hangar.papermc.io/JasonHorkles/EntityClearer
+Hangar: https://hangar.papermc.io/Silverstone/EntityClearer
 
 Modrinth: https://modrinth.com/plugin/entityclearer
 

@@ -62,9 +62,9 @@ public class Countdown {
             int divideBy = 1;
             if (timeLeft > 60) {
                 divideBy = 60;
-                time.append("minute");
-            } else time.append("second");
-            if (timeLeft != 1) time.append("s");
+                time.append(plugin.getConfig().getString("messages.timeleft-minute"));
+            } else time.append(plugin.getConfig().getString("messages.timeleft-second"));
+            if (timeLeft != 1) if (plugin.getConfig().getBoolean("messages.append-s")) time.append("s");
 
 
             // For each player in the world

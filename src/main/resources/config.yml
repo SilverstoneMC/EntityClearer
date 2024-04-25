@@ -167,16 +167,23 @@ messages:
   # Set the message to "" to disable it
   # This plugin supports MiniMessage markdown and formatting - see https://docs.advntr.dev/minimessage/format.html
 
+  # TIME placeholder translations
+  timeleft-minute: "minute"
+  timeleft-second: "second"
+
+  # Should the TIME placeholder end with an "s" if the remaining seconds/minutes are greater than 1?
+  append-s: true
+
   # Placeholders:
   # {TIMELEFT} - the time remaining before the clear task is run
   # {TIME} - will output "minute(s)" or "second(s)" depending on the time left
 
   actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow>{TIMELEFT} <#ff9b0f>{TIME}!"
   chat-message: "<red>Common entities will be removed in <gray>{TIMELEFT} <red>{TIME}!"
-  
+
   # Placeholders:
   # {ENTITIES} - the amount of entities removed after the clear task has run
-  
+
   actionbar-completed-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES} <#ff9b0f>entities!"
   actionbar-completed-low-tps-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES} <#ff9b0f>entities due to low TPS!"
   chat-completed-message: "<red>Removed <gray>{ENTITIES} <red>entities!"

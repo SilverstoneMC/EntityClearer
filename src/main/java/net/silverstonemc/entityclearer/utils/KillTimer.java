@@ -64,7 +64,7 @@ public class KillTimer {
                 public void run() {
                     new Countdown().countdown(world);
                 }
-            }.runTaskTimer(plugin, delay * 20, interval * 20L));
+            }.runTaskTimer(plugin, (delay * 20) + 10, (interval * 20L) + 20));
         }
     }
 }

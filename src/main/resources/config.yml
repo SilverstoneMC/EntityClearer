@@ -1,9 +1,7 @@
 # This config was generated for version %VERSION%
 # Find the latest config at https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml
 
-# This plugin uses bStats metrics
-# https://bstats.org/plugin/bukkit/EntityClearer/10915
-# Metrics can be disabled in the bStats config.yml
+# FAQs can be found at https://github.com/SilverstoneMC/EntityClearer/wiki/FAQs
 
 
 
@@ -265,3 +263,9 @@ low-tps:
         reasons:
           - SPAWNER
           - SPAWNER_EGG
+
+
+
+# This plugin uses bStats metrics
+# https://bstats.org/plugin/bukkit/EntityClearer/10915
+# Metrics can be disabled in the bStats config.yml

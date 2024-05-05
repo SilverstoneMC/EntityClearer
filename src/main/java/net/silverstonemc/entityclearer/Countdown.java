@@ -60,11 +60,11 @@ public class Countdown {
         try {
             StringBuilder time = new StringBuilder(7);
             int divideBy = 1;
-            if (timeLeft > 60) {
+            if (timeLeft >= 60) {
                 divideBy = 60;
                 time.append(plugin.getConfig().getString("messages.timeleft-minute"));
             } else time.append(plugin.getConfig().getString("messages.timeleft-second"));
-            if (timeLeft != 1) if (plugin.getConfig().getBoolean("messages.append-s")) time.append("s");
+            if (timeLeft / divideBy != 1) time.append(plugin.getConfig().getString("messages.append-s-text"));
 
 
             // For each player in the world

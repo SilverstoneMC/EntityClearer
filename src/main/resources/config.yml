@@ -164,15 +164,15 @@ commands:
 ###############################################
 
 messages:
-  # Set the message to "" to disable it
+  # Any message can be set to "" to disable it
   # This plugin supports MiniMessage markdown and formatting - see https://docs.advntr.dev/minimessage/format.html
 
   # TIME placeholder translations
   timeleft-minute: "minute"
   timeleft-second: "second"
 
-  # Should the TIME placeholder end with an "s" if the remaining seconds/minutes are greater than 1?
-  append-s: true
+  # The text to append if the remaining seconds/minutes are greater than 1 - most people will not need to change this
+  append-s-text: "s"
 
   # Placeholders:
   # {TIMELEFT} - the time remaining before the clear task is run

@@ -328,7 +328,6 @@ public class ClearTask {
         debug.debug(Level.INFO, "", "║     US THE LINK GIVEN IN CHAT AT     ║");
         debug.debug(Level.INFO, "", "║     https://discord.gg/4wRHMyrTgv    ║");
         debug.debug(Level.INFO, "", "╚══════════════════════════════════════╝");
-        debug.debug(Level.INFO, "", "");
         if (LogDebug.debugActive) {
             try {
                 LogDebug.debugFile.close();

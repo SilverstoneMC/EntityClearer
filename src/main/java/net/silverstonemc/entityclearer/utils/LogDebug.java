@@ -8,7 +8,6 @@ import net.silverstonemc.entityclearer.EntityClearer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -17,9 +16,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
+import java.util.zip.GZIPOutputStream;
 
 public class LogDebug {
     public static boolean debugActive;
@@ -53,40 +51,35 @@ public class LogDebug {
     }
 
     public void upload(File file) {
+        EntityClearer.getInstance().getLogger().log(Level.INFO, "Uploading debug dump...");
+
         // Run async
         new BukkitRunnable() {
             @Override
             public void run() {
                 // Build the json
                 try {
-                    JSONObject json = new JSONObject();
-                    json.put("name", "EntityClearer Dump");
-                    json.put("visibility", "unlisted");
-                    json.put("expires", Instant.now().plus(7, ChronoUnit.DAYS));
-
-                    JSONObject fileJson = new JSONObject();
-                    fileJson.put("name", file.getName());
-
-                    JSONObject content = new JSONObject();
-                    content.put("format", "text");
-                    content.put("value", Files.readString(file.toPath()));
-                    fileJson.put("content", content);
-
-                    json.put("files", new JSONArray().put(fileJson));
-
                     // Send the request
-                    URL url = new URL("https://api.paste.gg/v1/pastes");
+                    URL url = new URL("https://api.pastes.dev/post");
                     URLConnection con = url.openConnection();
                     HttpURLConnection http = (HttpURLConnection) con;
                     http.setRequestMethod("POST");
                     http.setDoInput(true);
                     http.setDoOutput(true);
 
-                    byte[] out = json.toString().getBytes(StandardCharsets.UTF_8);
+                    // Read file content and compress it
+                    String fileContent = Files.readString(file.toPath());
+                    ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+                    try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteOutputStream)) {
+                        gzipOutputStream.write(fileContent.getBytes(StandardCharsets.UTF_8));
+                    }
+                    byte[] out = byteOutputStream.toByteArray();
                     int length = out.length;
 
                     http.setFixedLengthStreamingMode(length);
-                    http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    http.setRequestProperty("Content-Type", "text/yaml");
+                    http.setRequestProperty("Content-Encoding", "gzip");
+                    http.setRequestProperty("User-Agent", "EntityClearer Debug Dump");
                     http.connect();
                     try (OutputStream os = http.getOutputStream()) {
                         os.write(out);
@@ -98,9 +91,9 @@ public class LogDebug {
                         StandardCharsets.UTF_8));
                     input.close();
 
-                    if (returnedText.getString("status").equals("success")) {
-                        String id = returnedText.getJSONObject("result").getString("id");
-                        String link = "https://paste.gg/p/anonymous/" + id;
+                    if (http.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+                        String key = returnedText.getString("key");
+                        String link = "https://pastes.dev/" + key;
                         dumpLink(link);
 
                     } else if (returnedText.getString("status").equals("error")) error("SERVER",

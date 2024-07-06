@@ -60,19 +60,22 @@ public class Countdown {
         try {
             StringBuilder time = new StringBuilder(7);
             int divideBy = 1;
+            // If timeLeft is greater than 60, divide by 60 to get minutes
             if (timeLeft >= 60) {
                 divideBy = 60;
                 time.append(plugin.getConfig().getString("messages.timeleft-minute"));
             } else time.append(plugin.getConfig().getString("messages.timeleft-second"));
             if (timeLeft / divideBy != 1) time.append(plugin.getConfig().getString("messages.append-s-text"));
 
+            String actualTimeLeft = String.valueOf(timeLeft / divideBy);
 
             // For each player in the world
             for (Player player : world.getPlayers()) {
-                sendActionBar(timeLeft, player, divideBy, time);
-                sendChat(timeLeft, player, divideBy, time);
+                sendActionBar(actualTimeLeft, player, time);
+                sendChat(actualTimeLeft, player, time);
                 playSound(world, player);
             }
+            sendLog(world, actualTimeLeft, time);
 
         } catch (NullPointerException e) {
             LogDebug debug = new LogDebug();
@@ -85,21 +88,27 @@ public class Countdown {
         }
     }
 
-    private void sendActionBar(int timeLeft, Player player, int divideBy, StringBuilder time) {
-        if (!plugin.getConfig().getString("messages.actionbar-message").isBlank()) bukkitAudiences.player(
-            player).sendActionBar(MiniMessage.miniMessage()
+    private void sendActionBar(String timeLeft, Player player, StringBuilder time) {
+        if (plugin.getConfig().getString("messages.actionbar-message").isBlank()) return;
+        if (!player.hasPermission("entityclearer.removalnotifs.actionbar")) return;
+
+        bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
             .deserialize(new ParseMessage().parse(plugin.getConfig().getString("messages.actionbar-message")
-                .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy)).replace("{TIME}", time))));
+                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time))));
     }
 
-    private void sendChat(int timeLeft, Player player, int divideBy, StringBuilder time) {
-        if (!plugin.getConfig().getString("messages.chat-message").isBlank())
-            bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
-                .deserialize(new ParseMessage().parse(plugin.getConfig().getString("messages.chat-message"))
-                    .replace("{TIMELEFT}", String.valueOf(timeLeft / divideBy)).replace("{TIME}", time)));
+    private void sendChat(String timeLeft, Player player, StringBuilder time) {
+        if (plugin.getConfig().getString("messages.chat-message").isBlank()) return;
+        if (!player.hasPermission("entityclearer.removalnotifs.chat")) return;
+
+        bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
+            .deserialize(new ParseMessage().parse(plugin.getConfig().getString("messages.chat-message"))
+                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
     }
 
     private void playSound(World world, Player player) {
+        if (!player.hasPermission("entityclearer.removalnotifs.sound")) return;
+
         try {
             player.playSound(player.getLocation(),
                 "minecraft:" + plugin.getConfig().getString("sound"),
@@ -114,5 +123,14 @@ public class Countdown {
 
             e.printStackTrace();
         }
+    }
+
+    private void sendLog(World world, String timeLeft, StringBuilder time) {
+        if (plugin.getConfig().getString("messages.log-message").isBlank()) return;
+
+        String worldName = world.getName().toUpperCase() + ": ";
+        bukkitAudiences.console().sendMessage(MiniMessage.miniMessage().deserialize(new ParseMessage().parse(
+                worldName + plugin.getConfig().getString("messages.log-message")).replace("{TIMELEFT}", timeLeft)
+            .replace("{TIME}", time)));
     }
 }

@@ -62,7 +62,7 @@ public class TpsMonitoring {
         savedTpsTask = taskTimer.runTaskTimerAsynchronously(plugin, delay, 20);
     }
 
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "MethodOnlyUsedFromInnerClass"})
     private void tpsLow(double tps) {
         // If TPS is not below the threshold, return
         if (!(tps < plugin.getConfig().getInt("low-tps.threshold"))) return;

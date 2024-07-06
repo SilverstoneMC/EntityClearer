@@ -28,13 +28,22 @@ permissions:
     description: Create debug dump
   entityclearer.lowtps:
     default: op
-    description: Notifications when the TPS is low
+    description: Notification when the TPS is low before the clear task runs
   entityclearer.notify:
     default: op
     description: Notifications when there are problems within the plugin
   entityclearer.reload:
     default: op
     description: Reload the plugin
+  entityclearer.removalnotifs.actionbar:
+    default: true
+    description: Actionbar notifications during the entity removal task
+  entityclearer.removalnotifs.chat:
+    default: true
+    description: Chat notifications during the entity removal task
+  entityclearer.removalnotifs.sound:
+    default: true
+    description: Sound during the entity removal task
   entityclearer.updatenotifs:
     default: op
     description: Notifications when there is an update available

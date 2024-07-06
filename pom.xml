@@ -4,7 +4,7 @@
 
     <groupId>net.silverstonemc</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>3.5.0-beta</version>
+    <version>3.5.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

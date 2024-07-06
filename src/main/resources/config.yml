@@ -109,23 +109,23 @@ worlds:
 
 
   # Example 3
-  creative:
-    interval: -1
-    entities:
-      - ARMOR_STAND
-      - ARROW
-      - BOAT
-      - DROPPED_ITEM
-      - MINECART
-      - MINECART_CHEST
-      - MINECART_FURNACE
-      - MINECART_HOPPER
-      - MINECART_TNT
-    spawn-reason:
-      enabled: false
-      reasons:
-        - SPAWNER
-        - SPAWNER_EGG
+  #creative:
+  #  interval: -1
+  #  entities:
+  #    - ARMOR_STAND
+  #    - ARROW
+  #    - BOAT
+  #    - DROPPED_ITEM
+  #    - MINECART
+  #    - MINECART_CHEST
+  #    - MINECART_FURNACE
+  #    - MINECART_HOPPER
+  #    - MINECART_TNT
+  #  spawn-reason:
+  #    enabled: false
+  #    reasons:
+  #      - SPAWNER
+  #      - SPAWNER_EGG
 
 
 
@@ -176,16 +176,21 @@ messages:
   # {TIMELEFT} - the time remaining before the clear task is run
   # {TIME} - will output "minute(s)" or "second(s)" depending on the time left
 
-  actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow>{TIMELEFT} <#ff9b0f>{TIME}!"
-  chat-message: "<red>Common entities will be removed in <gray>{TIMELEFT} <red>{TIME}!"
+  actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow>{TIMELEFT}</yellow> {TIME}!"
+  chat-message: "<red>Common entities will be removed in <gray>{TIMELEFT}</gray> {TIME}!"
+  log-message: "<gold>Common entities will be removed in <yellow>{TIMELEFT}</yellow> {TIME}!"
 
   # Placeholders:
   # {ENTITIES} - the amount of entities removed after the clear task has run
 
-  actionbar-completed-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES} <#ff9b0f>entities!"
-  actionbar-completed-low-tps-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES} <#ff9b0f>entities due to low TPS!"
-  chat-completed-message: "<red>Removed <gray>{ENTITIES} <red>entities!"
-  chat-completed-low-tps-message: "<red>Removed <gray>{ENTITIES} <red>entities due to low TPS!"
+  actionbar-completed-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES}</yellow> entities!"
+  actionbar-completed-low-tps-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES}</yellow> entities due to low TPS!"
+
+  chat-completed-message: "<red>Removed <gray>{ENTITIES}</gray> entities!"
+  chat-completed-low-tps-message: "<red>Removed <gray>{ENTITIES}</gray> entities due to low TPS!"
+
+  log-completed-message: "<yellow>Removed <gold>{ENTITIES}</gold> entities!"
+  log-completed-low-tps-message: "<red>Removed <gray>{ENTITIES}</gray> entities due to low TPS!"
 
 
 
@@ -201,12 +206,12 @@ low-tps:
   threshold: 17
 
   # Should there be a chat message sent to players with the `entityclearer.lowtps`
-  # permission stating that the TPS is low?
+  # permission stating that the TPS is low? This is run BEFORE the clearing task starts
   chat: true
 
   # Placeholders:
   # {TPS} - the current TPS of the server
-  chat-message: "<red><bold>Warning: TPS low <dark_gray>(<gray>{TPS}<dark_gray>)<red>! Removing entities..."
+  chat-message: "<red><bold>Warning: TPS low <dark_gray>(<gray>{TPS}</gray>)</dark_gray>! Removing entities..."
 
   # Should the list of entities to remove be separate from the one defined above?
   separate-entity-list: false

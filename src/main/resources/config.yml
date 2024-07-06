@@ -56,7 +56,7 @@ worlds:
     interval: -1
 
     # The entities to be removed from the world
-    # See https://jd.papermc.io/paper/1.20/org/bukkit/entity/EntityType.html for all entity types
+    # See https://jd.papermc.io/paper/1.21/org/bukkit/entity/EntityType.html for all entity types
     #
     # By default, named entities will not be removed
     # Add "-NAMED" to the end of the entity type to also remove named ones
@@ -89,7 +89,7 @@ worlds:
     # Note: This only works on Paper and its forks!
     spawn-reason:
       enabled: false
-      # See https://jd.papermc.io/paper/1.20/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+      # See https://jd.papermc.io/paper/1.21/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
       reasons:
         - SPAWNER
         - SPAWNER_EGG

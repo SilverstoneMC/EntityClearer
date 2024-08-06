@@ -63,7 +63,7 @@ public class ChecksumChecker implements Listener {
                     StringBuilder ownChecksum = new StringBuilder();
                     for (byte b : hash) ownChecksum.append(String.format("%02x", b));
 
-                    if (!ownChecksum.toString().equals(realChecksum)) {
+                    if (!ownChecksum.toString().equalsIgnoreCase(realChecksum)) {
                         checksumDiffers = true;
                         plugin.getLogger().severe(msg1);
                         plugin.getLogger().severe(msg2);

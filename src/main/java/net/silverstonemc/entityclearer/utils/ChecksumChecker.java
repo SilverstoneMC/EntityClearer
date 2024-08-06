@@ -36,14 +36,18 @@ public class ChecksumChecker implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         String pluginName = plugin.getDescription().getName();
 
-        if (event.getPlayer().hasPermission(pluginName.toLowerCase() + ".notify") && checksumDiffers) {
-            LogDebug debug = new LogDebug();
-            debug.error("SERVER", msg1);
-            debug.error("SERVER", msg2);
-            debug.error("SERVER", msg3 + pluginName);
-            debug.error("SERVER", msg4);
-            debug.error("SERVER", msg5);
-        }
+        if (checksumDiffers)
+            if (event.getPlayer().hasPermission(pluginName.toLowerCase() + ".notify")) new BukkitRunnable() {
+                @Override
+                public void run() {
+                    LogDebug debug = new LogDebug();
+                    debug.error("SERVER", msg1);
+                    debug.error("SERVER", msg2);
+                    debug.error("SERVER", msg3 + pluginName);
+                    debug.error("SERVER", msg4);
+                    debug.error("SERVER", msg5);
+                }
+            }.runTaskLater(plugin, 20L);
     }
 
     public void scan(File pluginJar) {

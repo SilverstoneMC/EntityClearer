@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class ChecksumChecker implements Listener {
     public ChecksumChecker(JavaPlugin plugin) {
@@ -53,7 +54,8 @@ public class ChecksumChecker implements Listener {
             public void run() {
                 String version = plugin.getDescription().getVersion();
                 String realChecksum = getOnlineChecksum(version);
-                if (realChecksum == null) return;
+                if (realChecksum == null) plugin.getLogger()
+                    .severe("Failed to get checksum for version " + version + " - custom version?");
 
                 try {
                     String fileName = Paths.get(pluginJar.getPath()).getFileName().toString();
@@ -63,6 +65,11 @@ public class ChecksumChecker implements Listener {
                     StringBuilder ownChecksum = new StringBuilder();
                     for (byte b : hash) ownChecksum.append(String.format("%02x", b));
 
+                    System.out.println(ownChecksum);
+                    System.out.println(Arrays.toString(ownChecksum.toString()
+                        .getBytes(StandardCharsets.UTF_8)));
+                    System.out.println(realChecksum);
+                    System.out.println(Arrays.toString(realChecksum.getBytes(StandardCharsets.UTF_8)));
                     if (!ownChecksum.toString().equalsIgnoreCase(realChecksum)) {
                         checksumDiffers = true;
                         plugin.getLogger().severe(msg1);
@@ -89,6 +96,8 @@ public class ChecksumChecker implements Listener {
                     JSONObject response = new JSONObject(new String(url.readAllBytes(),
                         StandardCharsets.UTF_8));
                     url.close();
+
+                    if (!response.has(version)) return null;
 
                     return response.getString(version);
 

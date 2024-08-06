@@ -57,8 +57,11 @@ public class ChecksumChecker implements Listener {
             public void run() {
                 String version = plugin.getDescription().getVersion();
                 String realChecksum = getOnlineChecksum(version);
-                if (realChecksum == null) plugin.getLogger()
-                    .severe("Failed to get checksum for version " + version + " - custom version?");
+                if (realChecksum == null) {
+                    plugin.getLogger()
+                        .severe("Failed to get checksum for version " + version + " - custom version?");
+                    return;
+                }
 
                 try {
                     // Get the jar's name

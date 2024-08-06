@@ -4,7 +4,7 @@
 
     <groupId>net.silverstonemc</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>3.5.1</version>
+    <version>3.6.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -21,7 +21,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
                 <configuration>
-                    <outputDirectory>D:\Intellij Outputs</outputDirectory>
+                    <outputDirectory>C:\Intellij Outputs</outputDirectory>
                 </configuration>
             </plugin>
 

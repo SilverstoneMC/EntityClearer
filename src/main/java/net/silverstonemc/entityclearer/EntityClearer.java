@@ -2,6 +2,7 @@ package net.silverstonemc.entityclearer;
 
 import io.lumine.mythic.api.MythicPlugin;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silverstonemc.entityclearer.utils.ChecksumChecker;
 import net.silverstonemc.entityclearer.utils.KillTimer;
 import net.silverstonemc.entityclearer.utils.MetricsUtils;
 import net.silverstonemc.entityclearer.utils.UpdateChecker;
@@ -25,6 +26,9 @@ public class EntityClearer extends JavaPlugin implements Listener {
     public void onEnable() {
         instance = this;
 
+        // Validate the checksum of the plugin's jar file to the one on GitHub
+        new ChecksumChecker(this).scan(getFile());
+
         adventure = BukkitAudiences.create(this);
 
         mythicPlugin = (MythicPlugin) getServer().getPluginManager().getPlugin("MythicMobs");
@@ -45,6 +49,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
         getCommand("entityclearer").setTabCompleter(new TabComplete());
 
         getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
+        getServer().getPluginManager().registerEvents(new ChecksumChecker(this), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(this), this);
 
         new KillTimer().start();

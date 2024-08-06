@@ -61,13 +61,19 @@ public class ChecksumChecker implements Listener {
                     .severe("Failed to get checksum for version " + version + " - custom version?");
 
                 try {
+                    // Get the jar's name
                     String fileName = Paths.get(pluginJar.getPath()).getFileName().toString();
-                    byte[] data = Files.readAllBytes(plugin.getServer().getPluginsFolder().toPath()
+                    // Get the plugin's data folder, then go up 1 (this should resolve to the plugins folder)
+                    // Spigot doesn't have a good way of getting the server's plugin folder natively but on Paper the jar is remapped so we can't grab that exact path either
+                    byte[] data = Files.readAllBytes(plugin.getDataFolder().toPath().getParent()
                         .resolve(fileName));
+
+                    // Generate the checksum for the jar we found
                     byte[] hash = MessageDigest.getInstance("MD5").digest(data);
                     StringBuilder ownChecksum = new StringBuilder();
                     for (byte b : hash) ownChecksum.append(String.format("%02x", b));
 
+                    // Freak out if the checksums don't match
                     if (!ownChecksum.toString().equalsIgnoreCase(realChecksum)) {
                         checksumDiffers = true;
                         plugin.getLogger().severe(msg1);

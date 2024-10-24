@@ -21,12 +21,10 @@ public class KillTimer {
         // For each world in the config, start a timer
         for (World world : new ConfigUtils().getWorlds("worlds")) {
             String worldName = world.getName();
-            String worldConfigName = worldName;
-            if (ConfigUtils.isAll) worldConfigName = "ALL";
+            String worldConfigName = ConfigUtils.isAll ? "ALL" : worldName;
 
             int interval = plugin.getConfig().getInt("worlds." + worldConfigName + ".interval");
             if (interval <= -1) interval = plugin.getConfig().getInt("global-interval");
-
 
             if (interval == 0) {
                 nextKillTask.put(worldName, -1L);

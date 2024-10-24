@@ -94,15 +94,15 @@ public class Commands implements CommandExecutor {
             while (scanner.hasNextLine()) LogDebug.debugFile.write(scanner.nextLine() + "\n");
             scanner.close();
             LogDebug.debugFile.write("""
-
-
-
+                
+                
+                
                 ###############################################
                 #              END OF CONFIG DUMP             #
                 ###############################################
-
-
-
+                
+                
+                
                 """);
             plugin.getLogger().info("Config file dumped!");
         } catch (IOException e) {
@@ -117,7 +117,8 @@ public class Commands implements CommandExecutor {
         debug.debug(Level.INFO, "", "╚══════════════════════════════════════╝");
 
         debug.debug(Level.INFO, "", "Plugin version: " + plugin.getDescription().getVersion());
-        debug.debug(Level.INFO, "", "Server version: " + Bukkit.getVersion());
+        debug.debug(Level.INFO, "", "Server version: " + Bukkit.getName() + " " + Bukkit.getVersion());
+        debug.debug(Level.INFO, "", "API version: " + Bukkit.getBukkitVersion());
         //noinspection AccessOfSystemProperties
         debug.debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));
 

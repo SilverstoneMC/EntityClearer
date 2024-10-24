@@ -5,10 +5,7 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.silverstonemc.entityclearer.utils.ConfigUtils;
-import net.silverstonemc.entityclearer.utils.EntityData;
-import net.silverstonemc.entityclearer.utils.LogDebug;
-import net.silverstonemc.entityclearer.utils.ParseMessage;
+import net.silverstonemc.entityclearer.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -70,8 +67,16 @@ public class ClearTask {
 
             debug.debug(Level.INFO, "", "");
 
-            String worldConfigName = worldName;
-            if (ConfigUtils.isAll) worldConfigName = "ALL";
+            String worldConfigName = ConfigUtils.isAll ? "ALL" : worldName;
+
+            Object[] notEnoughPlayers = new OnlinePlayers().isNotEnough(world, worldConfigName);
+            // Skip the world if there aren't enough players online
+            if ((boolean) notEnoughPlayers[0]) {
+                debug.debug(Level.WARNING,
+                    worldName,
+                    "Not enough players in the " + notEnoughPlayers[1] + "! Skipping...");
+                continue;
+            }
 
             // Save the entity data from the config
             for (String entityType : plugin.getConfig()
@@ -336,7 +341,7 @@ public class ClearTask {
                 Path path = Path.of(plugin.getDataFolder().getPath(), "debug");
                 File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
 
-                debug.upload(file);
+                if (!plugin.getConfig().getBoolean("disable-paste-upload")) debug.upload(file);
             } catch (IOException e) {
                 debug.debug(Level.INFO, "", e.toString());
                 for (StackTraceElement ste : e.getStackTrace())

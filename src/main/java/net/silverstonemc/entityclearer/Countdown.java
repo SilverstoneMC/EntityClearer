@@ -2,7 +2,9 @@ package net.silverstonemc.entityclearer;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
+import net.silverstonemc.entityclearer.utils.OnlinePlayers;
 import net.silverstonemc.entityclearer.utils.ParseMessage;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -56,6 +58,11 @@ public class Countdown {
     }
 
     public void message(int timeLeft, World world) {
+        // Don't send messages if there aren't enough players
+        String worldConfigName = ConfigUtils.isAll ? "ALL" : world.getName();
+        boolean notEnoughPlayers = (boolean) new OnlinePlayers().isNotEnough(world, worldConfigName)[0];
+        if (notEnoughPlayers) return;
+        
         //noinspection ProhibitedExceptionCaught
         try {
             StringBuilder time = new StringBuilder(7);

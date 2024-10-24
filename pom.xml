@@ -4,7 +4,7 @@
 
     <groupId>net.silverstonemc</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>3.6.1</version>
+    <version>3.7.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -154,19 +154,19 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.3</version>
+            <version>4.3.4</version>
         </dependency>
 
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.6.2</version>
+            <version>5.7.2</version>
             <scope>provided</scope>
         </dependency>
 

@@ -25,7 +25,7 @@ public class OnlinePlayers {
         // Determine if there are enough players either server-wide or world-wide depending on the settings
         boolean notEnoughPlayers;
         if (isServerWide) notEnoughPlayers = Bukkit.getOnlinePlayers().size() < minPlayers;
-        else notEnoughPlayers = world.getPlayerCount() < minPlayers;
+        else notEnoughPlayers = world.getPlayers().size() < minPlayers;
 
         return new Object[]{notEnoughPlayers, isServerWide ? "server" : "world"};
     }

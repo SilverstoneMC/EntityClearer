@@ -8,7 +8,7 @@ public class OnlinePlayers {
     /**
      * Returns an object array containing the notEnoughPlayers boolean and a string indicating if the check was server-wide or world-wide.
      *
-     * @return Object[] {boolean, String}
+     * @return Object[]{boolean, String}
      */
     public Object[] isNotEnough(World world, String worldConfigName) {
         EntityClearer plugin = EntityClearer.getInstance();

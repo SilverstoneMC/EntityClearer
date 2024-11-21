@@ -48,12 +48,17 @@ public class EntityClearer extends JavaPlugin implements Listener {
         getCommand("entityclearer").setExecutor(new Commands());
         getCommand("entityclearer").setTabCompleter(new TabComplete());
 
-        getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
         getServer().getPluginManager().registerEvents(new ChecksumChecker(this), this);
+        getServer().getPluginManager().registerEvents(new ReloadEvent(this), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(this), this);
 
-        new KillTimer().start();
-        if (getConfig().getBoolean("low-tps.enabled")) new TpsMonitoring().tpsTimer(600);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                new KillTimer().start();
+                if (getConfig().getBoolean("low-tps.enabled")) new TpsMonitoring().tpsTimer(200);
+            }
+        }.runTaskLater(this, 3L);
 
         // Log version update
         new BukkitRunnable() {

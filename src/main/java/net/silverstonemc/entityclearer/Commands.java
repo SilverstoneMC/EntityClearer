@@ -89,7 +89,8 @@ public class Commands implements CommandExecutor {
         // Dump config into debug file
         plugin.getLogger().info("Dumping config into debug file...");
         try {
-            Scanner scanner = new Scanner(new File(plugin.getDataFolder(), "config.yml"),
+            Scanner scanner = new Scanner(
+                new File(plugin.getDataFolder(), "config.yml"),
                 StandardCharsets.UTF_8);
             while (scanner.hasNextLine()) LogDebug.debugFile.write(scanner.nextLine() + "\n");
             scanner.close();
@@ -121,11 +122,16 @@ public class Commands implements CommandExecutor {
         debug.debug(Level.INFO, "", "API version: " + Bukkit.getBukkitVersion());
         //noinspection AccessOfSystemProperties
         debug.debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));
+        debug.debug(Level.INFO, "", "Players online: " + Bukkit.getOnlinePlayers().size());
 
         debug.debug(Level.INFO, "", "Available world list: ");
         for (World world : Bukkit.getWorlds())
-            debug.debug(Level.INFO, "", " " + world.getName());
+            debug.debug(
+                Level.INFO,
+                "",
+                " " + world.getName() + " (" + world.getPlayers().size() + " players)");
 
+        debug.debug(Level.INFO, "", "");
         new ClearTask().removeEntitiesPreTask(new ConfigUtils().getWorlds("worlds"), false, false);
     }
 

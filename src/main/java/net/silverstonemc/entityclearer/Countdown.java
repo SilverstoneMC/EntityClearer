@@ -2,10 +2,10 @@ package net.silverstonemc.entityclearer;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
 import net.silverstonemc.entityclearer.utils.OnlinePlayers;
-import net.silverstonemc.entityclearer.utils.ParseMessage;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -29,26 +29,28 @@ public class Countdown {
         int initialTime = times.get(0);
 
         int[] timeLeft = {initialTime};
-        savedCountingDowns.put(worldName, new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (timeLeft[0] <= 0) {
-                    new ClearTask().removeEntitiesPreTask(new ArrayList<>(Collections.singletonList(world)),
-                        false,
-                        false);
-                    cancel();
-                    savedCountingDowns.remove(worldName);
-                    return;
-                }
+        savedCountingDowns.put(
+            worldName, new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (timeLeft[0] <= 0) {
+                        new ClearTask().removeEntitiesPreTask(
+                            new ArrayList<>(Collections.singletonList(world)),
+                            false,
+                            false);
+                        cancel();
+                        savedCountingDowns.remove(worldName);
+                        return;
+                    }
 
-                if (!times.isEmpty()) if (timeLeft[0] <= times.get(0)) {
-                    message(timeLeft[0], world);
-                    times.remove(0);
-                }
+                    if (!times.isEmpty()) if (timeLeft[0] <= times.get(0)) {
+                        message(timeLeft[0], world);
+                        times.remove(0);
+                    }
 
-                timeLeft[0] -= 1;
-            }
-        }.runTaskTimer(plugin, 0, 20));
+                    timeLeft[0] -= 1;
+                }
+            }.runTaskTimer(plugin, 0, 20));
     }
 
     public List<Integer> getCountdownSorted() {
@@ -62,7 +64,7 @@ public class Countdown {
         String worldConfigName = ConfigUtils.isAll ? "ALL" : world.getName();
         boolean notEnoughPlayers = (boolean) new OnlinePlayers().isNotEnough(world, worldConfigName)[0];
         if (notEnoughPlayers) return;
-        
+
         //noinspection ProhibitedExceptionCaught
         try {
             StringBuilder time = new StringBuilder(7);
@@ -80,6 +82,7 @@ public class Countdown {
             for (Player player : world.getPlayers()) {
                 sendActionBar(actualTimeLeft, player, time);
                 sendChat(actualTimeLeft, player, time);
+                sendTitle(actualTimeLeft, player, time);
                 playSound(world, player);
             }
             sendLog(world, actualTimeLeft, time);
@@ -96,35 +99,50 @@ public class Countdown {
     }
 
     private void sendActionBar(String timeLeft, Player player, StringBuilder time) {
-        if (plugin.getConfig().getString("messages.actionbar-message").isBlank()) return;
         if (!player.hasPermission("entityclearer.removalnotifs.actionbar")) return;
+        if (plugin.getConfig().getString("messages.actionbar-message").isBlank()) return;
 
         bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
-            .deserialize(new ParseMessage().parse(plugin.getConfig().getString("messages.actionbar-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time))));
+            .deserialize(plugin.getConfig().getString("messages.actionbar-message")
+                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
     }
 
     private void sendChat(String timeLeft, Player player, StringBuilder time) {
-        if (plugin.getConfig().getString("messages.chat-message").isBlank()) return;
         if (!player.hasPermission("entityclearer.removalnotifs.chat")) return;
+        if (plugin.getConfig().getString("messages.chat-message").isBlank()) return;
 
         bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
-            .deserialize(new ParseMessage().parse(plugin.getConfig().getString("messages.chat-message"))
+            .deserialize(plugin.getConfig().getString("messages.chat-message").replace("{TIMELEFT}", timeLeft)
+                .replace("{TIME}", time)));
+    }
+
+    private void sendTitle(String timeLeft, Player player, StringBuilder time) {
+        if (!player.hasPermission("entityclearer.removalnotifs.title")) return;
+        if (plugin.getConfig().getString("messages.title-message").isBlank() && plugin.getConfig().getString(
+            "messages.subtitle-message").isBlank()) return;
+
+        Title title = Title.title(
+            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.title-message")
+                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)),
+            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.subtitle-message")
                 .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+        bukkitAudiences.player(player).showTitle(title);
     }
 
     private void playSound(World world, Player player) {
         if (!player.hasPermission("entityclearer.removalnotifs.sound")) return;
 
         try {
-            player.playSound(player.getLocation(),
+            player.playSound(
+                player.getLocation(),
                 "minecraft:" + plugin.getConfig().getString("sound"),
                 SoundCategory.MASTER,
                 1,
                 Float.parseFloat(plugin.getConfig().getString("countdown-pitch")));
 
         } catch (NumberFormatException e) {
-            new LogDebug().error(world.getName(),
+            new LogDebug().error(
+                world.getName(),
                 "Countdown pitch '" + plugin.getConfig()
                     .getString("countdown-pitch") + "' is not a valid number!");
 
@@ -136,8 +154,8 @@ public class Countdown {
         if (plugin.getConfig().getString("messages.log-message").isBlank()) return;
 
         String worldName = world.getName().toUpperCase() + ": ";
-        bukkitAudiences.console().sendMessage(MiniMessage.miniMessage().deserialize(new ParseMessage().parse(
-                worldName + plugin.getConfig().getString("messages.log-message")).replace("{TIMELEFT}", timeLeft)
-            .replace("{TIME}", time)));
+        bukkitAudiences.console().sendMessage(MiniMessage.miniMessage()
+            .deserialize(worldName + plugin.getConfig().getString("messages.log-message")
+                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
     }
 }

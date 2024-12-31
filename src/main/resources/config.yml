@@ -57,11 +57,11 @@ worlds:
     
     # The amount of players required to be in the WORLD for the clear task to run in said world
     # Set to 0 to run regardless of any players online
-    # To use the global-min-players value below, set the value to -1
+    # To use the global-min-players value below and ignore per-world player counts, set the value to -1
     min-players: -1
 
     # The entities to be removed from the world
-    # See https://jd.papermc.io/paper/1.21/org/bukkit/entity/EntityType.html for all entity types
+    # See https://jd.papermc.io/paper/1.21.4/org/bukkit/entity/EntityType.html for all entity types
     #
     # By default, named entities will not be removed
     # Add "-NAMED" to the end of the entity type to also remove named ones
@@ -94,7 +94,7 @@ worlds:
     # Note: This only works on Paper and its forks!
     spawn-reason:
       enabled: false
-      # See https://jd.papermc.io/paper/1.21/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+      # See https://jd.papermc.io/paper/1.21.4/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
       reasons:
         - SPAWNER
         - SPAWNER_EGG
@@ -103,7 +103,7 @@ worlds:
   # Example 2
   replace_me_with_world_nether: # <- Replace replace_me_with_world with the desired world name or remove this section entirely if not needed
     interval: -1
-    min-players: -1
+    min-players: 1
     entities:
       - BLAZE
       - ZOMBIFIED_PIGLIN
@@ -122,12 +122,12 @@ worlds:
   #    - ARMOR_STAND
   #    - ARROW
   #    - BOAT
+  #    - CHEST_MINECART
   #    - DROPPED_ITEM
+  #    - FURNACE_MINECART
+  #    - HOPPER_MINECART
   #    - MINECART
-  #    - MINECART_CHEST
-  #    - MINECART_FURNACE
-  #    - MINECART_HOPPER
-  #    - MINECART_TNT
+  #    - TNT_MINECART
   #  spawn-reason:
   #    enabled: false
   #    reasons:
@@ -175,7 +175,7 @@ commands:
 
 messages:
   # Any message can be set to "" to disable it
-  # This plugin supports MiniMessage markdown and formatting - see https://docs.advntr.dev/minimessage/format.html
+  # This plugin uses MiniMessage markdown and formatting - see https://docs.advntr.dev/minimessage/format.html
 
   # TIME placeholder translations
   timeleft-minute: "minute"
@@ -191,6 +191,8 @@ messages:
   actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow>{TIMELEFT}</yellow> {TIME}!"
   chat-message: "<red>Common entities will be removed in <gray>{TIMELEFT}</gray> {TIME}!"
   log-message: "<gold>Common entities will be removed in <yellow>{TIMELEFT}</yellow> {TIME}!"
+  title-message: ""
+  subtitle-message: ""
 
   # Placeholders:
   # {ENTITIES} - the amount of entities removed after the clear task has run
@@ -203,6 +205,11 @@ messages:
 
   log-completed-message: "<yellow>Removed <gold>{ENTITIES}</gold> entities!"
   log-completed-low-tps-message: "<red>Removed <gray>{ENTITIES}</gray> entities due to low TPS!"
+
+  title-completed-message: ""
+  subtitle-completed-message: ""
+  title-completed-low-tps-message: ""
+  subtitle-completed-low-tps-message: ""
 
 
 
@@ -234,24 +241,24 @@ low-tps:
     # Example 1
     replace_me_with_world: # <- Replace replace_me_with_world with the desired world name or set it to ALL to apply to all worlds (ALL overrides any other worlds below)
       entities:
-        - BEE
         - ARMOR_STAND
         - ARROW
+        - BEE
         - BOAT
         - CAVE_SPIDER
+        - CHEST_MINECART
         - CHICKEN
         - CREEPER
         - FALLING_BLOCK
+        - FURNACE_MINECART
+        - HOPPER_MINECART
         - MINECART-OCCUPIED
-        - MINECART_CHEST
-        - MINECART_FURNACE
-        - MINECART_HOPPER
-        - MINECART_TNT
         - SHEEP
         - SKELETON
         - SLIME
         - SPIDER
         - SQUID-NAMED
+        - TNT_MINECART
         - WOLF
         - ZOMBIE
       spawn-reason:
@@ -264,16 +271,16 @@ low-tps:
     # Example 2
     replace_me_with_world_nether: # <- Replace replace_me_with_world with the desired world name or remove this section entirely if not needed
       entities:
-        - BLAZE
         - ARMOR_STAND
         - ARROW
+        - BLAZE
         - BOAT
+        - CHEST_MINECART
         - FALLING_BLOCK
+        - FURNACE_MINECART
+        - HOPPER_MINECART
         - MINECART
-        - MINECART_CHEST
-        - MINECART_FURNACE
-        - MINECART_HOPPER
-        - MINECART_TNT
+        - TNT_MINECART
         - ZOMBIFIED_PIGLIN
       spawn-reason:
         enabled: false

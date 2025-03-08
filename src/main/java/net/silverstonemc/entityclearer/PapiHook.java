@@ -5,6 +5,9 @@ import net.silverstonemc.entityclearer.utils.KillTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PapiHook extends PlaceholderExpansion {
     @Override
@@ -37,13 +40,12 @@ public class PapiHook extends PlaceholderExpansion {
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
-        if (params.toLowerCase().startsWith("remaining_minutes_")) {
+    public String onRequest(OfflinePlayer player, @NotNull String params) {
+        if (params.startsWith("remaining_minutes_")) {
             String worldName = params.replace("remaining_minutes_", "");
 
-            if (Bukkit.getWorld(worldName) == null) return "UNKNOWN";
-            if (!KillTimer.nextKillTask.containsKey(worldName)) return "DISABLED";
-            if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED";
+            String returnReason = returnReason(worldName);
+            if (returnReason != null) return returnReason;
 
             return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 60000);
         }
@@ -51,9 +53,8 @@ public class PapiHook extends PlaceholderExpansion {
         if (params.startsWith("remaining_seconds_")) {
             String worldName = params.replace("remaining_seconds_", "");
 
-            if (Bukkit.getWorld(worldName) == null) return "UNKNOWN";
-            if (!KillTimer.nextKillTask.containsKey(worldName)) return "DISABLED";
-            if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED";
+            String returnReason = returnReason(worldName);
+            if (returnReason != null) return returnReason;
 
             return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
         }
@@ -61,9 +62,8 @@ public class PapiHook extends PlaceholderExpansion {
         if (params.startsWith("remaining_seconds_left_")) {
             String worldName = params.replace("remaining_seconds_left_", "");
 
-            if (Bukkit.getWorld(worldName) == null) return "UNKNOWN";
-            if (!KillTimer.nextKillTask.containsKey(worldName)) return "DISABLED";
-            if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED";
+            String returnReason = returnReason(worldName);
+            if (returnReason != null) return returnReason;
 
             int seconds = (int) ((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
             seconds %= 60;
@@ -71,5 +71,14 @@ public class PapiHook extends PlaceholderExpansion {
         }
 
         return null; // Placeholder is unknown by the Expansion
+    }
+
+    @Nullable
+    private String returnReason(String worldName) {
+        if (Bukkit.getWorld(worldName) == null) return "UNKNOWN WORLD";
+        if (!KillTimer.nextKillTask.containsKey(worldName))
+            return "NO TASK FOR WORLD (UNDEFINED OR DIFFERING CAPS)";
+        if (KillTimer.nextKillTask.get(worldName) == -1) return "DISABLED (INTERVAL SET TO -1)";
+        return null;
     }
 }

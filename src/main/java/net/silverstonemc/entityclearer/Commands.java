@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -120,16 +121,34 @@ public class Commands implements CommandExecutor {
         debug.debug(Level.INFO, "", "Plugin version: " + plugin.getDescription().getVersion());
         debug.debug(Level.INFO, "", "Server version: " + Bukkit.getName() + " " + Bukkit.getVersion());
         debug.debug(Level.INFO, "", "API version: " + Bukkit.getBukkitVersion());
+
+        Plugin mmobs = (Plugin) EntityClearer.getInstance().getMythicPlugin();
+        boolean mmobsEnabled = mmobs != null;
+        if (mmobsEnabled) debug.debug(
+            Level.INFO,
+            "",
+            "MythicMobs version: " + mmobs.getDescription().getVersion());
+
+        Plugin papi = EntityClearer.getInstance().getPlaceholderAPI();
+        boolean papiEnabled = papi != null;
+        if (papiEnabled) debug.debug(
+            Level.INFO,
+            "",
+            "PlaceholderAPI version: " + papi.getDescription().getVersion());
+
         //noinspection AccessOfSystemProperties
         debug.debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));
         debug.debug(Level.INFO, "", "Players online: " + Bukkit.getOnlinePlayers().size());
 
         debug.debug(Level.INFO, "", "Available world list: ");
-        for (World world : Bukkit.getWorlds())
-            debug.debug(
-                Level.INFO,
-                "",
-                " " + world.getName() + " (" + world.getPlayers().size() + " players)");
+        for (World world : Bukkit.getWorlds()) {
+            debug.debug(Level.INFO, "", " " + world.getName());
+            debug.debug(Level.INFO, "", "  Players: " + world.getPlayers().size());
+
+            String nextKillTask = KillTimer.nextKillTask.containsKey(world.getName()) ? (KillTimer.nextKillTask.get(
+                world.getName()) - System.currentTimeMillis()) / 1000 + " seconds" : "Unset";
+            debug.debug(Level.INFO, "", "  Next kill task: " + nextKillTask);
+        }
 
         debug.debug(Level.INFO, "", "");
         new ClearTask().removeEntitiesPreTask(new ConfigUtils().getWorlds("worlds"), false, false);

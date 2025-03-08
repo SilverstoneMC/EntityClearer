@@ -146,7 +146,7 @@ public class Commands implements CommandExecutor {
 
             if (papiEnabled) {
                 String nextKillTask = KillTimer.nextKillTask.containsKey(world.getName()) ? (KillTimer.nextKillTask.get(
-                    world.getName()) - System.currentTimeMillis()) / 1000 + " seconds" : "Unset";
+                    world.getName()) - System.currentTimeMillis()) / 1000 + " seconds" : "null";
                 debug.debug(Level.INFO, "", "  Next kill task: " + nextKillTask);
             }
         }

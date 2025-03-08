@@ -27,6 +27,15 @@ public class PapiHook extends PlaceholderExpansion {
         return true; // This is required or else PlaceholderAPI will unregister the Expansion on reload
     }
 
+    @NotNull
+    @Override
+    public List<String> getPlaceholders() {
+        return List.of(
+            "remaining_minutes_<world>",
+            "remaining_seconds_<world>",
+            "remaining_seconds_left_<world>");
+    }
+
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if (params.toLowerCase().startsWith("remaining_minutes_")) {

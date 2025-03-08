@@ -123,8 +123,7 @@ public class Commands implements CommandExecutor {
         debug.debug(Level.INFO, "", "API version: " + Bukkit.getBukkitVersion());
 
         Plugin mmobs = (Plugin) EntityClearer.getInstance().getMythicPlugin();
-        boolean mmobsEnabled = mmobs != null;
-        if (mmobsEnabled) debug.debug(
+        if (mmobs != null) debug.debug(
             Level.INFO,
             "",
             "MythicMobs version: " + mmobs.getDescription().getVersion());
@@ -145,9 +144,11 @@ public class Commands implements CommandExecutor {
             debug.debug(Level.INFO, "", " " + world.getName());
             debug.debug(Level.INFO, "", "  Players: " + world.getPlayers().size());
 
-            String nextKillTask = KillTimer.nextKillTask.containsKey(world.getName()) ? (KillTimer.nextKillTask.get(
-                world.getName()) - System.currentTimeMillis()) / 1000 + " seconds" : "Unset";
-            debug.debug(Level.INFO, "", "  Next kill task: " + nextKillTask);
+            if (papiEnabled) {
+                String nextKillTask = KillTimer.nextKillTask.containsKey(world.getName()) ? (KillTimer.nextKillTask.get(
+                    world.getName()) - System.currentTimeMillis()) / 1000 + " seconds" : "Unset";
+                debug.debug(Level.INFO, "", "  Next kill task: " + nextKillTask);
+            }
         }
 
         debug.debug(Level.INFO, "", "");

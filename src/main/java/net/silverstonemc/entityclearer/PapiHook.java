@@ -19,7 +19,7 @@ public class PapiHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1";
+        return EntityClearer.getInstance().getDescription().getVersion();
     }
 
     @Override

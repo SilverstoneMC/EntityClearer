@@ -118,22 +118,20 @@ public class Commands implements CommandExecutor {
         debug.debug(Level.INFO, "", "║             INFORMATION              ║");
         debug.debug(Level.INFO, "", "╚══════════════════════════════════════╝");
 
-        debug.debug(Level.INFO, "", "Plugin version: " + plugin.getDescription().getVersion());
+        debug.debug(Level.INFO, "", "Plugin version: " + plugin.getPluginMeta().getVersion());
         debug.debug(Level.INFO, "", "Server version: " + Bukkit.getName() + " " + Bukkit.getVersion());
         debug.debug(Level.INFO, "", "API version: " + Bukkit.getBukkitVersion());
 
         Plugin mmobs = (Plugin) EntityClearer.getInstance().getMythicPlugin();
         if (mmobs != null) debug.debug(
             Level.INFO,
-            "",
-            "MythicMobs version: " + mmobs.getDescription().getVersion());
+            "", "MythicMobs version: " + mmobs.getPluginMeta().getVersion());
 
         Plugin papi = EntityClearer.getInstance().getPlaceholderAPI();
         boolean papiEnabled = papi != null;
         if (papiEnabled) debug.debug(
             Level.INFO,
-            "",
-            "PlaceholderAPI version: " + papi.getDescription().getVersion());
+            "", "PlaceholderAPI version: " + papi.getPluginMeta().getVersion());
 
         //noinspection AccessOfSystemProperties
         debug.debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));

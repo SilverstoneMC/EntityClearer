@@ -65,7 +65,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 String latest = new UpdateChecker(instance).getLatestVersion();
-                String current = instance.getDescription().getVersion();
+                String current = instance.getPluginMeta().getVersion();
 
                 if (latest == null) return;
                 if (!current.equals(latest)) new UpdateChecker(instance).logUpdate(current, latest);

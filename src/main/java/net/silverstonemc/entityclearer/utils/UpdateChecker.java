@@ -27,7 +27,7 @@ public class UpdateChecker implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent event) {
-        String pluginName = plugin.getDescription().getName();
+        String pluginName = plugin.getPluginMeta().getName();
 
         if (event.getPlayer().hasPermission(pluginName.toLowerCase() + ".updatenotifs"))
             // Check for updates asynchronously
@@ -35,7 +35,7 @@ public class UpdateChecker implements Listener {
                 @Override
                 public void run() {
                     String latest = getLatestVersion();
-                    String current = plugin.getDescription().getVersion();
+                    String current = plugin.getPluginMeta().getVersion();
 
                     if (latest == null) return;
                     if (!current.equals(latest)) bukkitAudiences.player(event.getPlayer()).sendMessage(
@@ -53,7 +53,7 @@ public class UpdateChecker implements Listener {
 
     @Nullable
     public String getLatestVersion() {
-        String pluginName = plugin.getDescription().getName();
+        String pluginName = plugin.getPluginMeta().getName();
 
         try {
             // Send the request
@@ -74,7 +74,7 @@ public class UpdateChecker implements Listener {
     }
 
     public void logUpdate(String current, String latest) {
-        String pluginName = plugin.getDescription().getName();
+        String pluginName = plugin.getPluginMeta().getName();
 
         plugin.getLogger()
             .warning("An update is available for " + pluginName + "! (" + current + " → " + latest + ")");

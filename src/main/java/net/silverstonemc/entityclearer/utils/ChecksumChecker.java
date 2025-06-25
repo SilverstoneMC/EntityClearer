@@ -34,7 +34,7 @@ public class ChecksumChecker implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent event) {
-        String pluginName = plugin.getDescription().getName();
+        String pluginName = plugin.getPluginMeta().getName();
 
         if (checksumDiffers)
             if (event.getPlayer().hasPermission(pluginName.toLowerCase() + ".notify")) new BukkitRunnable() {
@@ -55,7 +55,7 @@ public class ChecksumChecker implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                String version = plugin.getDescription().getVersion();
+                String version = plugin.getPluginMeta().getVersion();
                 String realChecksum = getOnlineChecksum(version);
                 if (realChecksum == null) {
                     plugin.getLogger()
@@ -81,7 +81,7 @@ public class ChecksumChecker implements Listener {
                         checksumDiffers = true;
                         plugin.getLogger().severe(msg1);
                         plugin.getLogger().severe(msg2);
-                        plugin.getLogger().severe(msg3 + plugin.getDescription().getName());
+                        plugin.getLogger().severe(msg3 + plugin.getPluginMeta().getName());
                         plugin.getLogger().severe(msg4);
                         plugin.getLogger().severe(msg5);
                     }
@@ -92,7 +92,7 @@ public class ChecksumChecker implements Listener {
 
             @Nullable
             private String getOnlineChecksum(String version) {
-                String pluginName = plugin.getDescription().getName();
+                String pluginName = plugin.getPluginMeta().getName();
 
                 try {
                     // Send the request

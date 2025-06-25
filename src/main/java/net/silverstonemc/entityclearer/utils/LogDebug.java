@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -60,7 +61,7 @@ public class LogDebug {
                 // Build the json
                 try {
                     // Send the request
-                    URL url = new URL("https://api.pastes.dev/post");
+                    URL url = new URI("https://api.pastes.dev/post").toURL();
                     URLConnection con = url.openConnection();
                     HttpURLConnection http = (HttpURLConnection) con;
                     http.setRequestMethod("POST");

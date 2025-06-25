@@ -33,7 +33,7 @@ public class KillTimer {
 
             // interval - countdown time = time to wait/delay (in secs)
             interval = interval * 60;
-            long countdownLength = new Countdown().getCountdownSorted().get(0);
+            long countdownLength = new Countdown().getCountdownSorted().getFirst();
             long delay = interval - countdownLength;
 
             if (delay < 0) {

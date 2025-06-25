@@ -26,7 +26,7 @@ public class Countdown {
         String worldName = world.getName();
 
         List<Integer> times = getCountdownSorted();
-        int initialTime = times.get(0);
+        int initialTime = times.getFirst();
 
         int[] timeLeft = {initialTime};
         savedCountingDowns.put(
@@ -43,9 +43,9 @@ public class Countdown {
                         return;
                     }
 
-                    if (!times.isEmpty()) if (timeLeft[0] <= times.get(0)) {
+                    if (!times.isEmpty()) if (timeLeft[0] <= times.getFirst()) {
                         message(timeLeft[0], world);
-                        times.remove(0);
+                        times.removeFirst();
                     }
 
                     timeLeft[0] -= 1;

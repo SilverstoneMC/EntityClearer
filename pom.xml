@@ -4,11 +4,11 @@
 
     <groupId>net.silverstonemc</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>3.8.1</version>
+    <version>3.9.0-BETA</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -148,13 +148,13 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.19.0</version>
+            <version>4.23.0</version>
         </dependency>
 
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.4</version>
+            <version>4.4.0</version>
         </dependency>
 
         <dependency>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.7.2</version>
+            <version>5.9.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -180,7 +180,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20250107</version>
+            <version>20250517</version>
         </dependency>
     </dependencies>
 

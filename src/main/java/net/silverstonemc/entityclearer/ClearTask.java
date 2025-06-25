@@ -231,6 +231,12 @@ public class ClearTask {
         LogDebug debug = new LogDebug();
 
         // If any entity should be removed, regardless of the spawn reason
+        debug.debug(Level.WARNING, worldName, path + "." + worldName + ".spawn-reason.enabled");
+        debug.debug(
+            Level.WARNING,
+            worldName,
+            String.valueOf(plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")));
+
         if (!plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
             debug.debug(Level.INFO, worldName, "Removing entities regardless of their spawn reason...");
             checkNearby(entity, worldName);

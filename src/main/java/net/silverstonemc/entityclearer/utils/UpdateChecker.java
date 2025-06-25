@@ -39,8 +39,10 @@ public class UpdateChecker implements Listener {
 
                     if (latest == null) return;
                     if (!current.equals(latest)) bukkitAudiences.player(event.getPlayer()).sendMessage(
-                        Component.text("An update is available for " + pluginName + "! ",
-                            NamedTextColor.YELLOW).append(Component.text("(" + current + " → " + latest + ")",
+                        Component.text(
+                            "An update is available for " + pluginName + "! ",
+                            NamedTextColor.YELLOW).append(Component.text(
+                            "(" + current + " → " + latest + ")",
                             NamedTextColor.GOLD)).appendNewline().append(Component.text(
                                 "https://github.com/SilverstoneMC/" + pluginName + "/releases/latest",
                                 NamedTextColor.DARK_AQUA)

@@ -100,7 +100,8 @@ public class ChecksumChecker implements Listener {
                         .toURL().openStream();
 
                     // Read the response
-                    JSONObject response = new JSONObject(new String(url.readAllBytes(),
+                    JSONObject response = new JSONObject(new String(
+                        url.readAllBytes(),
                         StandardCharsets.UTF_8));
                     url.close();
 

@@ -12,7 +12,8 @@ public class MetricsUtils {
         // Interval
         int interval = plugin.getConfig().getInt("global-interval");
         String parsedInterval = getInterval(interval);
-        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("interval",
+        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie(
+            "interval",
             () -> parsedInterval));
 
         // Sound
@@ -21,13 +22,15 @@ public class MetricsUtils {
 
         // TPS
         String tpsEnabled = plugin.getConfig().getBoolean("low-tps.enabled") ? "Enabled" : "Disabled";
-        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("low_tps_check",
+        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie(
+            "low_tps_check",
             () -> tpsEnabled));
 
         // Nearby
         String nearbyEnabled = plugin.getConfig()
             .getBoolean("nearby-entities.enabled") ? "Enabled" : "Disabled";
-        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie("nearby_entities_check",
+        EntityClearer.getInstance().getMetrics().addCustomChart(new SimplePie(
+            "nearby_entities_check",
             () -> nearbyEnabled));
 
         // MythicMobs

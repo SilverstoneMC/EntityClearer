@@ -112,7 +112,8 @@ public class ClearTask {
                 }
 
                 // Skip all the checks if a dropped item
-                if (entity.getType() == EntityType.DROPPED_ITEM) removeEntity(entity, worldName);
+                // todo only 1.20.5+
+                if (entity.getType() == EntityType.ITEM) removeEntity(entity, worldName);
                 else checkOccupied(entity, entityData, path, worldName);
             }
 

@@ -2,10 +2,7 @@ package net.silverstonemc.entityclearer;
 
 import io.lumine.mythic.api.MythicPlugin;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silverstonemc.entityclearer.utils.ChecksumChecker;
-import net.silverstonemc.entityclearer.utils.KillTimer;
-import net.silverstonemc.entityclearer.utils.MetricsUtils;
-import net.silverstonemc.entityclearer.utils.UpdateChecker;
+import net.silverstonemc.entityclearer.utils.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -14,9 +11,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 
+import static net.silverstonemc.entityclearer.utils.TestConfigUtils.TestType;
+
 @SuppressWarnings("DataFlowIssue")
 public class EntityClearer extends JavaPlugin implements Listener {
-    private BukkitAudiences adventure;
+    public static boolean testing;
+    public static TestType testType = TestType.DEFAULT_CONFIG;
+
+    public static BukkitAudiences adventure;
     private Metrics metrics;
     private MythicPlugin mythicPlugin;
     private Plugin placeholderAPI;
@@ -26,8 +28,11 @@ public class EntityClearer extends JavaPlugin implements Listener {
     public void onEnable() {
         instance = this;
 
+        // Initialize test configurations
+        if (testing) new TestConfigUtils().initConfig(testType);
+
         // Validate the checksum of the plugin's jar file to the one on GitHub
-        new ChecksumChecker(this).scan(getFile());
+        if (!testing) new ChecksumChecker(this).scan(getFile());
 
         adventure = BukkitAudiences.create(this);
 
@@ -40,8 +45,10 @@ public class EntityClearer extends JavaPlugin implements Listener {
             getLogger().log(Level.INFO, "Enabled PlaceholderAPI hook!");
         }
 
-        metrics = new Metrics(this, 10915);
-        new MetricsUtils().send();
+        if (!testing) {
+            metrics = new Metrics(this, 10915);
+            new MetricsUtils().send();
+        }
 
         saveDefaultConfig();
 
@@ -61,7 +68,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
         }.runTaskLater(this, 3L);
 
         // Log version update
-        new BukkitRunnable() {
+        if (!testing) new BukkitRunnable() {
             @Override
             public void run() {
                 String latest = new UpdateChecker(instance).getLatestVersion();

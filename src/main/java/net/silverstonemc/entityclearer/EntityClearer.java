@@ -16,7 +16,7 @@ import static net.silverstonemc.entityclearer.utils.TestConfigUtils.TestType;
 @SuppressWarnings("DataFlowIssue")
 public class EntityClearer extends JavaPlugin implements Listener {
     public static boolean testing;
-    public static TestType testType = TestType.DEFAULT_CONFIG;
+    public static TestType testType;
 
     public static BukkitAudiences adventure;
     private Metrics metrics;

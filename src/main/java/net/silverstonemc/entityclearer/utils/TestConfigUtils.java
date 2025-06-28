@@ -14,13 +14,18 @@ public class TestConfigUtils {
         plugin.saveDefaultConfig();
         FileConfiguration config = plugin.getConfig();
 
+        // Set overworld
         config.set("worlds.mock_world", config.getConfigurationSection("worlds.replace_me_with_world"));
         config.set("worlds.replace_me_with_world", null);
 
+        // Set nether
         config.set(
             "worlds.mock_world_nether",
             config.getConfigurationSection("worlds.replace_me_with_world_nether"));
         config.set("worlds.replace_me_with_world_nether", null);
+
+        // Disable debug upload
+        plugin.getConfig().set("disable-paste-upload", true);
 
         switch (testType) {
         }

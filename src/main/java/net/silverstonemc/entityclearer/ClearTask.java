@@ -6,10 +6,7 @@ import io.lumine.mythic.core.mobs.ActiveMob;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
-import net.silverstonemc.entityclearer.utils.ConfigUtils;
-import net.silverstonemc.entityclearer.utils.EntityData;
-import net.silverstonemc.entityclearer.utils.LogDebug;
-import net.silverstonemc.entityclearer.utils.OnlinePlayers;
+import net.silverstonemc.entityclearer.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -111,9 +108,15 @@ public class ClearTask {
                     }
                 }
 
+
+                // Only check for EntityType.ITEM if version is 1.20.5 or newer due to enum change
+                boolean isDroppedItem = false;
+                if (new VersionUtils().compareVersions(
+                    Bukkit.getServer().getMinecraftVersion(),
+                    "1.20.5") >= 0) if (entity.getType() == EntityType.ITEM) isDroppedItem = true;
+
                 // Skip all the checks if a dropped item
-                // todo only 1.20.5+
-                if (entity.getType() == EntityType.ITEM) removeEntity(entity, worldName);
+                if (isDroppedItem) removeEntity(entity, worldName);
                 else checkOccupied(entity, entityData, path, worldName);
             }
 

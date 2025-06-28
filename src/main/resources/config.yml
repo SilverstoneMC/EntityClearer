@@ -61,7 +61,7 @@ worlds:
     min-players: -1
 
     # The entities to be removed from the world
-    # See https://jd.papermc.io/paper/1.21.4/org/bukkit/entity/EntityType.html for all entity types
+    # See https://paper-jd.silverstonemc.net/org/bukkit/entity/EntityType.html for all entity types
     #
     # By default, named entities will not be removed
     # Add "-NAMED" to the end of the entity type to also remove named ones
@@ -73,7 +73,7 @@ worlds:
     #
     # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded in quotation marks
     #
-    # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
+    # Note: You should not be using ITEM in your list as you should use Paper's alternate item despawn rates instead! Additionally, dropped items will not be properly detected on versions below 1.20.5.
     entities:
       - BEE
       - CAVE_SPIDER
@@ -94,7 +94,7 @@ worlds:
     # Note: This only works on Paper and its forks!
     spawn-reason:
       enabled: false
-      # See https://jd.papermc.io/paper/1.21.4/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+      # See https://paper-jd.silverstonemc.net/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
       reasons:
         - SPAWNER
         - SPAWNER_EGG

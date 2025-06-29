@@ -1,3 +1,9 @@
+
+##########################################################################
+#  WARNING - THIS IS THE LAST VERSION THAT WILL SUPPORT SPIGOT SERVERS!  #
+#         Future plugin updates will only be provided for Paper!         #
+##########################################################################
+
 # This config was generated for version %VERSION%
 # Find the latest config at https://github.com/SilverstoneMC/EntityClearer/blob/main/src/main/resources/config.yml
 
@@ -61,7 +67,7 @@ worlds:
     min-players: -1
 
     # The entities to be removed from the world
-    # See https://jd.papermc.io/paper/1.21.4/org/bukkit/entity/EntityType.html for all entity types
+    # See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for all entity types
     #
     # By default, named entities will not be removed
     # Add "-NAMED" to the end of the entity type to also remove named ones
@@ -73,7 +79,7 @@ worlds:
     #
     # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded in quotation marks
     #
-    # Note: You should not be using DROPPED_ITEM in your list as you should use Paper's alternate item despawn rates instead!
+    # Note: You should not be using ITEM in your list as it's best to let items despawn themselves!
     entities:
       - BEE
       - CAVE_SPIDER
@@ -89,16 +95,6 @@ worlds:
       #- HORSE-NAMED-OCCUPIED
       #- "MythicMob:SkeletalKnight-NAMED"
 
-    # Should only entities with a specific spawn reason be removed?
-    # Setting this to false will check for any spawn reason
-    # Note: This only works on Paper and its forks!
-    spawn-reason:
-      enabled: false
-      # See https://jd.papermc.io/paper/1.21.4/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
-      reasons:
-        - SPAWNER
-        - SPAWNER_EGG
-
 
   # Example 2
   replace_me_with_world_nether: # <- Replace replace_me_with_world with the desired world name or remove this section entirely if not needed
@@ -107,11 +103,6 @@ worlds:
     entities:
       - BLAZE
       - ZOMBIFIED_PIGLIN
-    spawn-reason:
-      enabled: false
-      reasons:
-        - SPAWNER
-        - SPAWNER_EGG
 
 
   # Example 3
@@ -128,11 +119,6 @@ worlds:
   #    - HOPPER_MINECART
   #    - MINECART
   #    - TNT_MINECART
-  #  spawn-reason:
-  #    enabled: false
-  #    reasons:
-  #      - SPAWNER
-  #      - SPAWNER_EGG
 
 
 
@@ -261,11 +247,6 @@ low-tps:
         - TNT_MINECART
         - WOLF
         - ZOMBIE
-      spawn-reason:
-        enabled: false
-        reasons:
-          - SPAWNER
-          - SPAWNER_EGG
 
 
     # Example 2
@@ -282,11 +263,6 @@ low-tps:
         - MINECART
         - TNT_MINECART
         - ZOMBIFIED_PIGLIN
-      spawn-reason:
-        enabled: false
-        reasons:
-          - SPAWNER
-          - SPAWNER_EGG
 
 
 

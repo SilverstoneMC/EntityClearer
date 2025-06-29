@@ -17,7 +17,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -34,7 +33,6 @@ public class ClearTask {
     private final JavaPlugin plugin = EntityClearer.getInstance();
     private final MythicPlugin mythicPlugin = EntityClearer.getInstance().getMythicPlugin();
     private int removedEntities;
-    private static boolean logCooldown;
 
     public void removeEntitiesPreTask(Iterable<World> worlds, boolean useTpsList, boolean tpsLow) {
         LogDebug debug = new LogDebug();
@@ -106,14 +104,14 @@ public class ClearTask {
                         .getActiveMob(entity.getUniqueId()).orElse(null);
 
                     if (mythicMob.getMobType().equalsIgnoreCase(entityData.getMythicMobType())) {
-                        checkOccupied(entity, entityData, path, worldName);
+                        checkOccupied(entity, entityData, worldName);
                         continue;
                     }
                 }
 
                 // Skip all the checks if a dropped item
-                if (entity.getType() == EntityType.DROPPED_ITEM) removeEntity(entity, worldName);
-                else checkOccupied(entity, entityData, path, worldName);
+                if (entity.getType() == EntityType.ITEM) removeEntity(entity, worldName);
+                else checkOccupied(entity, entityData, worldName);
             }
 
             // For each player in said world
@@ -184,7 +182,7 @@ public class ClearTask {
         return null;
     }
 
-    private void checkOccupied(Entity entity, EntityData entityData, String path, String worldName) {
+    private void checkOccupied(Entity entity, EntityData entityData, String worldName) {
         // Skip entity if it is occupied and the config doesn't allow it
         if (!entityData.includeOccupied()) for (Entity passenger : entity.getPassengers())
             if (passenger.getType() == EntityType.PLAYER) {
@@ -194,18 +192,17 @@ public class ClearTask {
                 return;
             }
 
-        checkNamed(entity, entityData, path, worldName);
+        checkNamed(entity, entityData, worldName);
     }
 
-    @SuppressWarnings("deprecation")
-    private void checkNamed(Entity entity, EntityData entityData, String path, String worldName) {
+    private void checkNamed(Entity entity, EntityData entityData, String worldName) {
         LogDebug debug = new LogDebug();
 
         String entityType = (entityData.getMythicMobType() != null) ? "MythicMob" : "entity";
 
         if (entityData.includeNamed()) {
             // We don't care if it has a name
-            checkSpawnReason(entity, path, worldName);
+            checkNearby(entity, worldName);
             return;
         }
 
@@ -216,7 +213,7 @@ public class ClearTask {
             debug.debug(
                 Level.INFO, worldName,
                 "The " + entityType + " " + entity.getType() + " doesn't have a custom name!");
-            checkSpawnReason(entity, path, worldName);
+            checkNearby(entity, worldName);
         }
         // And it does have a name
         else {
@@ -224,66 +221,6 @@ public class ClearTask {
                 Level.INFO, worldName,
                 entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
             debug.debug(Level.INFO, "", "");
-        }
-    }
-
-    private void checkSpawnReason(Entity entity, String path, String worldName) {
-        LogDebug debug = new LogDebug();
-
-        // If any entity should be removed, regardless of the spawn reason
-        debug.debug(Level.WARNING, worldName, path + "." + worldName + ".spawn-reason.enabled");
-        debug.debug(
-            Level.WARNING,
-            worldName,
-            String.valueOf(plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")));
-
-        if (!plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
-            debug.debug(Level.INFO, worldName, "Removing entities regardless of their spawn reason...");
-            checkNearby(entity, worldName);
-            return;
-        }
-
-        debug.debug(Level.INFO, worldName, "Only removing entities with a specific spawn reason...");
-
-        try {
-            List<String> spawnReasons = new ArrayList<>();
-            for (String spawnReason : plugin.getConfig()
-                .getStringList(path + "." + worldName + ".spawn-reason.reasons"))
-                spawnReasons.add(spawnReason.toUpperCase());
-
-            // If the entity's spawn reason matches the config's
-            if (spawnReasons.contains(entity.getEntitySpawnReason().name())) {
-                debug.debug(
-                    Level.INFO,
-                    worldName,
-                    entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason() + " matches the config's!");
-                checkNearby(entity, worldName);
-
-            } else debug.debug(
-                Level.INFO, worldName,
-                entity.getType() + "'s spawn reason " + entity.getEntitySpawnReason()
-                    .name() + " doesn't match the config's! (" + spawnReasons + ")");
-
-        } catch (NoClassDefFoundError | NoSuchMethodError e) {
-            if (logCooldown) return;
-
-            debug.error(worldName, "Unable to check for entity spawn reason! Are you not running Paper?");
-            plugin.getLogger().warning("Please use Paper or its forks for this feature to work.");
-
-            if (LogDebug.debugActive) {
-                debug.debug(Level.SEVERE, worldName, e.toString());
-                for (StackTraceElement ste : e.getStackTrace())
-                    debug.debug(Level.SEVERE, worldName, ste.toString());
-            } else e.printStackTrace();
-
-            logCooldown = true;
-            BukkitRunnable cooldown = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    logCooldown = false;
-                }
-            };
-            cooldown.runTaskLater(plugin, 200);
         }
     }
 

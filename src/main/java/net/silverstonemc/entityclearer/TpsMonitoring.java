@@ -45,7 +45,7 @@ public class TpsMonitoring {
 
                     private void averageTPS(int tps) {
                         tickList.add(tps);
-                        if (tickList.size() > 10) tickList.remove(0);
+                        if (tickList.size() > 10) tickList.removeFirst();
                         else return;
 
                         int sum = 0;

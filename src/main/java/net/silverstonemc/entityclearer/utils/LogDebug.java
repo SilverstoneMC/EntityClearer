@@ -88,7 +88,8 @@ public class LogDebug {
 
                     // Read the response
                     InputStream input = http.getInputStream();
-                    JSONObject returnedText = new JSONObject(new String(input.readAllBytes(),
+                    JSONObject returnedText = new JSONObject(new String(
+                        input.readAllBytes(),
                         StandardCharsets.UTF_8));
                     input.close();
 
@@ -97,11 +98,13 @@ public class LogDebug {
                         String link = "https://pastes.dev/" + key;
                         dumpLink(link);
 
-                    } else if (returnedText.getString("status").equals("error")) error("SERVER",
+                    } else if (returnedText.getString("status").equals("error")) error(
+                        "SERVER",
                         returnedText.getString("error") + "\n" + returnedText.getString("message"));
 
                 } catch (Exception e) {
-                    error("SERVER",
+                    error(
+                        "SERVER",
                         "An error occurred while uploading the debug dump! (" + e.getMessage() + ")");
                     e.printStackTrace();
                 }
@@ -115,7 +118,8 @@ public class LogDebug {
                             NamedTextColor.GRAY).append(Component.text(link, NamedTextColor.AQUA)
                             .clickEvent(ClickEvent.openUrl(link))));
 
-                EntityClearer.getInstance().getLogger().log(Level.INFO,
+                EntityClearer.getInstance().getLogger().log(
+                    Level.INFO,
                     "The debug dump can be found at " + link);
             }
         }.runTaskAsynchronously(EntityClearer.getInstance());

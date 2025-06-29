@@ -148,7 +148,8 @@ public class ClearTask {
 
                 if (mythicEntityData != null) {
                     debug.debug(
-                        Level.INFO, worldName,
+                        Level.INFO,
+                        worldName,
                         "Entity " + mythicMob.getMobType() + " is a MythicMob that matches the config's!");
                     return mythicEntityData;
                 }
@@ -168,7 +169,8 @@ public class ClearTask {
 
                 if (mythicMob != null) {
                     debug.debug(
-                        Level.WARNING, worldName,
+                        Level.WARNING,
+                        worldName,
                         "Entity " + mythicMob.getMobType() + " is a MythicMob not in the config! Skipping...");
                     return null;
                 }
@@ -187,7 +189,8 @@ public class ClearTask {
         if (!entityData.includeOccupied()) for (Entity passenger : entity.getPassengers())
             if (passenger.getType() == EntityType.PLAYER) {
                 new LogDebug().debug(
-                    Level.INFO, worldName,
+                    Level.INFO,
+                    worldName,
                     "Skipping entity " + entity.getType() + " because it is occupied!");
                 return;
             }
@@ -211,14 +214,16 @@ public class ClearTask {
         // And it doesn't have a name
         if (entity.getCustomName() == null) {
             debug.debug(
-                Level.INFO, worldName,
+                Level.INFO,
+                worldName,
                 "The " + entityType + " " + entity.getType() + " doesn't have a custom name!");
             checkNearby(entity, worldName);
         }
         // And it does have a name
         else {
             debug.debug(
-                Level.INFO, worldName,
+                Level.INFO,
+                worldName,
                 entity.getType() + " was skipped becuase it has a name: " + entity.getCustomName());
             debug.debug(Level.INFO, "", "");
         }
@@ -258,7 +263,8 @@ public class ClearTask {
             }
 
             debug.debug(
-                Level.INFO, worldName,
+                Level.INFO,
+                worldName,
                 "Found " + nearbyEntities.size() + " nearby entities that were on the list.");
         }
 
@@ -277,7 +283,8 @@ public class ClearTask {
 
         LogDebug debug = new LogDebug();
         debug.debug(
-            Level.INFO, worldName,
+            Level.INFO,
+            worldName,
             entity.getType() + " removed! Total removed is " + removedEntities + ".");
         debug.debug(Level.INFO, "", "");
     }

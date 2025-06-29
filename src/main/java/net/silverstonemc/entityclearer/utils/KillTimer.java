@@ -37,7 +37,8 @@ public class KillTimer {
             long delay = interval - countdownLength;
 
             if (delay < 0) {
-                new LogDebug().error(worldName,
+                new LogDebug().error(
+                    worldName,
                     "The interval is set to a value less than the highest countdown time!");
                 nextKillTask.put(worldName, -1L);
                 continue;
@@ -47,22 +48,24 @@ public class KillTimer {
             if (EntityClearer.getInstance().getPlaceholderAPI() != null) {
                 int finalInterval = interval;
 
-                savedTimeTillKillTasks.put(worldName, new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        nextKillTask.put(
-                            worldName,
-                            System.currentTimeMillis() + ((finalInterval + 1) * 1000L));
-                    }
-                }.runTaskTimer(plugin, 0, interval * 20L));
+                savedTimeTillKillTasks.put(
+                    worldName, new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            nextKillTask.put(
+                                worldName,
+                                System.currentTimeMillis() + ((finalInterval + 1) * 1000L));
+                        }
+                    }.runTaskTimer(plugin, 0, interval * 20L));
             }
 
-            savedStartCountdowns.put(worldName, new BukkitRunnable() {
-                @Override
-                public void run() {
-                    new Countdown().countdown(world);
-                }
-            }.runTaskTimer(plugin, (delay * 20) + 10, (interval * 20L) + 20));
+            savedStartCountdowns.put(
+                worldName, new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        new Countdown().countdown(world);
+                    }
+                }.runTaskTimer(plugin, (delay * 20) + 10, (interval * 20L) + 20));
         }
     }
 }

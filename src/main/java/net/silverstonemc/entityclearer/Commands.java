@@ -1,8 +1,9 @@
 package net.silverstonemc.entityclearer;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.silverstonemc.entityclearer.utils.*;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -57,18 +58,20 @@ public class Commands implements CommandExecutor {
         new KillTimer().start();
         new MetricsUtils().send();
 
-        sender.sendMessage(ChatColor.GREEN + "EntityClearer reloaded!");
+        sender.sendMessage(Component.text("EntityClearer reloaded!", NamedTextColor.GREEN));
     }
 
     private void debug(CommandSender sender) {
         LogDebug debug = new LogDebug();
 
         if (LogDebug.debugActive) {
-            sender.sendMessage(ChatColor.RED + "Debug is already active!");
+            sender.sendMessage(Component.text("Debug is already active!", NamedTextColor.RED));
             return;
         }
 
-        sender.sendMessage(ChatColor.YELLOW + "Activating debug... See console for more details.");
+        sender.sendMessage(Component.text(
+            "Activating debug... See console for more details.",
+            NamedTextColor.YELLOW));
 
         try {
             Path path = Path.of(plugin.getDataFolder().getPath(), "debug");
@@ -77,8 +80,8 @@ public class Commands implements CommandExecutor {
             File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
 
             if (file.createNewFile()) LogDebug.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
-            else
-                sender.sendMessage(ChatColor.RED + "Failed to create debug file! Check console for the debug output.");
+            else sender.sendMessage(Component.text("Failed to create debug file! Check console for the debug output.",
+                NamedTextColor.RED));
 
         } catch (IOException e) {
             debug.error("SERVER", "Failed to create debug file! Check console for more information...");
@@ -125,13 +128,15 @@ public class Commands implements CommandExecutor {
         Plugin mmobs = (Plugin) EntityClearer.getInstance().getMythicPlugin();
         if (mmobs != null) debug.debug(
             Level.INFO,
-            "", "MythicMobs version: " + mmobs.getPluginMeta().getVersion());
+            "",
+            "MythicMobs version: " + mmobs.getPluginMeta().getVersion());
 
         Plugin papi = EntityClearer.getInstance().getPlaceholderAPI();
         boolean papiEnabled = papi != null;
         if (papiEnabled) debug.debug(
             Level.INFO,
-            "", "PlaceholderAPI version: " + papi.getPluginMeta().getVersion());
+            "",
+            "PlaceholderAPI version: " + papi.getPluginMeta().getVersion());
 
         //noinspection AccessOfSystemProperties
         debug.debug(Level.INFO, "", "Java version: " + System.getProperty("java.version"));
@@ -154,7 +159,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void clearnow(CommandSender sender) {
-        sender.sendMessage(ChatColor.YELLOW + "Starting entity removal task...");
+        sender.sendMessage(Component.text("Starting entity removal task...", NamedTextColor.YELLOW));
         new ClearTask().removeEntitiesPreTask(new ConfigUtils().getWorlds("worlds"), false, false);
     }
 }

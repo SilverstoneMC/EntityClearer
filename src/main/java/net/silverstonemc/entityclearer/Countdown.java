@@ -2,7 +2,11 @@ package net.silverstonemc.entityclearer;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.title.Title;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
 import net.silverstonemc.entityclearer.utils.OnlinePlayers;
@@ -102,9 +106,11 @@ public class Countdown {
         if (!player.hasPermission("entityclearer.removalnotifs.actionbar")) return;
         if (plugin.getConfig().getString("messages.actionbar-message").isBlank()) return;
 
-        bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
-            .deserialize(plugin.getConfig().getString("messages.actionbar-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+        BaseComponent component = ComponentSerializer.deserialize(GsonComponentSerializer.gson()
+            .serializeToTree(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
+                "messages.actionbar-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time))));
+
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
     }
 
     private void sendChat(String timeLeft, Player player, StringBuilder time) {
@@ -121,12 +127,15 @@ public class Countdown {
         if (plugin.getConfig().getString("messages.title-message").isBlank() && plugin.getConfig().getString(
             "messages.subtitle-message").isBlank()) return;
 
-        Title title = Title.title(
-            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.title-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)),
-            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.subtitle-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
-        bukkitAudiences.player(player).showTitle(title);
+        String title = LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat().hexColors()
+            .build().serialize(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
+                "messages.title-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+
+        String subtitle = LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat()
+            .hexColors().build().serialize(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
+                "messages.subtitle-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+
+        player.sendTitle(title, subtitle, 10, 70, 20);
     }
 
     private void playSound(World world, Player player) {

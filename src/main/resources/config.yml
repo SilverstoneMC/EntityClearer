@@ -176,7 +176,7 @@ messages:
   # Any message can be set to "" to disable it
   # This plugin uses MiniMessage markdown and formatting - see https://docs.advntr.dev/minimessage/format.html
 
-  # TIME placeholder translations
+  # <time> placeholder translations
   timeleft-minute: "minute"
   timeleft-second: "second"
 
@@ -184,26 +184,26 @@ messages:
   append-s-text: "s"
 
   # Placeholders:
-  # {TIMELEFT} - the time remaining before the clear task is run
-  # {TIME} - will output "minute(s)" or "second(s)" depending on the time left
+  # <timeleft> - the time remaining before the clear task is run
+  # <time> - will output "minute(s)" or "second(s)" depending on the time left
 
-  actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow>{TIMELEFT}</yellow> {TIME}!"
-  chat-message: "<red>Common entities will be removed in <gray>{TIMELEFT}</gray> {TIME}!"
-  log-message: "<gold>Common entities will be removed in <yellow>{TIMELEFT}</yellow> {TIME}!"
+  actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow><timeleft></yellow> <time>!"
+  chat-message: "<red>Common entities will be removed in <gray><timeleft></gray> <time>!"
+  log-message: "<gold>Common entities will be removed in <yellow><timeleft></yellow> <time>!"
   title-message: ""
   subtitle-message: ""
 
   # Placeholders:
-  # {ENTITIES} - the amount of entities removed after the clear task has run
+  # <entities> - the amount of entities removed after the clear task has run
 
-  actionbar-completed-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES}</yellow> entities!"
-  actionbar-completed-low-tps-message: "<#ff9b0f><bold>Removed <yellow>{ENTITIES}</yellow> entities due to low TPS!"
+  actionbar-completed-message: "<#ff9b0f><bold>Removed <yellow><entities></yellow> entities!"
+  actionbar-completed-low-tps-message: "<#ff9b0f><bold>Removed <yellow><entities></yellow> entities due to low TPS!"
 
-  chat-completed-message: "<red>Removed <gray>{ENTITIES}</gray> entities!"
-  chat-completed-low-tps-message: "<red>Removed <gray>{ENTITIES}</gray> entities due to low TPS!"
+  chat-completed-message: "<red>Removed <gray><entities></gray> entities!"
+  chat-completed-low-tps-message: "<red>Removed <gray><entities></gray> entities due to low TPS!"
 
-  log-completed-message: "<yellow>Removed <gold>{ENTITIES}</gold> entities!"
-  log-completed-low-tps-message: "<red>Removed <gray>{ENTITIES}</gray> entities due to low TPS!"
+  log-completed-message: "<yellow>Removed <gold><entities></gold> entities!"
+  log-completed-low-tps-message: "<red>Removed <gray><entities></gray> entities due to low TPS!"
 
   title-completed-message: ""
   subtitle-completed-message: ""
@@ -228,8 +228,8 @@ low-tps:
   chat: true
 
   # Placeholders:
-  # {TPS} - the current TPS of the server
-  chat-message: "<red><bold>Warning: TPS low <dark_gray>(<gray>{TPS}</gray>)</dark_gray>! Removing entities..."
+  # <tps> - the current TPS of the server
+  chat-message: "<red><bold>Warning: TPS low <dark_gray>(<gray><tps></gray>)</dark_gray>! Removing entities..."
 
   # Should the list of entities to remove be separate from the one defined above?
   separate-entity-list: false

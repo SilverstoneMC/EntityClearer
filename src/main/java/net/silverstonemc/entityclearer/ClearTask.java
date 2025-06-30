@@ -3,7 +3,10 @@ package net.silverstonemc.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.EntityData;
@@ -26,7 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-@SuppressWarnings({"DataFlowIssue", "resource"})
+@SuppressWarnings({
+    "DataFlowIssue",
+    "resource"
+})
 public class ClearTask {
     private final List<EntityData> entityDataList = new ArrayList<>();
     private final JavaPlugin plugin = EntityClearer.getInstance();
@@ -114,14 +120,18 @@ public class ClearTask {
                 else checkOccupied(entity, entityData, path, worldName);
             }
 
+            TagResolver removedPlaceholder = Placeholder.unparsed(
+                "entities",
+                String.valueOf(removedEntities));
+
             // For each player in said world
             for (Player player : world.getPlayers()) {
-                sendActionBar(world, player, tpsLow);
-                sendChat(world, player, tpsLow);
-                sendTitle(world, player, tpsLow);
+                sendActionBar(world, player, tpsLow, removedPlaceholder);
+                sendChat(world, player, tpsLow, removedPlaceholder);
+                sendTitle(world, player, tpsLow, removedPlaceholder);
                 playSound(world, player);
             }
-            sendLog(world, tpsLow);
+            sendLog(world, tpsLow, removedPlaceholder);
         }
 
         for (String command : plugin.getConfig().getStringList("commands"))
@@ -372,7 +382,7 @@ public class ClearTask {
         }
     }
 
-    private void sendActionBar(World world, Player player, boolean tpsLow) {
+    private void sendActionBar(World world, Player player, boolean tpsLow, TagResolver placeholder) {
         if (!player.hasPermission("entityclearer.removalnotifs.actionbar")) return;
 
         String path = tpsLow ? "messages.actionbar-completed-low-tps-message" : "messages.actionbar-completed-message";
@@ -384,11 +394,11 @@ public class ClearTask {
             world.getName(),
             "Sending action bar to player " + player.getName() + " about " + removedEntities + " entities");
 
-        player.sendActionBar(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(path)
-            .replace("{ENTITIES}", String.valueOf(removedEntities))));
+        player.sendActionBar(MiniMessage.miniMessage()
+            .deserialize(plugin.getConfig().getString(path), placeholder));
     }
 
-    private void sendChat(World world, Player player, boolean tpsLow) {
+    private void sendChat(World world, Player player, boolean tpsLow, TagResolver placeholder) {
         if (!player.hasPermission("entityclearer.removalnotifs.chat")) return;
 
         String path = tpsLow ? "messages.chat-completed-low-tps-message" : "messages.chat-completed-message";
@@ -400,11 +410,11 @@ public class ClearTask {
             world.getName(),
             "Sending message to player " + player.getName() + " about " + removedEntities + " entities");
 
-        player.sendMessage(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(path)
-            .replace("{ENTITIES}", String.valueOf(removedEntities))));
+        player.sendMessage(MiniMessage.miniMessage()
+            .deserialize(plugin.getConfig().getString(path), placeholder));
     }
 
-    private void sendTitle(World world, Player player, boolean tpsLow) {
+    private void sendTitle(World world, Player player, boolean tpsLow, TagResolver placeholder) {
         if (!player.hasPermission("entityclearer.removalnotifs.title")) return;
 
         String titlePath = tpsLow ? "messages.title-completed-low-tps-message" : "messages.title-completed-message";
@@ -416,14 +426,18 @@ public class ClearTask {
         new LogDebug().debug(
             Level.INFO,
             world.getName(),
-            "Sending action bar to player " + player.getName() + " about " + removedEntities + " entities");
+            "Sending title to player " + player.getName() + " about " + removedEntities + " entities");
 
-        Title title = Title.title(
-            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(titlePath)
-                .replace("{ENTITIES}", String.valueOf(removedEntities))),
-            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(subtitlePath)
-                .replace("{ENTITIES}", String.valueOf(removedEntities))));
-        player.showTitle(title);
+        Component title = MiniMessage.miniMessage().deserialize(
+            plugin.getConfig().getString(titlePath),
+            placeholder);
+
+        Component subtitle = MiniMessage.miniMessage().deserialize(
+            plugin.getConfig().getString(subtitlePath),
+            placeholder);
+
+        Title fullTitle = Title.title(title, subtitle);
+        player.showTitle(fullTitle);
     }
 
     private void playSound(World world, Player player) {
@@ -458,21 +472,21 @@ public class ClearTask {
         }
     }
 
-    private void sendLog(World world, boolean tpsLow) {
+    private void sendLog(World world, boolean tpsLow, TagResolver placeholder) {
         String worldName = world.getName().toUpperCase() + ": ";
 
         if (tpsLow) {
             if (plugin.getConfig().getString("messages.log-completed-low-tps-message").isBlank()) return;
 
-            Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
-                .deserialize(worldName + plugin.getConfig()
-                    .getString("messages.log-completed-low-tps-message")
-                    .replace("{ENTITIES}", String.valueOf(removedEntities))));
+            Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage().deserialize(
+                worldName + plugin.getConfig().getString("messages.log-completed-low-tps-message"),
+                placeholder));
 
         } else if (!plugin.getConfig().getString("messages.log-completed-message").isBlank())
 
             Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
-                .deserialize(worldName + plugin.getConfig().getString("messages.log-completed-message")
-                    .replace("{ENTITIES}", String.valueOf(removedEntities))));
+                .deserialize(
+                    worldName + plugin.getConfig().getString("messages.log-completed-message"),
+                    placeholder));
     }
 }

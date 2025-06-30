@@ -1,6 +1,7 @@
 package net.silverstonemc.entityclearer;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
 import org.bukkit.Bukkit;
@@ -59,7 +60,10 @@ public class TpsMonitoring {
         savedTpsTask = taskTimer.runTaskTimerAsynchronously(plugin, delay, 20);
     }
 
-    @SuppressWarnings({"DataFlowIssue", "MethodOnlyUsedFromInnerClass"})
+    @SuppressWarnings({
+        "DataFlowIssue",
+        "MethodOnlyUsedFromInnerClass"
+    })
     private void tpsLow(double tps) {
         // If TPS is not below the threshold, return
         if (!(tps < plugin.getConfig().getInt("low-tps.threshold"))) return;
@@ -67,8 +71,9 @@ public class TpsMonitoring {
         // If a chat message should be sent
         if (plugin.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
             if (player.hasPermission("entityclearer.lowtps")) player.sendMessage(MiniMessage.miniMessage()
-                .deserialize(plugin.getConfig().getString("low-tps.chat-message")
-                    .replace("{TPS}", String.valueOf(tps))));
+                .deserialize(
+                    plugin.getConfig().getString("low-tps.chat-message"),
+                    Placeholder.unparsed("tps", String.valueOf(tps))));
 
         // If the entities should be removed from the regular list
         String path = "worlds";

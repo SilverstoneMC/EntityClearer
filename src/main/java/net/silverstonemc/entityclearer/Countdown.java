@@ -1,6 +1,9 @@
 package net.silverstonemc.entityclearer;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
@@ -77,14 +80,19 @@ public class Countdown {
 
             String actualTimeLeft = String.valueOf(timeLeft / divideBy);
 
+            TagResolver[] placeholders = {
+                Placeholder.unparsed("timeleft", actualTimeLeft),
+                Placeholder.unparsed("time", String.valueOf(time))
+            };
+
             // For each player in the world
             for (Player player : world.getPlayers()) {
-                sendActionBar(actualTimeLeft, player, time);
-                sendChat(actualTimeLeft, player, time);
-                sendTitle(actualTimeLeft, player, time);
+                sendActionBar(player, placeholders);
+                sendChat(player, placeholders);
+                sendTitle(player, placeholders);
                 playSound(world, player);
             }
-            sendLog(world, actualTimeLeft, time);
+            sendLog(world, placeholders);
 
         } catch (NullPointerException e) {
             LogDebug debug = new LogDebug();
@@ -97,33 +105,37 @@ public class Countdown {
         }
     }
 
-    private void sendActionBar(String timeLeft, Player player, StringBuilder time) {
+    private void sendActionBar(Player player, TagResolver[] placeholders) {
         if (!player.hasPermission("entityclearer.removalnotifs.actionbar")) return;
         if (plugin.getConfig().getString("messages.actionbar-message").isBlank()) return;
 
-        player.sendActionBar(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
-            "messages.actionbar-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+        player.sendActionBar(MiniMessage.miniMessage()
+            .deserialize(plugin.getConfig().getString("messages.actionbar-message"), placeholders));
     }
 
-    private void sendChat(String timeLeft, Player player, StringBuilder time) {
+    private void sendChat(Player player, TagResolver[] placeholders) {
         if (!player.hasPermission("entityclearer.removalnotifs.chat")) return;
         if (plugin.getConfig().getString("messages.chat-message").isBlank()) return;
 
-        player.sendMessage(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
-            "messages.chat-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+        player.sendMessage(MiniMessage.miniMessage()
+            .deserialize(plugin.getConfig().getString("messages.chat-message"), placeholders));
     }
 
-    private void sendTitle(String timeLeft, Player player, StringBuilder time) {
+    private void sendTitle(Player player, TagResolver[] placeholders) {
         if (!player.hasPermission("entityclearer.removalnotifs.title")) return;
         if (plugin.getConfig().getString("messages.title-message").isBlank() && plugin.getConfig().getString(
             "messages.subtitle-message").isBlank()) return;
 
-        Title title = Title.title(
-            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.title-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)),
-            MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.subtitle-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
-        player.showTitle(title);
+        Component title = MiniMessage.miniMessage().deserialize(
+            plugin.getConfig()
+                .getString("messages.title-message"), placeholders);
+
+        Component subtitle = MiniMessage.miniMessage().deserialize(
+            plugin.getConfig()
+                .getString("messages.subtitle-message"), placeholders);
+
+        Title fullTitle = Title.title(title, subtitle);
+        player.showTitle(fullTitle);
     }
 
     private void playSound(World world, Player player) {
@@ -147,12 +159,11 @@ public class Countdown {
         }
     }
 
-    private void sendLog(World world, String timeLeft, StringBuilder time) {
+    private void sendLog(World world, TagResolver[] placeholders) {
         if (plugin.getConfig().getString("messages.log-message").isBlank()) return;
 
         String worldName = world.getName().toUpperCase() + ": ";
         Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
-            .deserialize(worldName + plugin.getConfig().getString("messages.log-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+            .deserialize(worldName + plugin.getConfig().getString("messages.log-message"), placeholders));
     }
 }

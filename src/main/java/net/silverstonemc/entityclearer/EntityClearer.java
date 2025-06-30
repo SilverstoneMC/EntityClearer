@@ -1,7 +1,6 @@
 package net.silverstonemc.entityclearer;
 
 import io.lumine.mythic.api.MythicPlugin;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silverstonemc.entityclearer.utils.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.Listener;
@@ -18,7 +17,6 @@ public class EntityClearer extends JavaPlugin implements Listener {
     public static boolean testing;
     public static TestType testType;
 
-    public static BukkitAudiences adventure;
     private Metrics metrics;
     private MythicPlugin mythicPlugin;
     private Plugin placeholderAPI;
@@ -33,8 +31,6 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
         // Validate the checksum of the plugin's jar file to the one on GitHub
         if (!testing) new ChecksumChecker(this).scan(getFile());
-
-        adventure = BukkitAudiences.create(this);
 
         mythicPlugin = (MythicPlugin) getServer().getPluginManager().getPlugin("MythicMobs");
         if (mythicPlugin != null) getLogger().log(Level.INFO, "Enabled MythicMobs hook!");
@@ -80,22 +76,8 @@ public class EntityClearer extends JavaPlugin implements Listener {
         }.runTaskAsynchronously(this);
     }
 
-    @Override
-    public void onDisable() {
-        if (adventure != null) {
-            adventure.close();
-            adventure = null;
-        }
-    }
-
     public static EntityClearer getInstance() {
         return instance;
-    }
-
-    public BukkitAudiences getAdventure() {
-        if (adventure == null) throw new IllegalStateException(
-            "Tried to access Adventure when the plugin was disabled!");
-        return adventure;
     }
 
     public MythicPlugin getMythicPlugin() {

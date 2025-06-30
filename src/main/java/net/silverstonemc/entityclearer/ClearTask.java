@@ -3,7 +3,6 @@ package net.silverstonemc.entityclearer;
 import io.lumine.mythic.api.MythicPlugin;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.silverstonemc.entityclearer.utils.*;
@@ -27,7 +26,6 @@ import java.util.logging.Level;
 @SuppressWarnings({"DataFlowIssue", "resource"})
 public class ClearTask {
     private final List<EntityData> entityDataList = new ArrayList<>();
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
     private final MythicPlugin mythicPlugin = EntityClearer.getInstance().getMythicPlugin();
     private int removedEntities;
@@ -239,12 +237,6 @@ public class ClearTask {
         LogDebug debug = new LogDebug();
 
         // If any entity should be removed, regardless of the spawn reason
-        debug.debug(Level.WARNING, worldName, path + "." + worldName + ".spawn-reason.enabled");
-        debug.debug(
-            Level.WARNING,
-            worldName,
-            String.valueOf(plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")));
-
         if (!plugin.getConfig().getBoolean(path + "." + worldName + ".spawn-reason.enabled")) {
             debug.debug(Level.INFO, worldName, "Removing entities regardless of their spawn reason...");
             checkNearby(entity, worldName);
@@ -395,7 +387,7 @@ public class ClearTask {
             world.getName(),
             "Sending action bar to player " + player.getName() + " about " + removedEntities + " entities");
 
-        bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
+        player.sendActionBar(MiniMessage.miniMessage()
             .deserialize(plugin.getConfig().getString(path)
                 .replace("{ENTITIES}", String.valueOf(removedEntities))));
     }
@@ -412,7 +404,7 @@ public class ClearTask {
             world.getName(),
             "Sending message to player " + player.getName() + " about " + removedEntities + " entities");
 
-        bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
+        player.sendMessage(MiniMessage.miniMessage()
             .deserialize(plugin.getConfig().getString(path)
                 .replace("{ENTITIES}", String.valueOf(removedEntities))));
     }
@@ -436,7 +428,7 @@ public class ClearTask {
                 .replace("{ENTITIES}", String.valueOf(removedEntities))),
             MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(subtitlePath)
                 .replace("{ENTITIES}", String.valueOf(removedEntities))));
-        bukkitAudiences.player(player).showTitle(title);
+        player.showTitle(title);
     }
 
     private void playSound(World world, Player player) {
@@ -477,14 +469,14 @@ public class ClearTask {
         if (tpsLow) {
             if (plugin.getConfig().getString("messages.log-completed-low-tps-message").isBlank()) return;
 
-            bukkitAudiences.console().sendMessage(MiniMessage.miniMessage()
+            Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
                 .deserialize(worldName + plugin.getConfig()
                     .getString("messages.log-completed-low-tps-message")
                     .replace("{ENTITIES}", String.valueOf(removedEntities))));
 
         } else if (!plugin.getConfig().getString("messages.log-completed-message").isBlank())
 
-            bukkitAudiences.console().sendMessage(MiniMessage.miniMessage()
+            Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
                 .deserialize(worldName + plugin.getConfig().getString("messages.log-completed-message")
                     .replace("{ENTITIES}", String.valueOf(removedEntities))));
     }

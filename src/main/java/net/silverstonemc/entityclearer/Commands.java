@@ -1,6 +1,5 @@
 package net.silverstonemc.entityclearer;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.silverstonemc.entityclearer.utils.*;
@@ -24,7 +23,6 @@ import java.util.logging.Level;
 
 public class Commands implements CommandExecutor {
     private final JavaPlugin plugin = EntityClearer.getInstance();
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (args.length > 0) {
@@ -60,22 +58,19 @@ public class Commands implements CommandExecutor {
         new KillTimer().start();
         new MetricsUtils().send();
 
-        bukkitAudiences.sender(sender).sendMessage(Component.text(
-            "EntityClearer reloaded!",
-            NamedTextColor.GREEN));
+        sender.sendMessage(Component.text("EntityClearer reloaded!", NamedTextColor.GREEN));
     }
 
     private void debug(CommandSender sender) {
         LogDebug debug = new LogDebug();
 
         if (LogDebug.debugActive) {
-            bukkitAudiences.sender(sender).sendMessage(Component.text(
-                "Debug is already active!",
-                NamedTextColor.RED));
+            sender.sendMessage(Component.text("Debug is already active!", NamedTextColor.RED));
             return;
         }
 
-        bukkitAudiences.sender(sender).sendMessage(Component.text("Activating debug... See console for more details.",
+        sender.sendMessage(Component.text(
+            "Activating debug... See console for more details.",
             NamedTextColor.YELLOW));
 
         try {
@@ -85,7 +80,7 @@ public class Commands implements CommandExecutor {
             File file = new File(path.toFile(), "debug-" + LogDebug.fileId + ".yml");
 
             if (file.createNewFile()) LogDebug.debugFile = new FileWriter(file, StandardCharsets.UTF_8, true);
-            else bukkitAudiences.sender(sender).sendMessage(Component.text("Failed to create debug file! Check console for the debug output.",
+            else sender.sendMessage(Component.text("Failed to create debug file! Check console for the debug output.",
                 NamedTextColor.RED));
 
         } catch (IOException e) {
@@ -164,9 +159,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void clearnow(CommandSender sender) {
-        bukkitAudiences.sender(sender).sendMessage(Component.text(
-            "Starting entity removal task...",
-            NamedTextColor.YELLOW));
+        sender.sendMessage(Component.text("Starting entity removal task...", NamedTextColor.YELLOW));
         new ClearTask().removeEntitiesPreTask(new ConfigUtils().getWorlds("worlds"), false, false);
     }
 }

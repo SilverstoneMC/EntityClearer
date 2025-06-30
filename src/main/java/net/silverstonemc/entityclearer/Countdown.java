@@ -1,11 +1,11 @@
 package net.silverstonemc.entityclearer;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
 import net.silverstonemc.entityclearer.utils.OnlinePlayers;
+import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -19,7 +19,6 @@ import java.util.*;
 public class Countdown {
     public static final Map<String, BukkitTask> savedCountingDowns = new HashMap<>();
 
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public void countdown(World world) {
@@ -102,18 +101,16 @@ public class Countdown {
         if (!player.hasPermission("entityclearer.removalnotifs.actionbar")) return;
         if (plugin.getConfig().getString("messages.actionbar-message").isBlank()) return;
 
-        bukkitAudiences.player(player).sendActionBar(MiniMessage.miniMessage()
-            .deserialize(plugin.getConfig().getString("messages.actionbar-message")
-                .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
+        player.sendActionBar(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
+            "messages.actionbar-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
     }
 
     private void sendChat(String timeLeft, Player player, StringBuilder time) {
         if (!player.hasPermission("entityclearer.removalnotifs.chat")) return;
         if (plugin.getConfig().getString("messages.chat-message").isBlank()) return;
 
-        bukkitAudiences.player(player).sendMessage(MiniMessage.miniMessage()
-            .deserialize(plugin.getConfig().getString("messages.chat-message").replace("{TIMELEFT}", timeLeft)
-                .replace("{TIME}", time)));
+        player.sendMessage(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(
+            "messages.chat-message").replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
     }
 
     private void sendTitle(String timeLeft, Player player, StringBuilder time) {
@@ -126,7 +123,7 @@ public class Countdown {
                 .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)),
             MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.subtitle-message")
                 .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
-        bukkitAudiences.player(player).showTitle(title);
+        player.showTitle(title);
     }
 
     private void playSound(World world, Player player) {
@@ -154,7 +151,7 @@ public class Countdown {
         if (plugin.getConfig().getString("messages.log-message").isBlank()) return;
 
         String worldName = world.getName().toUpperCase() + ": ";
-        bukkitAudiences.console().sendMessage(MiniMessage.miniMessage()
+        Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
             .deserialize(worldName + plugin.getConfig().getString("messages.log-message")
                 .replace("{TIMELEFT}", timeLeft).replace("{TIME}", time)));
     }

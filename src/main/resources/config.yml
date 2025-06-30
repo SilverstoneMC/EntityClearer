@@ -73,7 +73,7 @@ worlds:
     #
     # If using the MythicMobs plugin, you may add the mob type prefixed by "MythicMob:" and surrounded in quotation marks
     #
-    # Note: You should not be using ITEM in your list as you should use Paper's alternate item despawn rates instead! Additionally, dropped items will not be properly detected on versions below 1.20.5.
+    # Note: You should not be using ITEM in your list as you should use Paper's alternate item despawn rates instead!
     entities:
       - BEE
       - CAVE_SPIDER
@@ -91,7 +91,6 @@ worlds:
 
     # Should only entities with a specific spawn reason be removed?
     # Setting this to false will check for any spawn reason
-    # Note: This only works on Paper and its forks!
     spawn-reason:
       enabled: false
       # See https://paper-jd.silverstonemc.net/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons

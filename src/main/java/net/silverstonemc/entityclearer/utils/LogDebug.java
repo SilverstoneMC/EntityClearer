@@ -1,6 +1,5 @@
 package net.silverstonemc.entityclearer.utils;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,8 +24,6 @@ public class LogDebug {
     public static FileWriter debugFile;
     public static Long fileId;
 
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
-
     public void debug(Level level, String worldName, String message) {
         if (!debugActive) return;
 
@@ -45,8 +42,8 @@ public class LogDebug {
         worldName = worldName.toUpperCase();
 
         for (Player players : Bukkit.getOnlinePlayers())
-            if (players.hasPermission("entityclearer.notify")) bukkitAudiences.player(players).sendMessage(
-                Component.text("[EntityClearer] " + worldName + ": " + message, NamedTextColor.RED));
+            if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component.text("[EntityClearer] " + worldName + ": " + message,
+                NamedTextColor.RED));
 
         debug(Level.SEVERE, worldName, message);
     }
@@ -112,10 +109,9 @@ public class LogDebug {
 
             private void dumpLink(String link) {
                 for (Player players : Bukkit.getOnlinePlayers())
-                    if (players.hasPermission("entityclearer.notify"))
-                        bukkitAudiences.player(players).sendMessage(Component.text(
-                            "[EntityClearer] SERVER: The debug dump can be found at ",
-                            NamedTextColor.GRAY).append(Component.text(link, NamedTextColor.AQUA)
+                    if (players.hasPermission("entityclearer.notify")) players.sendMessage(Component
+                        .text("[EntityClearer] SERVER: The debug dump can be found at ", NamedTextColor.GRAY)
+                        .append(Component.text(link, NamedTextColor.AQUA)
                             .clickEvent(ClickEvent.openUrl(link))));
 
                 EntityClearer.getInstance().getLogger().log(

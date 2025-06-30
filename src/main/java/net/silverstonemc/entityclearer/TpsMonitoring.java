@@ -1,6 +1,5 @@
 package net.silverstonemc.entityclearer;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
@@ -19,7 +18,6 @@ public class TpsMonitoring {
     public static BukkitTask savedTpsTask;
     public static final List<Integer> tickList = new ArrayList<>();
 
-    private final BukkitAudiences bukkitAudiences = EntityClearer.getInstance().getAdventure();
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public void tpsTimer(int delay) {
@@ -68,8 +66,8 @@ public class TpsMonitoring {
 
         // If a chat message should be sent
         if (plugin.getConfig().getBoolean("low-tps.chat")) for (Player player : Bukkit.getOnlinePlayers())
-            if (player.hasPermission("entityclearer.lowtps")) bukkitAudiences.player(player).sendMessage(
-                MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("low-tps.chat-message")
+            if (player.hasPermission("entityclearer.lowtps")) player.sendMessage(MiniMessage.miniMessage()
+                .deserialize(plugin.getConfig().getString("low-tps.chat-message")
                     .replace("{TPS}", String.valueOf(tps))));
 
         // If the entities should be removed from the regular list

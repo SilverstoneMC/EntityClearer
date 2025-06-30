@@ -5,7 +5,10 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
-import net.silverstonemc.entityclearer.utils.*;
+import net.silverstonemc.entityclearer.utils.ConfigUtils;
+import net.silverstonemc.entityclearer.utils.EntityData;
+import net.silverstonemc.entityclearer.utils.LogDebug;
+import net.silverstonemc.entityclearer.utils.OnlinePlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -106,14 +109,8 @@ public class ClearTask {
                     }
                 }
 
-                // Only check for EntityType.ITEM if version is 1.20.5 or newer due to enum change
-                boolean isDroppedItem = false;
-                if (new VersionUtils().compareVersions(
-                    Bukkit.getServer().getMinecraftVersion(),
-                    "1.20.5") >= 0) if (entity.getType() == EntityType.ITEM) isDroppedItem = true;
-
                 // Skip all the checks if a dropped item
-                if (isDroppedItem) removeEntity(entity, worldName);
+                if (entity.getType() == EntityType.ITEM) removeEntity(entity, worldName);
                 else checkOccupied(entity, entityData, path, worldName);
             }
 
@@ -387,9 +384,8 @@ public class ClearTask {
             world.getName(),
             "Sending action bar to player " + player.getName() + " about " + removedEntities + " entities");
 
-        player.sendActionBar(MiniMessage.miniMessage()
-            .deserialize(plugin.getConfig().getString(path)
-                .replace("{ENTITIES}", String.valueOf(removedEntities))));
+        player.sendActionBar(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(path)
+            .replace("{ENTITIES}", String.valueOf(removedEntities))));
     }
 
     private void sendChat(World world, Player player, boolean tpsLow) {
@@ -404,9 +400,8 @@ public class ClearTask {
             world.getName(),
             "Sending message to player " + player.getName() + " about " + removedEntities + " entities");
 
-        player.sendMessage(MiniMessage.miniMessage()
-            .deserialize(plugin.getConfig().getString(path)
-                .replace("{ENTITIES}", String.valueOf(removedEntities))));
+        player.sendMessage(MiniMessage.miniMessage().deserialize(plugin.getConfig().getString(path)
+            .replace("{ENTITIES}", String.valueOf(removedEntities))));
     }
 
     private void sendTitle(World world, Player player, boolean tpsLow) {

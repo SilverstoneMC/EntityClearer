@@ -18,6 +18,21 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
                 <configuration>
@@ -31,6 +46,14 @@
                 <version>1.5.3</version>
                 <executions>
                     <execution>
+                        <id>replace-main-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>replace-test-resources</id>
                         <phase>process-test-resources</phase>
                         <goals>
                             <goal>replace</goal>
@@ -114,7 +137,7 @@
         <dependency>
             <groupId>org.mockbukkit.mockbukkit</groupId>
             <artifactId>mockbukkit-v1.21</artifactId>
-            <version>4.58.0</version>
+            <version>4.60.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -134,7 +157,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.9.1</version>
+            <version>5.9.5</version>
             <scope>provided</scope>
         </dependency>
 

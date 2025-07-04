@@ -3,7 +3,7 @@ Hangar: https://hangar.papermc.io/Silverstone/EntityClearer
 
 Modrinth: https://modrinth.com/plugin/entityclearer
 
-Spigot: https://www.spigotmc.org/resources/90802
+Spigot (legacy): https://www.spigotmc.org/resources/90802
 
 ---
 

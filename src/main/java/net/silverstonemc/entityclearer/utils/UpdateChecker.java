@@ -25,7 +25,7 @@ public class UpdateChecker implements Listener {
     private final String pluginId = "SjDWdFjp";
 
     private String getUrl() {
-        return "https://modrinth.com/plugin/" + pluginId + "/versions";
+        return "https://modrinth.com/plugin/" + pluginId + "/changelog";
     }
 
     @EventHandler(ignoreCancelled = true)

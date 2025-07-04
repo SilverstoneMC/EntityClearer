@@ -28,8 +28,8 @@ public class ChecksumChecker implements Listener {
 
     private final String msg1 = "The checksum of this plugin's jar file does not match the official one!";
     private final String msg2 = "Unless you're modifying the plugin, chances are a jar you downloaded is malware!";
-    private final String msg3 = "Please re-download the plugin from the official sources: https://github.com/SilverstoneMC/";
-    private final String msg4 = "If you need additional help, please reach out using the Discord server on the linked GitHub page ^";
+    private final String msg3 = "Please re-download the plugin from the official sources: https://modrinth.com/project/SjDWdFjp";
+    private final String msg4 = "If you need additional help, please reach out using the Discord server on the linked Modrinth page ^";
     private final String msg5 = "If this message appears even after re-downloading, some other plugin or your server jar may be compromised, injecting its code into this one!";
 
     @EventHandler(ignoreCancelled = true)
@@ -81,7 +81,7 @@ public class ChecksumChecker implements Listener {
                         checksumDiffers = true;
                         plugin.getLogger().severe(msg1);
                         plugin.getLogger().severe(msg2);
-                        plugin.getLogger().severe(msg3 + plugin.getPluginMeta().getName());
+                        plugin.getLogger().severe(msg3);
                         plugin.getLogger().severe(msg4);
                         plugin.getLogger().severe(msg5);
                     }

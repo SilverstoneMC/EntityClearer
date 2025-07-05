@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a problem with the plugin
-labels: Bug-Unconfirmed
+labels: [ Bug-Unconfirmed ]
 body:
   - type: textarea
     attributes:
@@ -15,38 +15,23 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     attributes:
       label: Expected behavior
       description: "What should've happened?"
     validations:
       required: true
 
-  - type: textarea
+  - type: input
     attributes:
-      label: Output of `/version`
-      description: "Upload a screenshot or copy the text from the message"
+      label: Debug link
+      description: "Run the command `/ecl debug` in-game and provide the link it returns"
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: Output of `/version EntityClearer`
-      description: "Upload a screenshot or copy the text from the message"
-    validations:
-      required: true
-      
-  - type: textarea
-    attributes:
-      label: Debug file
-      description: "Copy and paste the contents of your debug file located in the `/plugins/EntityClearer/` directory after running the `/ecl debug` command"
-      render: yaml
-    validations:
-      required: true
-
-  - type: textarea
-    attributes:
-      label: Additional info
+      label: Additional info, if any
       description: Optional
     validations:
       required: false

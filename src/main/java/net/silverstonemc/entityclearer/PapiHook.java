@@ -50,15 +50,6 @@ public class PapiHook extends PlaceholderExpansion {
             return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 60000);
         }
 
-        if (params.startsWith("remaining_seconds_")) {
-            String worldName = params.replace("remaining_seconds_", "");
-
-            String returnReason = returnReason(worldName);
-            if (returnReason != null) return returnReason;
-
-            return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
-        }
-
         if (params.startsWith("remaining_seconds_left_")) {
             String worldName = params.replace("remaining_seconds_left_", "");
 
@@ -68,6 +59,15 @@ public class PapiHook extends PlaceholderExpansion {
             int seconds = (int) ((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
             seconds %= 60;
             return String.valueOf(seconds);
+        }
+
+        if (params.startsWith("remaining_seconds_")) {
+            String worldName = params.replace("remaining_seconds_", "");
+
+            String returnReason = returnReason(worldName);
+            if (returnReason != null) return returnReason;
+
+            return String.valueOf((KillTimer.nextKillTask.get(worldName) - System.currentTimeMillis()) / 1000);
         }
 
         return null; // Placeholder is unknown by the Expansion

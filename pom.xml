@@ -4,7 +4,7 @@
 
     <groupId>net.silverstonemc</groupId>
     <artifactId>EntityClearer</artifactId>
-    <version>4.1.1</version>
+    <version>4.1.2</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -137,14 +137,14 @@
         <dependency>
             <groupId>org.mockbukkit.mockbukkit</groupId>
             <artifactId>mockbukkit-v1.21</artifactId>
-            <version>4.60.0</version>
+            <version>4.72.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.7-R0.1-SNAPSHOT</version>
+            <version>1.21.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

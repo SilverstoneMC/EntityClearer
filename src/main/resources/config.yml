@@ -61,7 +61,7 @@ worlds:
     min-players: -1
 
     # The entities to be removed from the world
-    # See https://paper-jd.silverstonemc.net/org/bukkit/entity/EntityType.html for all entity types
+    # See https://jd.papermc.io/paper/org/bukkit/entity/EntityType.html for all entity types
     #
     # By default, named entities will not be removed
     # Add "-NAMED" to the end of the entity type to also remove named ones
@@ -93,7 +93,7 @@ worlds:
     # Setting this to false will check for any spawn reason
     spawn-reason:
       enabled: false
-      # See https://paper-jd.silverstonemc.net/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
+      # See https://jd.papermc.io/paper/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for all spawn reasons
       reasons:
         - SPAWNER
         - SPAWNER_EGG

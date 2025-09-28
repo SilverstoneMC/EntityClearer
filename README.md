@@ -1,1 +1,5 @@
 [![GitHub](https://badges.penpow.dev/badges/available/github/cozy.png)](https://github.com/SilverstoneMC/EntityClearer/releases) [![Hangar](https://badges.penpow.dev/badges/available/hangar/cozy.png)](https://hangar.papermc.io/Silverstone/EntityClearer) [![Modrinth](https://badges.penpow.dev/badges/available/modrinth/cozy.png)](https://modrinth.com/project/SjDWdFjp) [![Discord](https://badges.penpow.dev/badges/social/discord-plural/cozy.png)](https://discord.gg/5XFBx8uZVN)
+
+---
+
+*[Legacy Spigot version](https://www.spigotmc.org/resources/entityclearer-a-clearlagg-alternative.90802/update?update=598867)*

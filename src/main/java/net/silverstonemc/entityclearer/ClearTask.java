@@ -73,6 +73,8 @@ public class ClearTask {
         for (World world : worlds) {
             String worldName = world.getName();
 
+            entityDataList.clear();
+
             debug.debug(Level.INFO, "", "");
 
             String worldConfigName = ConfigUtils.isAll ? "ALL" : worldName;
@@ -87,13 +89,17 @@ public class ClearTask {
                 continue;
             }
 
-            // Save the entity data from the config
-            for (String entityType : plugin.getConfig()
-                .getStringList(path + "." + worldConfigName + ".entities"))
+            // Get the entity list from the config
+            List<String> entityList = plugin.getConfig()
+                .getStringList(path + "." + worldConfigName + ".entities");
+            if (entityList.isEmpty()) {
+                debug.error(worldName, "No entities are set to be removed in the config!");
+                continue;
+            }
+
+            for (String entityType : entityList)
                 entityDataList.add(new EntityData(entityType, worldName));
-            if (entityDataList.isEmpty()) debug.error(
-                worldName,
-                "No entities are set to be removed in the config!");
+
             debug.debug(Level.INFO, "", "");
 
             debug.debug(Level.INFO, worldName, "Scanning world...");

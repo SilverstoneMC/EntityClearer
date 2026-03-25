@@ -3,6 +3,7 @@ package net.silverstonemc.entityclearer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.silverstonemc.entityclearer.utils.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -56,7 +57,7 @@ public class Commands implements CommandExecutor {
         LogDebug.debugActive = false;
 
         new KillTimer().start();
-        new MetricsUtils().send();
+        new CustomMetrics().send();
 
         sender.sendMessage(Component.text("EntityClearer reloaded!", NamedTextColor.GREEN));
     }

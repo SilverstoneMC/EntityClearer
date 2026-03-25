@@ -1,11 +1,12 @@
 package net.silverstonemc.entityclearer.utils;
 
 import net.silverstonemc.entityclearer.EntityClearer;
+
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class MetricsUtils {
+public class CustomMetrics {
     private final JavaPlugin plugin = EntityClearer.getInstance();
 
     public void send() {

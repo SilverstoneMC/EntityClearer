@@ -1,7 +1,9 @@
 package net.silverstonemc.entityclearer;
 
-import io.lumine.mythic.api.MythicPlugin;
+import static net.silverstonemc.entityclearer.utils.TestConfigUtils.TestType;
+
 import net.silverstonemc.entityclearer.utils.*;
+
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -10,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 
-import static net.silverstonemc.entityclearer.utils.TestConfigUtils.TestType;
+import io.lumine.mythic.api.MythicPlugin;
 
 @SuppressWarnings("DataFlowIssue")
 public class EntityClearer extends JavaPlugin implements Listener {
@@ -43,7 +45,7 @@ public class EntityClearer extends JavaPlugin implements Listener {
 
         if (!testing) {
             metrics = new Metrics(this, 10915);
-            new MetricsUtils().send();
+            new CustomMetrics().send();
         }
 
         saveDefaultConfig();

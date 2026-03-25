@@ -3,6 +3,7 @@ package net.silverstonemc.entityclearer.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,10 +23,10 @@ public class UpdateChecker implements Listener {
     }
 
     private final JavaPlugin plugin;
-    private final String pluginId = "SjDWdFjp";
+    private static final String PLUGIN_ID = "SjDWdFjp";
 
     private String getUrl() {
-        return "https://modrinth.com/plugin/" + pluginId + "/changelog";
+        return "https://modrinth.com/plugin/" + PLUGIN_ID + "/changelog";
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -55,7 +56,7 @@ public class UpdateChecker implements Listener {
     public String getLatestVersion() {
         try {
             // Send the request
-            InputStream url = new URI("https://api.modrinth.com/v2/project/" + pluginId + "/version").toURL()
+            InputStream url = new URI("https://api.modrinth.com/v2/project/" + PLUGIN_ID + "/version").toURL()
                 .openStream();
 
             // Read the response

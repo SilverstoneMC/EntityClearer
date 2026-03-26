@@ -1,13 +1,17 @@
+// Copyright JasonHorkles and contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
 package net.silverstonemc.entityclearer;
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.silverstonemc.entityclearer.utils.KillTimer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 public class PapiHook extends PlaceholderExpansion {
     @Override

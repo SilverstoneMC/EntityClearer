@@ -1,3 +1,5 @@
+// Copyright JasonHorkles and contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
 package net.silverstonemc.entityclearer;
 
 import net.kyori.adventure.text.Component;
@@ -8,6 +10,7 @@ import net.kyori.adventure.title.Title;
 import net.silverstonemc.entityclearer.utils.ConfigUtils;
 import net.silverstonemc.entityclearer.utils.LogDebug;
 import net.silverstonemc.entityclearer.utils.OnlinePlayers;
+
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;

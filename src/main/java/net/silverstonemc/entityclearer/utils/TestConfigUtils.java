@@ -1,6 +1,9 @@
+// Copyright JasonHorkles and contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
 package net.silverstonemc.entityclearer.utils;
 
 import net.silverstonemc.entityclearer.EntityClearer;
+
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class TestConfigUtils {

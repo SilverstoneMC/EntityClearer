@@ -1,7 +1,10 @@
+// Copyright JasonHorkles and contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
 package net.silverstonemc.entityclearer.utils;
 
 import net.silverstonemc.entityclearer.Countdown;
 import net.silverstonemc.entityclearer.EntityClearer;
+
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;

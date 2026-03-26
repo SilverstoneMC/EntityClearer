@@ -1,6 +1,9 @@
+// Copyright JasonHorkles and contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
 package net.silverstonemc.entityclearer;
 
 import net.silverstonemc.entityclearer.utils.LogDebug;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockbukkit.mockbukkit.MockBukkit;

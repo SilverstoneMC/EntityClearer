@@ -1,7 +1,10 @@
+// Copyright JasonHorkles and contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
 package net.silverstonemc.entityclearer;
 
 import net.silverstonemc.entityclearer.utils.PrepPlugin;
 import net.silverstonemc.entityclearer.utils.TestConfigUtils.TestType;
+
 import org.junit.jupiter.api.*;
 import org.mockbukkit.mockbukkit.MockBukkit;
 

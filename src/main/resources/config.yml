@@ -4,7 +4,6 @@
 # FAQs can be found at https://github.com/SilverstoneMC/EntityClearer/wiki/FAQs
 
 
-
 ###############################################
 #              COUNTDOWN SETTINGS             #
 ###############################################
@@ -184,8 +183,8 @@ messages:
   append-s-text: "s"
 
   # Placeholders:
-  # <timeleft> - the time remaining before the clear task is run
-  # <time> - will output "minute(s)" or "second(s)" depending on the time left
+  #  <timeleft> - the time remaining before the clear task is run
+  #  <time> - will output "minute(s)" or "second(s)" depending on the time left
 
   actionbar-message: "<#ff9b0f><bold>Common entities will be removed in <yellow><timeleft></yellow> <time>!"
   chat-message: "<red>Common entities will be removed in <gray><timeleft></gray> <time>!"
